@@ -3,7 +3,7 @@ name: Verification Request
 about: Verify project functionality
 title: 'Verification Request: Project v#'
 labels: verify
-assignees: ''
+assignees: oliviakumar
 
 ---
 
