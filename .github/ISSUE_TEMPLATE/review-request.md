@@ -3,7 +3,7 @@ name: Review Request
 about: Request code review.
 title: 'Review Request: Project v#'
 labels: review
-assignees: ''
+assignees: oliviakumar
 
 ---
 
