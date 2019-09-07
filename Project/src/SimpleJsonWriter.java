@@ -125,7 +125,6 @@ public class SimpleJsonWriter {
 	 * @see #asNestedObject(Map, Writer, int)
 	 */
 	public static void asNestedObject(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Path path) throws IOException {
-	
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asNestedObject(elements, writer, 0);
 		}catch(FileNotFoundException e) {
@@ -142,7 +141,6 @@ public class SimpleJsonWriter {
 	 * @throws IOException
 	 */
 	public static void indent(Writer writer, int times) throws IOException {
-		// THIS CODE IS PROVIDED FOR YOU; DO NOT MODIFY
 		for (int i = 0; i < times; i++) {
 			writer.write('\t');
 		}
@@ -160,7 +158,6 @@ public class SimpleJsonWriter {
 	 * @see #indent(Writer, int)
 	 */
 	public static void indent(Integer element, Writer writer, int times) throws IOException {
-		// THIS CODE IS PROVIDED FOR YOU; DO NOT MODIFY
 		indent(element.toString(), writer, times);
 	}
 
@@ -175,7 +172,6 @@ public class SimpleJsonWriter {
 	 * @see #indent(Writer, int)
 	 */
 	public static void indent(String element, Writer writer, int times) throws IOException {
-		// THIS CODE IS PROVIDED FOR YOU; DO NOT MODIFY
 		indent(writer, times);
 		writer.write(element);
 	}
@@ -188,7 +184,6 @@ public class SimpleJsonWriter {
 	 * @throws IOException
 	 */
 	public static void quote(String element, Writer writer) throws IOException {
-		// THIS CODE IS PROVIDED FOR YOU; DO NOT MODIFY
 		writer.write('"');
 		writer.write(element);
 		writer.write('"');
@@ -207,7 +202,6 @@ public class SimpleJsonWriter {
 	 * @see #quote(String, Writer)
 	 */
 	public static void quote(String element, Writer writer, int times) throws IOException {
-		// THIS CODE IS PROVIDED FOR YOU; DO NOT MODIFY
 		indent(writer, times);
 		quote(element, writer);
 	}

@@ -19,9 +19,7 @@ public class ArgumentParser {
 	 * Initializes this argument map.
 	 */
 	public ArgumentParser() {
-		// TODO Initialize map
 		map = new HashMap<>();
-//		this.map = null;
 	}
 
 	/**
@@ -32,7 +30,6 @@ public class ArgumentParser {
 	 * @param args the command line arguments to parse
 	 */
 	public ArgumentParser(String[] args) {
-		// DO NOT MODIFY; THIS METHOD IS PROVIDED FOR YOU
 		this();
 		parse(args);
 	}
@@ -40,8 +37,9 @@ public class ArgumentParser {
 	/**
 	 * Parses the arguments into flag/value pairs where possible. Some flags may not
 	 * have associated values. If a flag is repeated, its value is overwritten.
-	 *
+	 * 
 	 * @param args the command line arguments to parse
+	 * @return a map of command line arguments
 	 */
 	public Map<String, String> parse(String[] args) {
 		for(int i = 0; i < args.length; i++) {
@@ -75,7 +73,6 @@ public class ArgumentParser {
 	 * @see String#length()
 	 */
 	public static boolean isFlag(String arg) {
-		// TODO Fix isFlag(...) implementation
 		if(arg != null && arg.startsWith("-") && (arg.length() >= 2)) {
 			return true;
 		}
@@ -94,7 +91,6 @@ public class ArgumentParser {
 	 * @see String#length()
 	 */
 	public static boolean isValue(String arg) {
-		// TODO Fix isValue(...) implementation
 		if(arg != null && !arg.startsWith("-") && (arg.length() >= 1)){
 			return true;
 		}
@@ -107,7 +103,6 @@ public class ArgumentParser {
 	 * @return number of unique flags
 	 */
 	public int numFlags() {
-		// TODO Fix numFlags(...) implementation
 		return map.size();
 	}
 
@@ -118,7 +113,6 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag exists
 	 */
 	public boolean hasFlag(String flag) {
-		// TODO Fix hasFlag(...) implementation
 		if(map.containsKey(flag)) {
 			return true;
 		}
@@ -132,7 +126,6 @@ public class ArgumentParser {
 	 * @return {@code true} if the flag is mapped to a non-null value
 	 */
 	public boolean hasValue(String flag) {
-		// TODO Fix hasValue(...) implementation
 		if(map.containsKey(flag) && (map.get(flag)!= null)) {
 			return true;
 		}
@@ -148,7 +141,6 @@ public class ArgumentParser {
 	 *         there is no mapping for the flag
 	 */
 	public String getString(String flag) {
-		// TODO Fix getString(...) implementation
 		if(hasFlag(flag) && hasValue(flag)) {
 			return map.get(flag);
 		}
@@ -166,7 +158,6 @@ public class ArgumentParser {
 	 *         if there is no mapping for the flag
 	 */
 	public String getString(String flag, String defaultValue) {
-		// DO NOT MODIFY; THIS METHOD IS PROVIDED FOR YOU
 		String value = getString(flag);
 		return value == null ? defaultValue : value;
 	}
@@ -182,7 +173,6 @@ public class ArgumentParser {
 	 * @see Path#of(String, String...)
 	 */
 	public Path getPath(String flag) {
-		// TODO Fix getPath(...) implementation
 		if(hasFlag(flag) && hasValue(flag)) {
 			return Path.of(map.get(flag));
 		}
@@ -200,14 +190,12 @@ public class ArgumentParser {
 	 *         default value if there is no valid mapping for the flag
 	 */
 	public Path getPath(String flag, Path defaultValue) {
-		// DO NOT MODIFY; THIS METHOD IS PROVIDED FOR YOU
 		Path value = getPath(flag);
 		return value == null ? defaultValue : value;
 	}
 
 	@Override
 	public String toString() {
-		// DO NOT MODIFY; THIS METHOD IS PROVIDED FOR YOU
 		return this.map.toString();
 	}
 
@@ -217,9 +205,4 @@ public class ArgumentParser {
 	 *
 	 * @param args the command-line arguments to parse
 	 */
-	public static void main(String[] args) {
-		// TODO Modify main(...) as needed to debug code
-		var map = new ArgumentParser(args);
-		System.out.println(map);
-	}
 }
