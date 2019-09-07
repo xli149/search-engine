@@ -1,18 +1,10 @@
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -29,6 +21,14 @@ import java.util.TreeSet;
  * @version Fall 2019
  */
 public class SimpleJsonWriter {
+	
+	/**
+	 * Writes the word count of each file as a pretty JSON object to a file
+	 * @param counts the number of words of each file
+	 * @param writer the writer to use
+	 * @param level the initial indent level
+	 * @throws IOException if the file is unable to write or read
+	 */
 	public static void wordsCountsPrinter(TreeMap<String, Integer> counts, Writer writer, int level)throws IOException{
 		
 		int flag = 0;
@@ -49,6 +49,14 @@ public class SimpleJsonWriter {
 		
 	}
 
+	/**
+	 * Writes the word count of each file as a pretty JSON object to a file
+	 * @param counts the number of words of each file
+	 * @param path 	 the path of a file
+	 * @throws IOException if the file is unable to write or read
+	 * 
+	 * @see #wordCountsPrinter()
+	 */
 	public static void wordCountsPrinter(TreeMap<String, Integer> counts, Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			System.out.println("path: " + path.toString());
@@ -60,6 +68,16 @@ public class SimpleJsonWriter {
 			System.out.println("Null");
 		}
 	}
+	/**
+	 * Writes the elements as a nested pretty JSON object. The generic notation used
+	 * allows this method to be used for any type of map with any type of nested
+	 * collection of integer objects.
+	 *
+	 * @param elements the elements to write
+	 * @param writer   the writer to use
+	 * @param level    the initial indent level
+	 * @throws IOException if the file is unable to read or write
+	 */
 	public static void asNestedObject(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Writer writer, int level) throws IOException {
 		int flag1 = 0;
 		writer.write("{\n");
@@ -95,15 +113,6 @@ public class SimpleJsonWriter {
 			writer.write("\n");
 		} 
 		writer.write("}");
-				 /*
-				  * The generic notation:
-		 *
-		 *    Map<String, ? extends Collection<Integer>> elements
-		 *
-		 * May be confusing. You can mentally replace it with:
-		 *
-		 *    HashMap<String, HashSet<Integer>> elements
-		 */
 	}
 
 	/**

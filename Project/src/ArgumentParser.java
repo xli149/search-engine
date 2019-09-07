@@ -4,7 +4,6 @@ import java.util.Map;
 
 /**
  * Parses and stores command-line arguments into simple key = value pairs.
- * test......
  * @author CS 212 Software Development
  * @author University of San Francisco
  * @version Fall 2019
