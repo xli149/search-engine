@@ -4,7 +4,7 @@ import java.util.regex.Pattern;
 
 /**
  * Utility class for parsing text in a consistent manner.
- *
+ *test
  * @author CS 212 Software Development
  * @author University of San Francisco
  * @version Fall 2019
