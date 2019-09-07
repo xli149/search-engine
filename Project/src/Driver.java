@@ -46,7 +46,7 @@ public class Driver {
 			return Path.of(mapOfArgs.get("-index"));
 			
 		}
-		else if(mapOfArgs.containsKey("-index") && (mapOfArgs.get("-index")!= null)){
+		else if(mapOfArgs.containsKey("-index") && (mapOfArgs.get("-index") == null)){
 			return Path.of("index.json");
 		}
 		else {
@@ -58,11 +58,11 @@ public class Driver {
 			return Path.of(mapOfArgs.get("-counts"));
 			
 		}
-		else if(!mapOfArgs.containsKey("-counts")) {
-			return null;
+		else if(mapOfArgs.containsKey("-counts") && mapOfArgs.get("-counts") == null) {
+			return Path.of("counts.json");
 		}
 		else {
-			return Path.of("counts.json");
+			return null;
 		}
 	}
 	
@@ -94,8 +94,11 @@ public class Driver {
 		}
 		
 		System.out.println("size of returned elements " + elements.size());
+		
 		Path outPutFile = dri.PathOfOutput(mapOfArgs);
-		SimpleJsonWriter.asNestedObject(elements, outPutFile);
+		if(outPutFile != null) {
+			SimpleJsonWriter.asNestedObject(elements, outPutFile);
+		}
 		Path countsFilePath = dri.CountsOutput(mapOfArgs);
 		if(countsFilePath != null) {
 			System.out.println("path: " + countsFilePath.toString());
