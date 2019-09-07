@@ -17,7 +17,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 public class InvertedIndex{
 	
 	//Reading the text files in directories and its sub-directories
-	/**
+	/** test
 	 * @param relativePath
 	 * @throws FileNotFoundException 
 	 */
