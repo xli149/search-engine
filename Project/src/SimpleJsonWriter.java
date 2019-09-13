@@ -5,9 +5,10 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
+
+// TODO Try to refactor to be a little more efficient (not needing counters and not needing conditionals inside of a loop)
 
 /**
  * Outputs several simple data structures in "pretty" JSON format where
@@ -21,7 +22,7 @@ import java.util.TreeSet;
  * @version Fall 2019
  */
 public class SimpleJsonWriter {
-	
+
 	/**
 	 * Writes the word count of each file as a pretty JSON object to a file
 	 * @param counts the number of words of each file
@@ -30,7 +31,7 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to write or read
 	 */
 	public static void wordsCountsPrinter(TreeMap<String, Integer> counts, Writer writer, int level)throws IOException{
-		
+
 		int flag = 0;
 		writer.write("{\n");
 		for(String count: counts.keySet()) {
@@ -42,11 +43,11 @@ public class SimpleJsonWriter {
 			}
 			writer.write("\n");
 			flag++;
-			
+
 		}
 		System.out.println("Get here");
 		writer.write("}");
-		
+
 	}
 
 	/**
@@ -54,7 +55,7 @@ public class SimpleJsonWriter {
 	 * @param counts the number of words of each file
 	 * @param path 	 the path of a file
 	 * @throws IOException if the file is unable to write or read
-	 * 
+	 *
 	 * @see #wordCountsPrinter()
 	 */
 	public static void wordCountsPrinter(TreeMap<String, Integer> counts, Path path) throws IOException {
@@ -62,7 +63,7 @@ public class SimpleJsonWriter {
 			System.out.println("path: " + path.toString());
 			wordsCountsPrinter(counts, writer,0);
 		}catch(FileNotFoundException e) {
-			
+
 			System.out.println("No such files");
 		}catch(NullPointerException e) {
 			System.out.println("Null");
@@ -94,7 +95,7 @@ public class SimpleJsonWriter {
 					if(flag3 != filename.getValue().size() - 1) {
 						writer.write(",");
 					}
-				
+
 					flag3++;
 					writer.write("\n");
 				}
@@ -108,12 +109,20 @@ public class SimpleJsonWriter {
 			writer.write("\t}");
 			if(flag1 != elements.size() - 1) {
 				writer.write(",");
-			}	
+			}
 			flag1++;
 			writer.write("\n");
-		} 
+		}
 		writer.write("}");
 	}
+
+	// TODO See if you can configure Eclipse to show the same warnings as seen by me
+	/*
+Javadoc: The method iterateFiles(File, TreeMap<String,TreeMap<String,TreeSet<Integer>>>, TreeMap<String,Integer>) in the type InvertedIndex is not applicable for the arguments ()	InvertedIndex.java	/Project/src	line 119	Java Problem
+Javadoc: The method uniqueStems(String, Stemmer, TreeMap<String,TreeMap<String,TreeSet<Integer>>>) in the type InvertedIndex is not applicable for the arguments (String, Stemmer)	InvertedIndex.java	/Project/src	line 42	Java Problem
+Javadoc: The method uniqueStems(String, Stemmer, TreeMap<String,TreeMap<String,TreeSet<Integer>>>) in the type InvertedIndex is not applicable for the arguments (String, Stemmer)	InvertedIndex.java	/Project/src	line 56	Java Problem
+Javadoc: The method wordCountsPrinter(TreeMap<String,Integer>, Path) in the type SimpleJsonWriter is not applicable for the arguments ()	SimpleJsonWriter.java	/Project/src	line 57	Java Problem
+	 */
 
 	/**
 	 * Writes the elements as a nested pretty JSON object to file.
@@ -122,7 +131,7 @@ public class SimpleJsonWriter {
 	 * @param path     the file path to use
 	 * @throws IOException
 	 *
-	 * @see #asNestedObject(Map, Writer, int)
+	 * @see #asNestedObject(TreeMap, Writer, int)
 	 */
 	public static void asNestedObject(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
