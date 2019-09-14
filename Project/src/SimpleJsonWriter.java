@@ -116,14 +116,6 @@ public class SimpleJsonWriter {
 		writer.write("}");
 	}
 
-	// TODO See if you can configure Eclipse to show the same warnings as seen by me
-	/*
-Javadoc: The method iterateFiles(File, TreeMap<String,TreeMap<String,TreeSet<Integer>>>, TreeMap<String,Integer>) in the type InvertedIndex is not applicable for the arguments ()	InvertedIndex.java	/Project/src	line 119	Java Problem
-Javadoc: The method uniqueStems(String, Stemmer, TreeMap<String,TreeMap<String,TreeSet<Integer>>>) in the type InvertedIndex is not applicable for the arguments (String, Stemmer)	InvertedIndex.java	/Project/src	line 42	Java Problem
-Javadoc: The method uniqueStems(String, Stemmer, TreeMap<String,TreeMap<String,TreeSet<Integer>>>) in the type InvertedIndex is not applicable for the arguments (String, Stemmer)	InvertedIndex.java	/Project/src	line 56	Java Problem
-Javadoc: The method wordCountsPrinter(TreeMap<String,Integer>, Path) in the type SimpleJsonWriter is not applicable for the arguments ()	SimpleJsonWriter.java	/Project/src	line 57	Java Problem
-	 */
-
 	/**
 	 * Writes the elements as a nested pretty JSON object to file.
 	 *
