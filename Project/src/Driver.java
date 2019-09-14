@@ -19,7 +19,7 @@ public class Driver {
 	 * TODO
 	 * Should not have so many static members, and maybe not in this class.
 	 */
-	//
+
 	/** A map of parsed arguments from command line*/
 	public static Map<String, String> mapOfArgs;
 

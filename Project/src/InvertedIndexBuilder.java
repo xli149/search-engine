@@ -1,10 +1,12 @@
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
+import java.util.function.BiPredicate;
+import java.util.function.Predicate;
 
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
@@ -102,7 +104,6 @@ public class InvertedIndexBuilder{
 		}
 	}
 
-	// TODO Add a blank line in between methods
 	// TODO Make all the methods in this class static
 	// TODO Better method names
 	/**
@@ -117,16 +118,31 @@ public class InvertedIndexBuilder{
 	 *
 	 *  @see #iterateFiles()
 	 */
+	public static final Predicate<Path> IS_TEXT = (Path path) ->{
+		if(Files.isRegularFile(path)
+				&& (path.getFileName().toString().toLowerCase().endsWith(".txt")
+						|| path.getFileName().toString().toLowerCase().endsWith(".text")))
+			return true;
+		return false;
+	};
+	public static final BiPredicate<Path, BasicFileAttributes> IS_TEXT_ATTR = (path, attr) -> IS_TEXT.test(path);
+
 	public void processFiles(Path relativePath) {
 		try {
 			// TODO Cannot use the file class at all
 			// TODO Keep things as a Path object as long as possible, until just before adding to your index
-			File file = relativePath.toFile();
-			iterateFiles(file);
+			/*File file = relativePath.toFile();
+			iterateFiles(file);*/
+
+			if(relativePath.toFile().exists()) {
+				traversDir(relativePath);
+			}
+
 		}catch(NullPointerException | IOException e) {
 			System.out.println("The path is not valid");
 		}
 	}
+
 
 	/**
 	 * Recursively checking if a file descriptor points to a file or not
@@ -138,31 +154,46 @@ public class InvertedIndexBuilder{
 	 * @param counts an empty treeMap to store number of words in a file
 	 * @throws IOException if the file is unable to read
 	 */
-	private void iterateFiles(File file) throws IOException{
-		// TODO Going to have to do directory traversal without using File and listFiles()
-		// TODO https://github.com/usf-cs212-fall2019/lectures/blob/master/Files%20and%20Exceptions/src/DirectoryStreamDemo.java
-		if(file != null) {
-			if(file.isDirectory()) {
-				File[] files = file.listFiles();
-				for(File f: files) {
-					iterateFiles(f);
+	private void traversDir(Path start) throws IOException {
+		Files.find(start, Integer.MAX_VALUE, IS_TEXT_ATTR).forEach((Path path)->{
+			try {
+				wordStem(path);
+				if(numOfWorlds != 0) {
+					addIndex.addWordCounts(fileName, numOfWorlds);
 				}
-			}
-			else if(file.isFile()) {
-				if(file.getName().toLowerCase().endsWith(".txt") || file.getName().toLowerCase().endsWith(".text")) {
-					wordStem(file.toPath());
-					if(numOfWorlds != 0) {
-						//counts.put(fileName, numOfWorlds);
-						addIndex.addWordCounts(fileName, numOfWorlds);
-					}
-					numOfWorlds = 0;
-
-
-				}
+				numOfWorlds = 0;
+			} catch (IOException e) {
+				System.out.println("Input output fails");
 			}
 
-		}
+		});
 	}
+	//	private void iterateFiles(File file) throws IOException{
+	//		// TODO Going to have to do directory traversal without using File and listFiles()
+	//		// TODO https://github.com/usf-cs212-fall2019/lectures/blob/master/Files%20and%20Exceptions/src/DirectoryStreamDemo.java
+	//		if(file != null) {
+	//			if(file.isDirectory()) {
+	//				File[] files = file.listFiles();
+	//				for(File f: files) {
+	//					iterateFiles(f);
+	//				}
+	//			}
+	//			else if(file.isFile()) {
+	//				if(file.getName().toLowerCase().endsWith(".txt") || file.getName().toLowerCase().endsWith(".text")) {
+	//					wordStem(file.toPath());
+	//					if(numOfWorlds != 0) {
+	//						//counts.put(fileName, numOfWorlds);
+	//						addIndex.addWordCounts(fileName, numOfWorlds);
+	//					}
+	//					numOfWorlds = 0;
+	//
+	//
+	//				}
+	//			}
+	//
+	//		}
+	//	}
+
 
 	public InvertedIndex getInvertedIndexObject() {
 		return addIndex;
