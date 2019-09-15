@@ -91,7 +91,7 @@ public class Driver {
 		mapOfArgs = parser.parse(args);
 		Path relativePath = dri.PathOfInput(mapOfArgs);
 		if(relativePath != null) {
-			index.processFiles(relativePath);
+			InvertedIndexBuilder.checkFile(relativePath);
 		}
 		Path outPutFile = dri.PathOfOutput(mapOfArgs);
 		if(outPutFile != null) {

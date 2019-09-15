@@ -34,7 +34,7 @@ public class SimpleJsonWriter {
 
 		int flag = 0;
 		writer.write("{\n");
-		for(String count: counts.keySet()) {
+		for (String count: counts.keySet()) {
 			quote(count, writer, 1);
 			writer.write(": ");
 			writer.write(counts.get(count).toString());
@@ -55,17 +55,15 @@ public class SimpleJsonWriter {
 	 * @param counts the number of words of each file
 	 * @param path 	 the path of a file
 	 * @throws IOException if the file is unable to write or read
-	 *
-	 * @see #wordCountsPrinter()
 	 */
 	public static void wordCountsPrinter(TreeMap<String, Integer> counts, Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			System.out.println("path: " + path.toString());
 			wordsCountsPrinter(counts, writer,0);
-		}catch(FileNotFoundException e) {
+		} catch(FileNotFoundException e) {
 
 			System.out.println("No such files");
-		}catch(NullPointerException e) {
+		} catch(NullPointerException e) {
 			System.out.println("Null");
 		}
 	}
@@ -86,11 +84,11 @@ public class SimpleJsonWriter {
 			int flag2 = 0;
 			quote(e.getKey(), writer, 1);
 			writer.write(": {\n");
-			for(var filename : e.getValue().entrySet()) {
+			for (var filename : e.getValue().entrySet()) {
 				int flag3 = 0;
 				quote(filename.getKey(), writer, 2);
 				writer.write(": [\n");
-				for(int i: filename.getValue()) {
+				for (int i: filename.getValue()) {
 					indent(i, writer, 3);
 					if(flag3 != filename.getValue().size() - 1) {
 						writer.write(",");
@@ -128,9 +126,9 @@ public class SimpleJsonWriter {
 	public static void asNestedObject(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
 			asNestedObject(elements, writer, 0);
-		}catch(FileNotFoundException e) {
+		} catch(FileNotFoundException e) {
 			System.out.println("No such files");
-		}catch(NullPointerException e) {
+		} catch(NullPointerException e) {
 			System.out.println("Null");
 		}
 	}

@@ -1,5 +1,4 @@
 import java.io.BufferedReader;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -23,16 +22,14 @@ public class InvertedIndexBuilder{
 	/** The default stemmer algorithm used by this class. */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
-	// TODO The rest of these should be local variables within the methods they are needed
-	/** The position of each word in a file starts at 1 */
-	private static int posOfWord = 1;
-	/** The total number of words in a file starts at 0*/
-	private static int numOfWorlds = 0;
-	/** The name of each file*/
-	private static String fileName;
+	/**
+	 * Declaration of an object of InvertedIndex type
+	 */
+	private static InvertedIndex addIndex;
 
-	private InvertedIndex addIndex;
-
+	/**
+	 * Constructor
+	 */
 	public InvertedIndexBuilder() {
 		addIndex = new InvertedIndex();
 	}
@@ -42,15 +39,15 @@ public class InvertedIndexBuilder{
 	 * from the provided line.
 	 *
 	 * @param line the line of words to clean, split, and stem
-	 * @param elements the collection of stemming the words and its position
-	 *
+	 * @param posOfWord
+	 * @param filePath
+	 * @return position of a stemmed word
 	 * @see SnowballStemmer
 	 * @see #DEFAULT
-	 * @see #wordStem(String, Stemmer)
 	 */
 
-	public void wordStem(String line) {
-		wordStem(line, new SnowballStemmer(DEFAULT));
+	public static int wordStem(String line, int posOfWord, Path filePath) {
+		return wordStem(line, new SnowballStemmer(DEFAULT), posOfWord, filePath);
 	}
 
 	/**
@@ -59,64 +56,55 @@ public class InvertedIndexBuilder{
 	 *
 	 * @param line    the line of words to clean, split, and stem
 	 * @param stemmer the stemmer to use
-	 * @param elements the collection of stemming the words and its position
-	 *
-	 * @see #wordStem(String, Stemmer)
+	 * @param posOfWord the position of a word
+	 * @param filePath the path of a file
+	 * @return the position of a word
 	 */
-	public void wordStem(String line, Stemmer stemmer) {
-
+	public static int wordStem(String line, Stemmer stemmer, int posOfWord, Path filePath) {
 		String [] tokens = TextParser.parse(line);
 		String stemmedWords;
-		for(int i = 0; i < tokens.length; i++) {
+		for (int i = 0; i < tokens.length; i++) {
 			stemmedWords = stemmer.stem(tokens[i]).toString();
-			addIndex.addIndex(stemmedWords, fileName, posOfWord);
-
-			numOfWorlds++;
+			addIndex.addIndex(stemmedWords, filePath.toString(), posOfWord);
 			posOfWord++;
 		}
+		return posOfWord;
 	}
-
-	// TODO Usually have a space after all key words, e.g. "for (...)" and after curly braces like "} catch (IOException...)"
 
 	// TODO public static void uniqueStems(Path inputFile,  InvertedIndex elements) throws IOException {
 	/**
 	 * Reads a file line by line, parses each line into cleaned and stemmed words,
 	 * and then adds those words to a set.
 	 *
-	 * @param inputFile the input file to parse
-	 * @param elements the collection of stemming the words and its position
+	 * @param filePath the path of a file
 	 * @throws IOException if unable to read or parse file
 	 */
-	public void wordStem(Path inputFile) throws IOException {
+	public static void wordStem(Path filePath) throws IOException {
+		int posOfWord = 1;
+		String line = null;
 		try(
-				BufferedReader reader = Files.newBufferedReader(inputFile, StandardCharsets.UTF_8);
+				BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8);
 				){
-			fileName = inputFile.toString();
-			String line = null;
+
 			while((line = reader.readLine()) != null) {
-				wordStem(line);
+
+				posOfWord = wordStem(line, posOfWord, filePath);
+
 
 			}
-
-			posOfWord = 1;
-		}catch(IOException e) {
+			if(posOfWord != 1) {
+				addIndex.addWordCounts(filePath.toString(), posOfWord - 1);
+			}
+		} catch(IOException e) {
 			System.out.print("Please check if the file exist");
 		}
 	}
 
 	// TODO Make all the methods in this class static
 	// TODO Better method names
+
 	/**
-	 * Convert a path to a file descriptor and pass it to a reading file function
-	 *
-	 * @param relativePath the relative path of a file
-	 * @param elements an empty treeMap for storing word index
-	 * @param counts an empty treeMap for storing number of words in each file
-	 * @throws FileNotFoundException if the file is not found
-	 * @throws IOException if it is unable to read the file
-	 * @throws NullPointerException if the file descriptor is null
-	 *
-	 *  @see #iterateFiles()
+	 * Lambda function that checks if a file ends with ".txt" or ".text"
 	 */
 	public static final Predicate<Path> IS_TEXT = (Path path) ->{
 		if(Files.isRegularFile(path)
@@ -125,20 +113,22 @@ public class InvertedIndexBuilder{
 			return true;
 		return false;
 	};
+	/**
+	 * Lambda function for setting attribute
+	 */
 	public static final BiPredicate<Path, BasicFileAttributes> IS_TEXT_ATTR = (path, attr) -> IS_TEXT.test(path);
 
-	public void processFiles(Path relativePath) {
+	/**
+	 * Function for checking the existence of a file and pass it to get parsed
+	 * @param relativePath the relative path of a file
+	 */
+	public static void checkFile(Path relativePath) {
 		try {
-			// TODO Cannot use the file class at all
-			// TODO Keep things as a Path object as long as possible, until just before adding to your index
-			/*File file = relativePath.toFile();
-			iterateFiles(file);*/
-
 			if(relativePath.toFile().exists()) {
 				traversDir(relativePath);
 			}
 
-		}catch(NullPointerException | IOException e) {
+		} catch(NullPointerException | IOException e) {
 			System.out.println("The path is not valid");
 		}
 	}
@@ -149,52 +139,25 @@ public class InvertedIndexBuilder{
 	 * pass it to parse if it is a file, otherwise get a list of sub-folders
 	 * and call itself again
 	 *
-	 * @param file descriptor of a file
-	 * @param elements an empty treeMap to store word index
-	 * @param counts an empty treeMap to store number of words in a file
+	 * @param start starting path of stream
+	 *
 	 * @throws IOException if the file is unable to read
 	 */
-	private void traversDir(Path start) throws IOException {
+	private static void traversDir(Path start) throws IOException {
+
 		Files.find(start, Integer.MAX_VALUE, IS_TEXT_ATTR).forEach((Path path)->{
 			try {
 				wordStem(path);
-				if(numOfWorlds != 0) {
-					addIndex.addWordCounts(fileName, numOfWorlds);
-				}
-				numOfWorlds = 0;
 			} catch (IOException e) {
 				System.out.println("Input output fails");
 			}
 
 		});
 	}
-	//	private void iterateFiles(File file) throws IOException{
-	//		// TODO Going to have to do directory traversal without using File and listFiles()
-	//		// TODO https://github.com/usf-cs212-fall2019/lectures/blob/master/Files%20and%20Exceptions/src/DirectoryStreamDemo.java
-	//		if(file != null) {
-	//			if(file.isDirectory()) {
-	//				File[] files = file.listFiles();
-	//				for(File f: files) {
-	//					iterateFiles(f);
-	//				}
-	//			}
-	//			else if(file.isFile()) {
-	//				if(file.getName().toLowerCase().endsWith(".txt") || file.getName().toLowerCase().endsWith(".text")) {
-	//					wordStem(file.toPath());
-	//					if(numOfWorlds != 0) {
-	//						//counts.put(fileName, numOfWorlds);
-	//						addIndex.addWordCounts(fileName, numOfWorlds);
-	//					}
-	//					numOfWorlds = 0;
-	//
-	//
-	//				}
-	//			}
-	//
-	//		}
-	//	}
 
-
+	/**
+	 * @return an object of InvertedIndex type
+	 */
 	public InvertedIndex getInvertedIndexObject() {
 		return addIndex;
 	}
