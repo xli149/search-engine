@@ -22,32 +22,23 @@ public class InvertedIndexBuilder{
 	/** The default stemmer algorithm used by this class. */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
-	/**
-	 * Declaration of an object of InvertedIndex type
-	 */
-	private static InvertedIndex addIndex;
 
-	/**
-	 * Constructor
-	 */
-	public InvertedIndexBuilder() {
-		addIndex = new InvertedIndex();
-	}
 	/**
 	 *
 	 * Returns a set of unique (no duplicates) cleaned and stemmed words parsed
 	 * from the provided line.
 	 *
 	 * @param line the line of words to clean, split, and stem
-	 * @param posOfWord
-	 * @param filePath
+	 * @param posOfWord the position of a stemmed word
+	 * @param filePath the path of a file
+	 * @param elements elements an object of InvertedIndex type
 	 * @return position of a stemmed word
 	 * @see SnowballStemmer
 	 * @see #DEFAULT
 	 */
 
-	public static int wordStem(String line, int posOfWord, Path filePath) {
-		return wordStem(line, new SnowballStemmer(DEFAULT), posOfWord, filePath);
+	public static int wordStem(String line, int posOfWord, Path filePath, InvertedIndex elements) {
+		return wordStem(line, new SnowballStemmer(DEFAULT), posOfWord, filePath, elements);
 	}
 
 	/**
@@ -58,28 +49,29 @@ public class InvertedIndexBuilder{
 	 * @param stemmer the stemmer to use
 	 * @param posOfWord the position of a word
 	 * @param filePath the path of a file
+	 * @param elements elements an object of InvertedIndex type
 	 * @return the position of a word
 	 */
-	public static int wordStem(String line, Stemmer stemmer, int posOfWord, Path filePath) {
+	public static int wordStem(String line, Stemmer stemmer, int posOfWord, Path filePath, InvertedIndex elements) {
 		String [] tokens = TextParser.parse(line);
 		String stemmedWords;
 		for (int i = 0; i < tokens.length; i++) {
 			stemmedWords = stemmer.stem(tokens[i]).toString();
-			addIndex.addIndex(stemmedWords, filePath.toString(), posOfWord);
+			elements.addIndex(stemmedWords, filePath.toString(), posOfWord);
 			posOfWord++;
 		}
 		return posOfWord;
 	}
 
-	// TODO public static void uniqueStems(Path inputFile,  InvertedIndex elements) throws IOException {
 	/**
 	 * Reads a file line by line, parses each line into cleaned and stemmed words,
 	 * and then adds those words to a set.
 	 *
 	 * @param filePath the path of a file
+	 * @param elements elements an object of InvertedIndex type
 	 * @throws IOException if unable to read or parse file
 	 */
-	public static void wordStem(Path filePath) throws IOException {
+	public static void wordStem(Path filePath, InvertedIndex elements) throws IOException {
 		int posOfWord = 1;
 		String line = null;
 		try(
@@ -88,20 +80,17 @@ public class InvertedIndexBuilder{
 
 			while((line = reader.readLine()) != null) {
 
-				posOfWord = wordStem(line, posOfWord, filePath);
+				posOfWord = wordStem(line, posOfWord, filePath, elements);
 
 
 			}
 			if(posOfWord != 1) {
-				addIndex.addWordCounts(filePath.toString(), posOfWord - 1);
+				elements.addWordCounts(filePath.toString(), posOfWord - 1);
 			}
 		} catch(IOException e) {
 			System.out.print("Please check if the file exist");
 		}
 	}
-
-	// TODO Make all the methods in this class static
-	// TODO Better method names
 
 	/**
 	 * Lambda function that checks if a file ends with ".txt" or ".text"
@@ -121,11 +110,12 @@ public class InvertedIndexBuilder{
 	/**
 	 * Function for checking the existence of a file and pass it to get parsed
 	 * @param relativePath the relative path of a file
+	 * @param elements elements an object of InvertedIndex type
 	 */
-	public static void checkFile(Path relativePath) {
+	public static void checkFile(Path relativePath, InvertedIndex elements) {
 		try {
 			if(relativePath.toFile().exists()) {
-				traversDir(relativePath);
+				traversDir(relativePath, elements);
 			}
 
 		} catch(NullPointerException | IOException e) {
@@ -140,14 +130,15 @@ public class InvertedIndexBuilder{
 	 * and call itself again
 	 *
 	 * @param start starting path of stream
+	 * @param elements an object of InvertedIndex type
 	 *
 	 * @throws IOException if the file is unable to read
 	 */
-	private static void traversDir(Path start) throws IOException {
+	private static void traversDir(Path start, InvertedIndex elements) throws IOException {
 
 		Files.find(start, Integer.MAX_VALUE, IS_TEXT_ATTR).forEach((Path path)->{
 			try {
-				wordStem(path);
+				wordStem(path, elements);
 			} catch (IOException e) {
 				System.out.println("Input output fails");
 			}
@@ -155,10 +146,4 @@ public class InvertedIndexBuilder{
 		});
 	}
 
-	/**
-	 * @return an object of InvertedIndex type
-	 */
-	public InvertedIndex getInvertedIndexObject() {
-		return addIndex;
-	}
 }

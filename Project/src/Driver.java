@@ -15,10 +15,6 @@ import java.util.Map;
  * @version Fall 2019
  */
 public class Driver {
-	/*
-	 * TODO
-	 * Should not have so many static members, and maybe not in this class.
-	 */
 
 	/** A map of parsed arguments from command line*/
 	public static Map<String, String> mapOfArgs;
@@ -87,19 +83,19 @@ public class Driver {
 		System.out.println(Arrays.toString(args));
 		ArgumentParser parser = new ArgumentParser();
 		Driver dri = new Driver();
-		InvertedIndexBuilder index = new InvertedIndexBuilder();
+		InvertedIndex elements = new InvertedIndex();
 		mapOfArgs = parser.parse(args);
 		Path relativePath = dri.PathOfInput(mapOfArgs);
 		if(relativePath != null) {
-			InvertedIndexBuilder.checkFile(relativePath);
+			InvertedIndexBuilder.checkFile(relativePath, elements);
 		}
 		Path outPutFile = dri.PathOfOutput(mapOfArgs);
 		if(outPutFile != null) {
-			index.getInvertedIndexObject().indexToJson(outPutFile);
+			elements.indexToJson(outPutFile);
 		}
 		Path countsFilePath = dri.CountsOutput(mapOfArgs);
 		if(countsFilePath != null) {
-			index.getInvertedIndexObject().wordCountToJson(countsFilePath);
+			elements.wordCountToJson(countsFilePath);
 		}
 		Duration elapsed = Duration.between(start, Instant.now());
 		double seconds = (double) elapsed.toMillis() / Duration.ofSeconds(1).toMillis();

@@ -5,10 +5,9 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-// TODO Try to refactor to be a little more efficient (not needing counters and not needing conditionals inside of a loop)
 
 /**
  * Outputs several simple data structures in "pretty" JSON format where
@@ -23,6 +22,21 @@ import java.util.TreeSet;
  */
 public class SimpleJsonWriter {
 
+
+
+	/**
+	 * Utility function for reducing repeated code
+	 * @param entry entry set of String, Integer pair
+	 * @param writer the writer to use
+	 * @param level the initial indent level
+	 * @throws IOException if the file is unable to write or read
+	 */
+	private static void writeEntry(Map.Entry<String, Integer> entry, Writer writer, int level) throws IOException{
+		quote(entry.getKey(), writer, level);
+		writer.write(": ");
+		writer.write(entry.getValue().toString());
+	}
+
 	/**
 	 * Writes the word count of each file as a pretty JSON object to a file
 	 * @param counts the number of words of each file
@@ -32,22 +46,23 @@ public class SimpleJsonWriter {
 	 */
 	public static void wordsCountsPrinter(TreeMap<String, Integer> counts, Writer writer, int level)throws IOException{
 
-		int flag = 0;
-		writer.write("{\n");
-		for (String count: counts.keySet()) {
-			quote(count, writer, 1);
-			writer.write(": ");
-			writer.write(counts.get(count).toString());
-			if(flag != counts.size() - 1) {
-				writer.write(",");
-			}
+		writer.write("{");
+		var iterator = counts.entrySet().iterator();
+
+		if(iterator.hasNext()) {
 			writer.write("\n");
-			flag++;
-
+			var element  = iterator.next();
+			writeEntry(element, writer, level + 1);
 		}
-		System.out.println("Get here");
-		writer.write("}");
 
+		while(iterator.hasNext()) {
+			writer.write(",");
+			writer.write("\n");
+			var element = iterator.next();
+			writeEntry(element, writer, level + 1);
+		}
+		System.out.println("got here");
+		writer.write("\n}");
 	}
 
 	/**
@@ -58,17 +73,98 @@ public class SimpleJsonWriter {
 	 */
 	public static void wordCountsPrinter(TreeMap<String, Integer> counts, Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-			System.out.println("path: " + path.toString());
 			wordsCountsPrinter(counts, writer,0);
 		} catch(FileNotFoundException e) {
-
 			System.out.println("No such files");
 		} catch(NullPointerException e) {
 			System.out.println("Null");
 		}
 	}
 	/**
-	 * Writes the elements as a nested pretty JSON object. The generic notation used
+	 * Utility function for reducing repeated code
+	 * @param entry entry set of String, Integer pair
+	 * @param writer the writer to use
+	 * @param level the initial indent level
+	 * @throws IOException if the file is unable to write or read
+	 */
+	private static void writeEntrySecond(Map.Entry<String, TreeSet<Integer>> entry, Writer writer, int level) throws IOException{
+		quote(entry.getKey(), writer, level);
+		writer.write(": ");
+		asSet(entry.getValue(), writer, level + 1);
+
+	}
+
+	/**
+	 * Utility function for reducing repeated code
+	 * @param entry entry set of String, Integer pair
+	 * @param writer the writer to use
+	 * @param level the initial indent level
+	 * @throws IOException if the file is unable to write or read
+	 */
+	private static void writeEntryFirst(Map.Entry<String,TreeMap<String,TreeSet<Integer>>> entry, Writer writer, int level) throws IOException{
+		quote(entry.getKey(), writer, level);
+		writer.write(": ");
+		var elements = entry.getValue();
+		asObject(elements, writer, level + 1);
+	}
+
+	/**
+	 *  Writes index of each stemmed word in JSON object
+	 * @param elements a collection of Integers
+	 * @param writer the writer to use
+	 * @param level the initial indent level
+	 * @throws IOException if the file is unable to write or read
+	 */
+	public static void asSet(TreeSet<Integer> elements, Writer writer, int level)throws IOException{
+		writer.write("[");
+		var indexItr = elements.iterator();
+		if(indexItr.hasNext()) {
+			writer.write("\n");
+			indent(indexItr.next(), writer, level);
+		}
+
+		while(indexItr.hasNext()) {
+			writer.write(",");
+			writer.write("\n");
+			indent(indexItr.next(), writer, level);
+
+		}
+		indent("\n]", writer, level);
+
+	}
+
+	/**
+	 *  Writes file paths of each file in JSON object
+	 * @param elements a TreeMap of String and TreeSet pairs
+	 * @param writer the writer to use
+	 * @param level the initial indent level
+	 * @throws IOException if the file is unable to write or read
+	 */
+	public static void  asObject(TreeMap<String, TreeSet<Integer>> elements, Writer writer, int level)throws IOException {
+		writer.write("{");
+
+		var fileNamesItr = elements.entrySet().iterator();
+		if(fileNamesItr.hasNext()) {
+			writer.write("\n");
+			var element = fileNamesItr.next();
+			writeEntrySecond(element, writer, level);
+
+		}
+
+		while(fileNamesItr.hasNext()) {
+			writer.write(",");
+			writer.write("\n");
+			var element = fileNamesItr.next();
+			writeEntrySecond(element, writer, level);
+		}
+
+		indent("\n}", writer, level);
+
+	}
+
+
+	/**
+	 * Writes stemmed words as a nested pretty JSON object. The generic notation used
 	 * allows this method to be used for any type of map with any type of nested
 	 * collection of integer objects.
 	 *
@@ -78,40 +174,25 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to read or write
 	 */
 	public static void asNestedObject(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Writer writer, int level) throws IOException {
-		int flag1 = 0;
-		writer.write("{\n");
-		for (var e : elements.entrySet()) {
-			int flag2 = 0;
-			quote(e.getKey(), writer, 1);
-			writer.write(": {\n");
-			for (var filename : e.getValue().entrySet()) {
-				int flag3 = 0;
-				quote(filename.getKey(), writer, 2);
-				writer.write(": [\n");
-				for (int i: filename.getValue()) {
-					indent(i, writer, 3);
-					if(flag3 != filename.getValue().size() - 1) {
-						writer.write(",");
-					}
 
-					flag3++;
-					writer.write("\n");
-				}
-				writer.write("\t\t]");
-				if(flag2 != e.getValue().size() - 1) {
-					writer.write(",");
-				}
-				flag2++;
-				writer.write("\n");
-			}
-			writer.write("\t}");
-			if(flag1 != elements.size() - 1) {
-				writer.write(",");
-			}
-			flag1++;
+		writer.write("{");
+
+		var stemmedWordItr = elements.entrySet().iterator();
+		if(stemmedWordItr.hasNext()) {
 			writer.write("\n");
+			var element = stemmedWordItr.next();
+			writeEntryFirst(element, writer, level + 1);
+
 		}
-		writer.write("}");
+
+		while(stemmedWordItr.hasNext()) {
+			writer.write(",");
+			writer.write("\n");
+			var element = stemmedWordItr.next();
+			writeEntryFirst(element, writer, level + 1);
+		}
+
+		writer.write("\n}");
 	}
 
 	/**
