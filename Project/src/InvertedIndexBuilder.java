@@ -1,6 +1,7 @@
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -136,7 +137,7 @@ public class InvertedIndexBuilder{
 	 */
 	private static void traversDir(Path start, InvertedIndex elements) throws IOException {
 
-		Files.find(start, Integer.MAX_VALUE, IS_TEXT_ATTR).forEach((Path path)->{
+		Files.find(start, Integer.MAX_VALUE, IS_TEXT_ATTR, FileVisitOption.FOLLOW_LINKS).forEach((Path path)->{
 			try {
 				wordStem(path, elements);
 			} catch (IOException e) {
