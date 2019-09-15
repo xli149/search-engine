@@ -44,7 +44,7 @@ public class SimpleJsonWriter {
 	 * @param level the initial indent level
 	 * @throws IOException if the file is unable to write or read
 	 */
-	public static void wordsCountsPrinter(TreeMap<String, Integer> counts, Writer writer, int level)throws IOException{
+	public static void wordsCountsPrinter(TreeMap<String, Integer> counts, Writer writer, int level) throws IOException{
 
 		writer.write("{");
 		var iterator = counts.entrySet().iterator();
@@ -61,7 +61,6 @@ public class SimpleJsonWriter {
 			var element = iterator.next();
 			writeEntry(element, writer, level + 1);
 		}
-		System.out.println("got here");
 		writer.write("\n}");
 	}
 
@@ -91,7 +90,6 @@ public class SimpleJsonWriter {
 		quote(entry.getKey(), writer, level);
 		writer.write(": ");
 		asSet(entry.getValue(), writer, level + 1);
-
 	}
 
 	/**
@@ -129,6 +127,7 @@ public class SimpleJsonWriter {
 			indent(indexItr.next(), writer, level);
 
 		}
+
 		indent("\n]", writer, level);
 
 	}
@@ -144,6 +143,7 @@ public class SimpleJsonWriter {
 		writer.write("{");
 
 		var fileNamesItr = elements.entrySet().iterator();
+
 		if(fileNamesItr.hasNext()) {
 			writer.write("\n");
 			var element = fileNamesItr.next();
