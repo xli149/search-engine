@@ -16,8 +16,10 @@ import java.util.Map;
  */
 public class Driver {
 
+	// TODO Methods always start with lowercase letter
+
 	/** A map of parsed arguments from command line*/
-	public static Map<String, String> mapOfArgs;
+	public static Map<String, String> mapOfArgs; // TODO Make this a local variable in Driver.main
 
 	/**
 	 * Getting the path of file for reading a file by checking a map
@@ -79,6 +81,9 @@ public class Driver {
 	 * @param args flag/value pairs used to start this program
 	 */
 	public static void main(String[] args){
+
+		// TODO Try/catch in here and output user-friendly error message
+
 		Instant start = Instant.now();
 		System.out.println(Arrays.toString(args));
 		ArgumentParser parser = new ArgumentParser();

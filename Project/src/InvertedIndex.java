@@ -30,6 +30,7 @@ public class InvertedIndex {
 		counts = new TreeMap<>();
 	}
 
+	// TODO add(String word, String location, int position)
 	/**
 	 * Function for adding path and word index to a collection
 	 *
@@ -38,6 +39,8 @@ public class InvertedIndex {
 	 * @param position position of the stemmed word in that file
 	 */
 	public void addIndex(String stemmedWords, String filePath, int position) {
+
+		// TODO Remove all of the toLowerCase... data structures assume another class handles the cleaning/parsing/etc.
 
 		if(!elements.containsKey(stemmedWords.toLowerCase())) {
 			TreeMap<String, TreeSet<Integer>> newPair = new TreeMap<>();
@@ -58,8 +61,42 @@ public class InvertedIndex {
 			}
 		}
 
+		/* TODO
+		refactor version 1
+		if (elements.get(stemmedWords) == null) {
+			elements.put(stemmedWords, new TreeMap<>());
+		}
+
+		if (elements.get(stemmedWords).get(filePath) == null) {
+			elements.get(stemmedWords).put(filePath, new TreeSet<>());
+		}
+
+		elements.get(stemmedWords).get(filePath).add(position);
+
+		refactor version 2
+		elements.putIfAbsent(stemmedWords, new TreeMap<>());
+		elements.get(stemmedWords).putIfAbsent(filePath, new TreeSet<>());
+		elements.get(stemmedWords).get(filePath).add(position);
+
+		// put updating word count here so it is always 100% consistent with what your index is storing
+		if this is the first time seeing the file
+			put the file and current position in your count map
+		else
+			put the maximum of the stored value and current position for the file into the count map
+		*/
 	}
 
+	/*
+	 * TODO Add more methods... especially getters
+	 *
+	 * getWords(...) to return safely all the words in the index
+	 * getLocations(String word) to return all the locations for that word safely
+	 * etc.
+	 */
+
+	/*
+	 * TODO Should not be public... would be bad if something could decide there are -11 words in a file.
+	 */
 	/**
 	 * Function for adding path of a file and the total word count to a collection
 	 * @param filePath the path of a file
@@ -68,6 +105,11 @@ public class InvertedIndex {
 	public void addWordCounts(String filePath, int wordCounts) {
 		counts.put(filePath, wordCounts);
 	}
+
+	/*
+	 * TODO Throw the exceptions to Driver, Driver can provide more specific
+	 * user-friendly error output.
+	 */
 
 	/**
 	 * Function for writing word index to Json object
@@ -99,6 +141,7 @@ public class InvertedIndex {
 
 	@Override
 	public String toString() {
+		// TODO return this.elements.toString();
 		return this.getClass().getName();
 	}
 

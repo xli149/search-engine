@@ -23,7 +23,6 @@ public class InvertedIndexBuilder{
 	/** The default stemmer algorithm used by this class. */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
-
 	/**
 	 *
 	 * Returns a set of unique (no duplicates) cleaned and stemmed words parsed
@@ -37,7 +36,6 @@ public class InvertedIndexBuilder{
 	 * @see SnowballStemmer
 	 * @see #DEFAULT
 	 */
-
 	public static int wordStem(String line, int posOfWord, Path filePath, InvertedIndex elements) {
 		return wordStem(line, new SnowballStemmer(DEFAULT), posOfWord, filePath, elements);
 	}
@@ -97,10 +95,12 @@ public class InvertedIndexBuilder{
 	 * Lambda function that checks if a file ends with ".txt" or ".text"
 	 */
 	public static final Predicate<Path> IS_TEXT = (Path path) ->{
+		// TODO Safe toString.toLowercase and reuse instead of calling twice
 		if(Files.isRegularFile(path)
 				&& (path.getFileName().toString().toLowerCase().endsWith(".txt")
-						|| path.getFileName().toString().toLowerCase().endsWith(".text")))
+						|| path.getFileName().toString().toLowerCase().endsWith(".text"))) {
 			return true;
+		}
 		return false;
 	};
 	/**

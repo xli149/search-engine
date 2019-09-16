@@ -9,6 +9,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+// TODO Try to be consistent with formatting
+
 /**
  * Outputs several simple data structures in "pretty" JSON format where
  * newlines are used to separate elements and nested elements are indented.
@@ -114,6 +116,7 @@ public class SimpleJsonWriter {
 	public static void asSet(TreeSet<Integer> elements, Writer writer, int level)throws IOException{
 		writer.write("[");
 		var indexItr = elements.iterator();
+
 		if(indexItr.hasNext()) {
 			writer.write("\n");
 			indent(indexItr.next(), writer, level);
@@ -172,15 +175,14 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to read or write
 	 */
 	public static void asNestedObject(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Writer writer, int level) throws IOException {
-
 		writer.write("{");
 
-		var stemmedWordItr = elements.entrySet().iterator();
+		var stemmedWordItr = elements.entrySet().iterator(); // TODO Refactor all of these to iterator
+
 		if(stemmedWordItr.hasNext()) {
 			writer.write("\n");
 			var element = stemmedWordItr.next();
 			writeEntryFirst(element, writer, level + 1);
-
 		}
 
 		while(stemmedWordItr.hasNext()) {
@@ -204,7 +206,7 @@ public class SimpleJsonWriter {
 	 */
 	public static void asNestedObject(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Path path) throws IOException {
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-			asNestedObject(elements, writer, 0);
+			asNestedObject(elements, writer, 0); // TODO Remove the catch blocks here
 		} catch(FileNotFoundException e) {
 			System.out.println("No such files");
 		} catch(NullPointerException e) {
