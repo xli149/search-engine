@@ -83,6 +83,7 @@ public class Driver {
 	public static void main(String[] args){
 
 		// TODO Try/catch in here and output user-friendly error message
+		// TODO Fix formatting
 
 		Instant start = Instant.now();
 		System.out.println(Arrays.toString(args));
