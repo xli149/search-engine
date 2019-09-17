@@ -1,3 +1,4 @@
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -16,21 +17,21 @@ import java.util.Map;
  */
 public class Driver {
 
-	// TODO Methods always start with lowercase letter
-
-	/** A map of parsed arguments from command line*/
-	public static Map<String, String> mapOfArgs; // TODO Make this a local variable in Driver.main
-
 	/**
 	 * Getting the path of file for reading a file by checking a map
 	 * @param mapOfArgs a collection of  parsed arguments from command line
 	 * @return the path of a file if the key exist or return null if the key doesn't exist
 	 */
-	public Path PathOfInput(Map<String, String> mapOfArgs) {
+	public Path pathOfInput(Map<String, String> mapOfArgs) {
+
 		if(mapOfArgs.containsKey("-path") && mapOfArgs.get("-path") != null) {
+
 			return Path.of(mapOfArgs.get("-path"));
+
 		}
+
 		return null;
+
 	}
 
 	/**
@@ -40,17 +41,25 @@ public class Driver {
 	 * @return the path of a file or a default path if the key exist,
 	 * or return null if the key doesn't exist
 	 */
-	public Path PathOfOutput(Map<String, String> mapOfArgs) {
+	public Path pathOfOutput(Map<String, String> mapOfArgs) {
+
 		if(mapOfArgs.containsKey("-index") && mapOfArgs.get("-index")!= null) {
+
 			return Path.of(mapOfArgs.get("-index"));
 
 		}
+
 		else if(mapOfArgs.containsKey("-index") && mapOfArgs.get("-index") == null){
+
 			return Path.of("index.json");
 		}
+
 		else {
+
 			return null;
+
 		}
+
 	}
 
 	/**
@@ -60,17 +69,25 @@ public class Driver {
 	 * @return the path of a file or a default path if the key exist,
 	 * or return null if the key doesn't exist
 	 */
-	public Path CountsOutput(Map<String, String> mapOfArgs) {
+	public Path countsOutput(Map<String, String> mapOfArgs) {
+
 		if(mapOfArgs.containsKey("-counts") && mapOfArgs.get("-counts")!= null) {
+
 			return Path.of(mapOfArgs.get("-counts"));
 
 		}
+
 		else if(mapOfArgs.containsKey("-counts") && mapOfArgs.get("-counts") == null) {
+
 			return Path.of("counts.json");
 		}
+
 		else {
+
 			return null;
+
 		}
+
 	}
 
 	/**
@@ -82,29 +99,55 @@ public class Driver {
 	 */
 	public static void main(String[] args){
 
-		// TODO Try/catch in here and output user-friendly error message
-		// TODO Fix formatting
+		try {
 
-		Instant start = Instant.now();
-		System.out.println(Arrays.toString(args));
-		ArgumentParser parser = new ArgumentParser();
-		Driver dri = new Driver();
-		InvertedIndex elements = new InvertedIndex();
-		mapOfArgs = parser.parse(args);
-		Path relativePath = dri.PathOfInput(mapOfArgs);
-		if(relativePath != null) {
-			InvertedIndexBuilder.checkFile(relativePath, elements);
+			Instant start = Instant.now();
+
+			System.out.println(Arrays.toString(args));
+
+			ArgumentParser parser = new ArgumentParser();
+
+			Driver dri = new Driver();
+
+			InvertedIndex elements = new InvertedIndex();
+
+			Map<String, String> mapOfArgs = parser.parse(args);
+
+			Path relativePath = dri.pathOfInput(mapOfArgs);
+
+			if(relativePath != null) {
+
+				InvertedIndexBuilder.checkFile(relativePath, elements);
+
+			}
+
+			Path outPutFile = dri.pathOfOutput(mapOfArgs);
+
+			if(outPutFile != null) {
+
+				elements.indexToJson(outPutFile);
+
+			}
+
+			Path countsFilePath = dri.countsOutput(mapOfArgs);
+
+			if(countsFilePath != null) {
+
+				elements.wordCountToJson(countsFilePath);
+
+			}
+			Duration elapsed = Duration.between(start, Instant.now());
+
+			double seconds = (double) elapsed.toMillis() / Duration.ofSeconds(1).toMillis();
+
+			System.out.printf("Elapsed: %f seconds%n", seconds);
+
+		}catch(IOException e) {
+
+			System.out.println("File is not valiad");
+
 		}
-		Path outPutFile = dri.PathOfOutput(mapOfArgs);
-		if(outPutFile != null) {
-			elements.indexToJson(outPutFile);
-		}
-		Path countsFilePath = dri.CountsOutput(mapOfArgs);
-		if(countsFilePath != null) {
-			elements.wordCountToJson(countsFilePath);
-		}
-		Duration elapsed = Duration.between(start, Instant.now());
-		double seconds = (double) elapsed.toMillis() / Duration.ofSeconds(1).toMillis();
-		System.out.printf("Elapsed: %f seconds%n", seconds);
+
 	}
+
 }

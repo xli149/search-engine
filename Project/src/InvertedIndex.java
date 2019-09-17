@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -26,123 +27,84 @@ public class InvertedIndex {
 	 * Constructor
 	 */
 	public InvertedIndex() {
+
 		elements = new TreeMap<>();
+
 		counts = new TreeMap<>();
+
 	}
 
-	// TODO add(String word, String location, int position)
 	/**
 	 * Function for adding path and word index to a collection
 	 *
-	 * @param stemmedWords word has stemmed
-	 * @param filePath path of the file
+	 * @param word word has stemmed
+	 * @param location path of the file
 	 * @param position position of the stemmed word in that file
 	 */
-	public void addIndex(String stemmedWords, String filePath, int position) {
+	public void addIndex(String word, String location, int position) {
 
-		// TODO Remove all of the toLowerCase... data structures assume another class handles the cleaning/parsing/etc.
+		elements.putIfAbsent(word, new TreeMap<>());
 
-		if(!elements.containsKey(stemmedWords.toLowerCase())) {
-			TreeMap<String, TreeSet<Integer>> newPair = new TreeMap<>();
-			TreeSet<Integer> pos = new TreeSet<>();
-			pos.add(position);
-			newPair.put(filePath, pos);
-			elements.put(stemmedWords.toLowerCase(), newPair);
+		elements.get(word).putIfAbsent(location, new TreeSet<>());
 
-		}
-		else  {
-			if(!elements.get(stemmedWords.toLowerCase()).containsKey(filePath)) {
-				TreeSet<Integer> pos = new TreeSet<>();
-				pos.add(position);
-				elements.get(stemmedWords.toLowerCase()).put(filePath, pos);
-			}
-			else {
-				elements.get(stemmedWords.toLowerCase()).get(filePath).add(position);
-			}
-		}
+		elements.get(word).get(location).add(position);
 
-		/* TODO
-		refactor version 1
-		if (elements.get(stemmedWords) == null) {
-			elements.put(stemmedWords, new TreeMap<>());
-		}
+		counts.putIfAbsent(location, position);
 
-		if (elements.get(stemmedWords).get(filePath) == null) {
-			elements.get(stemmedWords).put(filePath, new TreeSet<>());
-		}
+		counts.replace(location, position);
 
-		elements.get(stemmedWords).get(filePath).add(position);
-
-		refactor version 2
-		elements.putIfAbsent(stemmedWords, new TreeMap<>());
-		elements.get(stemmedWords).putIfAbsent(filePath, new TreeSet<>());
-		elements.get(stemmedWords).get(filePath).add(position);
-
-		// put updating word count here so it is always 100% consistent with what your index is storing
-		if this is the first time seeing the file
-			put the file and current position in your count map
-		else
-			put the maximum of the stored value and current position for the file into the count map
-		*/
 	}
 
-	/*
-	 * TODO Add more methods... especially getters
-	 *
-	 * getWords(...) to return safely all the words in the index
-	 * getLocations(String word) to return all the locations for that word safely
-	 * etc.
-	 */
-
-	/*
-	 * TODO Should not be public... would be bad if something could decide there are -11 words in a file.
-	 */
 	/**
-	 * Function for adding path of a file and the total word count to a collection
-	 * @param filePath the path of a file
-	 * @param wordCounts the total number of a file
+	 * @return an unmodifiable treeSet of stemmed
 	 */
-	public void addWordCounts(String filePath, int wordCounts) {
-		counts.put(filePath, wordCounts);
+	public TreeSet<String> getWords(){
+
+		return (TreeSet<String>) Collections.unmodifiableSet(elements.keySet());
+
 	}
 
-	/*
-	 * TODO Throw the exceptions to Driver, Driver can provide more specific
-	 * user-friendly error output.
+	/**
+	 * @param word stemmed word
+	 * @param file the location of a file
+	 * @return an unmodifiable treeSet of locations
 	 */
+	public TreeSet<Integer> getLocations(String word, String file){
+
+		TreeMap<String, TreeSet<Integer>> files = elements.get(word);
+
+		TreeSet<Integer> locations = files.get(file);
+
+		return (TreeSet<Integer>) Collections.unmodifiableSet(locations);
+	}
 
 	/**
 	 * Function for writing word index to Json object
 	 * @param path the path of a file
+	 * @throws IOException if unable to write in the file
 	 */
-	public void indexToJson(Path path) {
+	public void indexToJson(Path path) throws IOException {
 
-		try {
-			SimpleJsonWriter.asNestedObject(elements, path);
+		SimpleJsonWriter.asNestedObject(elements, path);
 
-		} catch (IOException e) {
-			System.out.println("Unable to write in the file");
-		}
 	}
 
 	/**
 	 * Function for writing total word count to Json object
 	 * @param path the path of a file
+	 * @throws IOException if unable to write in the file
 	 */
-	public void wordCountToJson(Path path) {
+	public void wordCountToJson(Path path) throws IOException{
 
-		try {
-			SimpleJsonWriter.wordCountsPrinter(counts, path);
+		SimpleJsonWriter.wordCountsPrinter(counts, path);
 
-		} catch (IOException e) {
-			System.out.println("Unable to write in the file");
-		}
 	}
 
 	@Override
 	public String toString() {
-		// TODO return this.elements.toString();
-		return this.getClass().getName();
+
+		return this.elements.toString();
+
 	}
 
 }

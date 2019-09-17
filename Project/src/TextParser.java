@@ -25,9 +25,13 @@ public class TextParser {
 	 * @return cleaned text
 	 */
 	public static String clean(String text) {
+
 		String cleaned = Normalizer.normalize(text, Normalizer.Form.NFD);
+
 		cleaned = CLEAN_REGEX.matcher(cleaned).replaceAll("");
+
 		return cleaned.toLowerCase();
+
 	}
 
 	/**
@@ -37,7 +41,9 @@ public class TextParser {
 	 * @return an array of {@link String} objects
 	 */
 	public static String[] split(String text) {
+
 		return text.isBlank() ? new String[0] : SPLIT_REGEX.split(text.strip());
+
 	}
 
 	/**
@@ -50,7 +56,9 @@ public class TextParser {
 	 * @see #parse(String)
 	 */
 	public static String[] parse(String text) {
+
 		return split(clean(text));
+
 	}
 
 	/**
@@ -59,26 +67,36 @@ public class TextParser {
 	 * @param args unused
 	 */
 	public static void main(String[] args) {
+
 		String text = "Sally Sue...\t sells 76 sea-shells    at THE sEa_shorE soirée!";
 
 		String afterClean = clean(text);
+
 		String[] afterSplit = split(text);
+
 		String[] afterParse = parse(text);
 
 		String[] cleanThenSplit = split(clean(text));
+
 		String[] splitThenClean = new String[afterSplit.length];
 
 		for (int i = 0; i < afterSplit.length; i++) {
+
 			splitThenClean[i] = clean(afterSplit[i]);
+
 		}
 
 		System.out.printf("                 text  :  %s%n", text);
+
 		System.out.printf("           clean(text) :  %s%n", afterClean);
+
 		System.out.printf("(%02d)       split(text) : %s%n", afterSplit.length, Arrays.toString(afterSplit));
+
 		System.out.printf("(%02d) clean(split(text)): %s%n", splitThenClean.length, Arrays.toString(splitThenClean));
+
 		System.out.printf("(%02d) split(clean(text)): %s%n", cleanThenSplit.length, Arrays.toString(cleanThenSplit));
+
 		System.out.printf("(%02d)       parse(text) : %s%n", afterParse.length, Arrays.toString(afterParse));
 
-		// which approach avoids empty strings?
 	}
 }

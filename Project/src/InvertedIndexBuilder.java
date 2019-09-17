@@ -5,6 +5,7 @@ import java.nio.file.FileVisitOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Iterator;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 
@@ -33,11 +34,14 @@ public class InvertedIndexBuilder{
 	 * @param filePath the path of a file
 	 * @param elements elements an object of InvertedIndex type
 	 * @return position of a stemmed word
+	 * @throws IOException if file is unreachable
 	 * @see SnowballStemmer
 	 * @see #DEFAULT
 	 */
-	public static int wordStem(String line, int posOfWord, Path filePath, InvertedIndex elements) {
+	public static int wordStem(String line, int posOfWord, Path filePath, InvertedIndex elements)throws IOException {
+
 		return wordStem(line, new SnowballStemmer(DEFAULT), posOfWord, filePath, elements);
+
 	}
 
 	/**
@@ -50,15 +54,23 @@ public class InvertedIndexBuilder{
 	 * @param filePath the path of a file
 	 * @param elements elements an object of InvertedIndex type
 	 * @return the position of a word
+	 * @throws IOException if the file is unreachable
 	 */
-	public static int wordStem(String line, Stemmer stemmer, int posOfWord, Path filePath, InvertedIndex elements) {
+	public static int wordStem(String line, Stemmer stemmer, int posOfWord, Path filePath, InvertedIndex elements) throws IOException{
+
 		String [] tokens = TextParser.parse(line);
+
 		String stemmedWords;
+
 		for (int i = 0; i < tokens.length; i++) {
+
 			stemmedWords = stemmer.stem(tokens[i]).toString();
+
 			elements.addIndex(stemmedWords, filePath.toString(), posOfWord);
+
 			posOfWord++;
 		}
+
 		return posOfWord;
 	}
 
@@ -71,23 +83,18 @@ public class InvertedIndexBuilder{
 	 * @throws IOException if unable to read or parse file
 	 */
 	public static void wordStem(Path filePath, InvertedIndex elements) throws IOException {
-		int posOfWord = 1;
-		String line = null;
-		try(
-				BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8);
-				){
+
+		try(BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)){
+
+			int posOfWord = 1;
+
+			String line = null;
 
 			while((line = reader.readLine()) != null) {
 
 				posOfWord = wordStem(line, posOfWord, filePath, elements);
 
-
 			}
-			if(posOfWord != 1) {
-				elements.addWordCounts(filePath.toString(), posOfWord - 1);
-			}
-		} catch(IOException e) {
-			System.out.print("Please check if the file exist");
 		}
 	}
 
@@ -95,12 +102,19 @@ public class InvertedIndexBuilder{
 	 * Lambda function that checks if a file ends with ".txt" or ".text"
 	 */
 	public static final Predicate<Path> IS_TEXT = (Path path) ->{
-		// TODO Safe toString.toLowercase and reuse instead of calling twice
+
+		String name = path.getFileName().toString().toLowerCase();
+
 		if(Files.isRegularFile(path)
-				&& (path.getFileName().toString().toLowerCase().endsWith(".txt")
-						|| path.getFileName().toString().toLowerCase().endsWith(".text"))) {
+
+				&& (name.endsWith(".txt")
+
+						|| name.endsWith(".text"))) {
+
 			return true;
+
 		}
+
 		return false;
 	};
 	/**
@@ -112,16 +126,17 @@ public class InvertedIndexBuilder{
 	 * Function for checking the existence of a file and pass it to get parsed
 	 * @param relativePath the relative path of a file
 	 * @param elements elements an object of InvertedIndex type
+	 * @throws NullPointerException if file does not exit
+	 * @throws IOException if unable to write in the file
 	 */
-	public static void checkFile(Path relativePath, InvertedIndex elements) {
-		try {
-			if(relativePath.toFile().exists()) {
-				traversDir(relativePath, elements);
-			}
+	public static void checkFile(Path relativePath, InvertedIndex elements) throws NullPointerException, IOException{
 
-		} catch(NullPointerException | IOException e) {
-			System.out.println("The path is not valid");
+		if(relativePath.toFile().exists()) {
+
+			traversDir(relativePath, elements);
+
 		}
+
 	}
 
 
@@ -137,14 +152,14 @@ public class InvertedIndexBuilder{
 	 */
 	private static void traversDir(Path start, InvertedIndex elements) throws IOException {
 
-		Files.find(start, Integer.MAX_VALUE, IS_TEXT_ATTR, FileVisitOption.FOLLOW_LINKS).forEach((Path path)->{
-			try {
-				wordStem(path, elements);
-			} catch (IOException e) {
-				System.out.println("Input output fails");
-			}
+		Iterator<Path> locations =  Files.find(start, Integer.MAX_VALUE, IS_TEXT_ATTR, FileVisitOption.FOLLOW_LINKS).iterator();
 
-		});
+		while(locations.hasNext()) {
+
+			wordStem(locations.next(), elements);
+
+		}
+
 	}
 
 }

@@ -1,5 +1,4 @@
 import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
@@ -8,8 +7,6 @@ import java.nio.file.Path;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
-
-// TODO Try to be consistent with formatting
 
 /**
  * Outputs several simple data structures in "pretty" JSON format where
@@ -32,8 +29,11 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to write or read
 	 */
 	private static void writeEntry(Map.Entry<String, Integer> entry, Writer writer, int level) throws IOException{
+
 		quote(entry.getKey(), writer, level);
+
 		writer.write(": ");
+
 		writer.write(entry.getValue().toString());
 	}
 
@@ -47,19 +47,29 @@ public class SimpleJsonWriter {
 	public static void wordsCountsPrinter(TreeMap<String, Integer> counts, Writer writer, int level) throws IOException{
 
 		writer.write("{");
+
 		var iterator = counts.entrySet().iterator();
 
 		if(iterator.hasNext()) {
+
 			writer.write("\n");
+
 			var element  = iterator.next();
+
 			writeEntry(element, writer, level + 1);
+
 		}
 
 		while(iterator.hasNext()) {
+
 			writer.write(",");
+
 			writer.write("\n");
+
 			var element = iterator.next();
+
 			writeEntry(element, writer, level + 1);
+
 		}
 		writer.write("\n}");
 	}
@@ -71,12 +81,11 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to write or read
 	 */
 	public static void wordCountsPrinter(TreeMap<String, Integer> counts, Path path) throws IOException {
+
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+
 			wordsCountsPrinter(counts, writer,0);
-		} catch(FileNotFoundException e) {
-			System.out.println("No such files");
-		} catch(NullPointerException e) {
-			System.out.println("Null");
+
 		}
 	}
 	/**
@@ -87,9 +96,13 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to write or read
 	 */
 	private static void writeEntrySecond(Map.Entry<String, TreeSet<Integer>> entry, Writer writer, int level) throws IOException{
+
 		quote(entry.getKey(), writer, level);
+
 		writer.write(": ");
+
 		asSet(entry.getValue(), writer, level + 1);
+
 	}
 
 	/**
@@ -100,10 +113,15 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to write or read
 	 */
 	private static void writeEntryFirst(Map.Entry<String,TreeMap<String,TreeSet<Integer>>> entry, Writer writer, int level) throws IOException{
+
 		quote(entry.getKey(), writer, level);
+
 		writer.write(": ");
+
 		var elements = entry.getValue();
+
 		asObject(elements, writer, level + 1);
+
 	}
 
 	/**
@@ -114,18 +132,26 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to write or read
 	 */
 	public static void asSet(TreeSet<Integer> elements, Writer writer, int level)throws IOException{
-		writer.write("[");
-		var indexItr = elements.iterator();
 
-		if(indexItr.hasNext()) {
+		writer.write("[");
+
+		var iterator = elements.iterator();
+
+		if(iterator.hasNext()) {
+
 			writer.write("\n");
-			indent(indexItr.next(), writer, level);
+
+			indent(iterator.next(), writer, level);
+
 		}
 
-		while(indexItr.hasNext()) {
+		while(iterator.hasNext()) {
+
 			writer.write(",");
+
 			writer.write("\n");
-			indent(indexItr.next(), writer, level);
+
+			indent(iterator.next(), writer, level);
 
 		}
 
@@ -141,22 +167,31 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to write or read
 	 */
 	public static void  asObject(TreeMap<String, TreeSet<Integer>> elements, Writer writer, int level)throws IOException {
+
 		writer.write("{");
 
-		var fileNamesItr = elements.entrySet().iterator();
+		var iterator = elements.entrySet().iterator();
 
-		if(fileNamesItr.hasNext()) {
+		if(iterator.hasNext()) {
+
 			writer.write("\n");
-			var element = fileNamesItr.next();
+
+			var element = iterator.next();
+
 			writeEntrySecond(element, writer, level);
 
 		}
 
-		while(fileNamesItr.hasNext()) {
+		while(iterator.hasNext()) {
+
 			writer.write(",");
+
 			writer.write("\n");
-			var element = fileNamesItr.next();
+
+			var element = iterator.next();
+
 			writeEntrySecond(element, writer, level);
+
 		}
 
 		indent("\n}", writer, level);
@@ -175,21 +210,31 @@ public class SimpleJsonWriter {
 	 * @throws IOException if the file is unable to read or write
 	 */
 	public static void asNestedObject(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Writer writer, int level) throws IOException {
+
 		writer.write("{");
 
-		var stemmedWordItr = elements.entrySet().iterator(); // TODO Refactor all of these to iterator
+		var iterator = elements.entrySet().iterator();
 
-		if(stemmedWordItr.hasNext()) {
+		if(iterator.hasNext()) {
+
 			writer.write("\n");
-			var element = stemmedWordItr.next();
+
+			var element = iterator.next();
+
 			writeEntryFirst(element, writer, level + 1);
+
 		}
 
-		while(stemmedWordItr.hasNext()) {
+		while(iterator.hasNext()) {
+
 			writer.write(",");
+
 			writer.write("\n");
-			var element = stemmedWordItr.next();
+
+			var element = iterator.next();
+
 			writeEntryFirst(element, writer, level + 1);
+
 		}
 
 		writer.write("\n}");
@@ -205,13 +250,13 @@ public class SimpleJsonWriter {
 	 * @see #asNestedObject(TreeMap, Writer, int)
 	 */
 	public static void asNestedObject(TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements, Path path) throws IOException {
+
 		try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-			asNestedObject(elements, writer, 0); // TODO Remove the catch blocks here
-		} catch(FileNotFoundException e) {
-			System.out.println("No such files");
-		} catch(NullPointerException e) {
-			System.out.println("Null");
+
+			asNestedObject(elements, writer, 0);
+
 		}
+
 	}
 	/**
 	 * Writes the {@code \t} tab symbol by the number of times specified.
@@ -221,8 +266,11 @@ public class SimpleJsonWriter {
 	 * @throws IOException
 	 */
 	public static void indent(Writer writer, int times) throws IOException {
+
 		for (int i = 0; i < times; i++) {
+
 			writer.write('\t');
+
 		}
 	}
 
@@ -238,7 +286,9 @@ public class SimpleJsonWriter {
 	 * @see #indent(Writer, int)
 	 */
 	public static void indent(Integer element, Writer writer, int times) throws IOException {
+
 		indent(element.toString(), writer, times);
+
 	}
 
 	/**
@@ -252,8 +302,11 @@ public class SimpleJsonWriter {
 	 * @see #indent(Writer, int)
 	 */
 	public static void indent(String element, Writer writer, int times) throws IOException {
+
 		indent(writer, times);
+
 		writer.write(element);
+
 	}
 
 	/**
@@ -264,9 +317,13 @@ public class SimpleJsonWriter {
 	 * @throws IOException
 	 */
 	public static void quote(String element, Writer writer) throws IOException {
+
 		writer.write('"');
+
 		writer.write(element);
+
 		writer.write('"');
+
 	}
 
 	/**
@@ -282,8 +339,11 @@ public class SimpleJsonWriter {
 	 * @see #quote(String, Writer)
 	 */
 	public static void quote(String element, Writer writer, int times) throws IOException {
+
 		indent(writer, times);
+
 		quote(element, writer);
+
 	}
 
 
