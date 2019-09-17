@@ -41,7 +41,7 @@ public class InvertedIndex {
 	 * @param location path of the file
 	 * @param position position of the stemmed word in that file
 	 */
-	public void addIndex(String word, String location, int position) {
+	public void add(String word, String location, int position) {
 
 		elements.putIfAbsent(word, new TreeMap<>());
 

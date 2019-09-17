@@ -66,7 +66,7 @@ public class InvertedIndexBuilder{
 
 			stemmedWords = stemmer.stem(tokens[i]).toString();
 
-			elements.addIndex(stemmedWords, filePath.toString(), posOfWord);
+			elements.add(stemmedWords, filePath.toString(), posOfWord);
 
 			posOfWord++;
 		}
