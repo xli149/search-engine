@@ -17,6 +17,9 @@ import java.util.Map;
  */
 public class Driver {
 
+	/*
+	 * TODO Can simplify a bit.
+	 */
 	/**
 	 * Getting the path of file for reading a file by checking a map
 	 * @param mapOfArgs a collection of  parsed arguments from command line
@@ -103,7 +106,32 @@ public class Driver {
 
 			Instant start = Instant.now();
 
-			System.out.println(Arrays.toString(args));
+			System.out.println(Arrays.toString(args)); // TODO Remove
+			
+			/* TODO Try this for Driver instead
+			ArgumentParser parser = new ArgumentParser(args);
+			InvertedIndex elements = new InvertedIndex();
+			
+			if (parser.hasFlag("-path")) {
+			
+			}
+			
+			if (parser.hasFlag("-index")) {
+				Path path = parser.getPath("-index", Path.of("index.json"));
+				
+				try {
+					elements.indexToJson(path);
+				}
+				catch (IOException e) {
+					System.out.println("Unable to write inverted index to JSON file: " + path);
+				}
+			}
+
+			if (parser.hasFlag("-counts")) {
+			
+			}
+			 */
+			
 
 			ArgumentParser parser = new ArgumentParser();
 
