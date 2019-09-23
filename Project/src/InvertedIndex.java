@@ -51,9 +51,11 @@ public class InvertedIndex {
 
 		counts.putIfAbsent(location, position);
 
-		counts.replace(location, position);
+		counts.replace(location, position); // TODO Address later (ask me about on Piazza)
 
 	}
+	
+	// TODO Avoid all downcasting. Change getWords from TreeSet<STring> getWords --> Set<String> getWords
 
 	/**
 	 * @return an unmodifiable treeSet of stemmed
@@ -69,8 +71,15 @@ public class InvertedIndex {
 	 * @param file the location of a file
 	 * @return an unmodifiable treeSet of locations
 	 */
-	public TreeSet<Integer> getLocations(String word, String file){
-
+	public TreeSet<Integer> getLocations(String word, String file){ // TODO getPositions
+		// TODO Null pointer exception if elements.get(word) is null.
+		/*
+		 * if (elements.hasKey(word)) {
+		 * 		then return unmodifiable version of the collection
+		 * }
+		 * 
+		 * return Collection.emptySet();
+		 */
 		TreeMap<String, TreeSet<Integer>> files = elements.get(word);
 
 		TreeSet<Integer> locations = files.get(file);
@@ -78,6 +87,10 @@ public class InvertedIndex {
 		return (TreeSet<Integer>) Collections.unmodifiableSet(locations);
 	}
 
+	// TODO getLocations(String) returns the keyset of the inner map
+	// TOOD getLocations() returns the paths in your counts map
+	// TODO getCounts() returns an unmodifiable version of the counts map
+	
 	/**
 	 * Function for writing word index to Json object
 	 * @param path the path of a file

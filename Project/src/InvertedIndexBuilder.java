@@ -40,6 +40,8 @@ public class InvertedIndexBuilder{
 	 */
 	public static int wordStem(String line, int posOfWord, Path filePath, InvertedIndex elements)throws IOException {
 
+		// TODO Inefficient, creates a new stemmer for every single line
+		// TODO Remove this method and integrate directly into your wordStem method instead
 		return wordStem(line, new SnowballStemmer(DEFAULT), posOfWord, filePath, elements);
 
 	}
@@ -56,7 +58,7 @@ public class InvertedIndexBuilder{
 	 * @return the position of a word
 	 * @throws IOException if the file is unreachable
 	 */
-	public static int wordStem(String line, Stemmer stemmer, int posOfWord, Path filePath, InvertedIndex elements) throws IOException{
+	public static int wordStem(String line, Stemmer stemmer, int posOfWord, Path filePath, InvertedIndex elements) throws IOException{ // TODO Remove and integrate into wordStem
 
 		String [] tokens = TextParser.parse(line);
 
@@ -83,20 +85,29 @@ public class InvertedIndexBuilder{
 	 * @throws IOException if unable to read or parse file
 	 */
 	public static void wordStem(Path filePath, InvertedIndex elements) throws IOException {
-
+		// TODO Stemmer stemmer = ....
 		try(BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)){
 
 			int posOfWord = 1;
 
 			String line = null;
+			
+			String location = filePath.toString();
 
 			while((line = reader.readLine()) != null) {
 
 				posOfWord = wordStem(line, posOfWord, filePath, elements);
 
+				/* TODO
+				String [] tokens = TextParser.parse(line);
+				
+				loop through tokens and immediate add after stemming to the index
+				*/
 			}
 		}
 	}
+	
+	// TODO Choose which one you need between IS_TEXT and IS_TEXT_ATTR
 
 	/**
 	 * Lambda function that checks if a file ends with ".txt" or ".text"
@@ -131,7 +142,7 @@ public class InvertedIndexBuilder{
 	 */
 	public static void checkFile(Path relativePath, InvertedIndex elements) throws NullPointerException, IOException{
 
-		if(relativePath.toFile().exists()) {
+		if(relativePath.toFile().exists()) { // TODO Do not convert toFile().... Files.isReadable(...)
 
 			traversDir(relativePath, elements);
 
@@ -151,7 +162,14 @@ public class InvertedIndexBuilder{
 	 * @throws IOException if the file is unable to read
 	 */
 	private static void traversDir(Path start, InvertedIndex elements) throws IOException {
-
+		/*
+		 * TODO This combines stream pipelines and functional programming with non-functional programming
+		 * 
+		 * (1) Create a method that is functional that just returns a list of paths. A separate method can be non-functional and loop through those paths and add to the index.
+		 * 
+		 * 
+		 * (2) Either do not use any functional programming and instead of Files.find use a DirectoryStream. (There is lecture code that shows this.)
+		 */
 		Iterator<Path> locations =  Files.find(start, Integer.MAX_VALUE, IS_TEXT_ATTR, FileVisitOption.FOLLOW_LINKS).iterator();
 
 		while(locations.hasNext()) {

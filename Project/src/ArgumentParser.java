@@ -51,6 +51,18 @@ public class ArgumentParser {
 		for(int i = 0; i < args.length; i++) {
 
 			if(isFlag(args[i])) {
+				/* TODO This is all you need here, always use { } with if statements
+				if((i < args.length - 1) && isValue(args[i+1])) {
+
+					map.put(args[i], args[i+1]);
+				
+				}
+				else {
+
+					map.put(args[i], null);
+					
+				}
+				*/
 
 				if(!hasFlag(args[i])) {
 
@@ -79,7 +91,7 @@ public class ArgumentParser {
 
 		}
 
-		return map;
+		return map; // TODO Breaks encapsulation
 
 	}
 
@@ -95,6 +107,9 @@ public class ArgumentParser {
 	 */
 	public static boolean isFlag(String arg) {
 
+		// TODO return (arg != null && arg.startsWith("-") && (arg.length() >= 2);
+		// TODO Fix this in all of the similar methods below
+		
 		if(arg != null && arg.startsWith("-") && (arg.length() >= 2)) {
 
 			return true;
