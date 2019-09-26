@@ -53,7 +53,7 @@ public class InvertedIndex {
 
 		counts.putIfAbsent(location, position);
 
-		counts.replace(location, position); // TODO Address later (ask me about on Piazza)
+		counts.put(location, position);
 
 	}
 
