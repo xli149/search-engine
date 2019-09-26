@@ -44,54 +44,27 @@ public class ArgumentParser {
 	 * have associated values. If a flag is repeated, its value is overwritten.
 	 *
 	 * @param args the command line arguments to parse
-	 * @return a map of command line arguments
 	 */
-	public Map<String, String> parse(String[] args) {
+	private void parse(String[] args) {
 
 		for(int i = 0; i < args.length; i++) {
 
 			if(isFlag(args[i])) {
-				/* TODO This is all you need here, always use { } with if statements
+
 				if((i < args.length - 1) && isValue(args[i+1])) {
 
 					map.put(args[i], args[i+1]);
-				
+
 				}
 				else {
 
 					map.put(args[i], null);
-					
-				}
-				*/
-
-				if(!hasFlag(args[i])) {
-
-					if((i < args.length - 1) && isValue(args[i+1]))
-
-						map.put(args[i], args[i+1]);
-
-					else
-
-						map.put(args[i], null);
-				}
-
-				else {
-
-					if((i < args.length - 1) && isValue(args[i+1]))
-
-						map.replace(args[i], args[i+1]);
-
-					else
-
-						map.replace(args[i], null);
 
 				}
 
 			}
 
 		}
-
-		return map; // TODO Breaks encapsulation
 
 	}
 
@@ -107,16 +80,7 @@ public class ArgumentParser {
 	 */
 	public static boolean isFlag(String arg) {
 
-		// TODO return (arg != null && arg.startsWith("-") && (arg.length() >= 2);
-		// TODO Fix this in all of the similar methods below
-		
-		if(arg != null && arg.startsWith("-") && (arg.length() >= 2)) {
-
-			return true;
-
-		}
-
-		return false;
+		return (arg != null && arg.startsWith("-") && (arg.length() >= 2));
 
 	}
 
@@ -132,13 +96,7 @@ public class ArgumentParser {
 	 */
 	public static boolean isValue(String arg) {
 
-		if(arg != null && !arg.startsWith("-") && (arg.length() >= 1)){
-
-			return true;
-
-		}
-
-		return false;
+		return arg != null && !arg.startsWith("-") && (arg.length() >= 1);
 
 	}
 
@@ -161,13 +119,7 @@ public class ArgumentParser {
 	 */
 	public boolean hasFlag(String flag) {
 
-		if(map.containsKey(flag)) {
-
-			return true;
-
-		}
-
-		return false;
+		return map.containsKey(flag);
 
 	}
 
@@ -179,13 +131,7 @@ public class ArgumentParser {
 	 */
 	public boolean hasValue(String flag) {
 
-		if(map.containsKey(flag) && (map.get(flag)!= null)) {
-
-			return true;
-
-		}
-
-		return false;
+		return map.containsKey(flag) && (map.get(flag)!= null);
 
 	}
 
@@ -199,13 +145,7 @@ public class ArgumentParser {
 	 */
 	public String getString(String flag) {
 
-		if(hasFlag(flag) && hasValue(flag)) {
-
-			return map.get(flag);
-
-		}
-
-		return null;
+		return (hasFlag(flag) && hasValue(flag)) ? map.get(flag) : null;
 	}
 
 	/**
@@ -240,14 +180,7 @@ public class ArgumentParser {
 
 	public Path getPath(String flag) {
 
-		if(hasFlag(flag) && hasValue(flag)) {
-
-			return Path.of(map.get(flag));
-
-		}
-
-		return null;
-
+		return (hasFlag(flag) && hasValue(flag)) ? Path.of(map.get(flag)): null;
 	}
 
 	/**

@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Collections;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -54,15 +56,13 @@ public class InvertedIndex {
 		counts.replace(location, position); // TODO Address later (ask me about on Piazza)
 
 	}
-	
-	// TODO Avoid all downcasting. Change getWords from TreeSet<STring> getWords --> Set<String> getWords
 
 	/**
-	 * @return an unmodifiable treeSet of stemmed
+	 * @return an unmodifiable Set of stemmed words
 	 */
-	public TreeSet<String> getWords(){
+	public Set<String> getWords(){
 
-		return (TreeSet<String>) Collections.unmodifiableSet(elements.keySet());
+		return Collections.unmodifiableSet(elements.keySet());
 
 	}
 
@@ -71,26 +71,60 @@ public class InvertedIndex {
 	 * @param file the location of a file
 	 * @return an unmodifiable treeSet of locations
 	 */
-	public TreeSet<Integer> getLocations(String word, String file){ // TODO getPositions
-		// TODO Null pointer exception if elements.get(word) is null.
-		/*
-		 * if (elements.hasKey(word)) {
-		 * 		then return unmodifiable version of the collection
-		 * }
-		 * 
-		 * return Collection.emptySet();
-		 */
-		TreeMap<String, TreeSet<Integer>> files = elements.get(word);
+	public Set<Integer> getPositions(String word, String file){
 
-		TreeSet<Integer> locations = files.get(file);
+		if (elements.containsKey(word)) {
 
-		return (TreeSet<Integer>) Collections.unmodifiableSet(locations);
+			TreeMap<String, TreeSet<Integer>> fileMap = elements.get(word);
+
+			TreeSet<Integer> positions = fileMap.get(file);
+
+			return Collections.unmodifiableSet(positions);
+		}
+
+		return Collections.emptySet();
+
 	}
 
-	// TODO getLocations(String) returns the keyset of the inner map
-	// TOOD getLocations() returns the paths in your counts map
-	// TODO getCounts() returns an unmodifiable version of the counts map
-	
+	/**
+	 * @param word stemmed word
+	 * @return a keyset of files
+	 */
+	public Set<String>  getLocations(String word){
+
+		if (elements.containsKey(word)) {
+
+			TreeMap<String, TreeSet<Integer>> fileMap = elements.get(word);
+
+			Set<String> files = fileMap.keySet();
+
+			return Collections.unmodifiableSet(files);
+		}
+
+		return Collections.emptySet();
+
+	}
+
+	/**
+	 *
+	 * @return the paths in your counts map
+	 */
+	public Set<String> getLocations(){
+
+		Set<String> paths = counts.keySet();
+
+		return Collections.unmodifiableSet(paths);
+	}
+
+	/**
+	 * @return an unmodifiable map of counts
+	 */
+	public Map<String, Integer> getCounts(){
+
+		return Collections.unmodifiableMap(counts);
+
+	}
+
 	/**
 	 * Function for writing word index to Json object
 	 * @param path the path of a file

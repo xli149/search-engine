@@ -1,8 +1,9 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.Map;
 
 
@@ -102,23 +103,21 @@ public class Driver {
 	 */
 	public static void main(String[] args){
 
-		try {
 
-			Instant start = Instant.now();
+		Instant start = Instant.now();
 
-			System.out.println(Arrays.toString(args)); // TODO Remove
-			
-			/* TODO Try this for Driver instead
+
+		/* TODO Try this for Driver instead
 			ArgumentParser parser = new ArgumentParser(args);
 			InvertedIndex elements = new InvertedIndex();
-			
+
 			if (parser.hasFlag("-path")) {
-			
+
 			}
-			
+
 			if (parser.hasFlag("-index")) {
 				Path path = parser.getPath("-index", Path.of("index.json"));
-				
+
 				try {
 					elements.indexToJson(path);
 				}
@@ -128,54 +127,112 @@ public class Driver {
 			}
 
 			if (parser.hasFlag("-counts")) {
-			
-			}
-			 */
-			
-
-			ArgumentParser parser = new ArgumentParser();
-
-			Driver dri = new Driver();
-
-			InvertedIndex elements = new InvertedIndex();
-
-			Map<String, String> mapOfArgs = parser.parse(args);
-
-			Path relativePath = dri.pathOfInput(mapOfArgs);
-
-			if(relativePath != null) {
-
-				InvertedIndexBuilder.checkFile(relativePath, elements);
 
 			}
+		 */
 
-			Path outPutFile = dri.pathOfOutput(mapOfArgs);
 
-			if(outPutFile != null) {
+		ArgumentParser parser = new ArgumentParser(args);
 
-				elements.indexToJson(outPutFile);
+		//Driver dri = new Driver();
+
+		InvertedIndex elements = new InvertedIndex();
+
+		//Map<String, String> mapOfArgs = parser.parse(args);
+		//
+		//			Path relativePath = dri.pathOfInput(mapOfArgs);
+		//
+		//			if(relativePath != null) {
+		//
+		//				InvertedIndexBuilder.checkFile(relativePath, elements);
+		//
+		//			}
+		//
+		//			Path outPutFile = dri.pathOfOutput(mapOfArgs);
+		//
+		//			if(outPutFile != null) {
+		//
+		//				elements.indexToJson(outPutFile);
+		//
+		//			}
+		//
+		//			Path countsFilePath = dri.countsOutput(mapOfArgs);
+		//
+		//			if(countsFilePath != null) {
+		//
+		//				elements.wordCountToJson(countsFilePath);
+		//
+		//			}
+
+		if (parser.hasFlag("-path")) {
+
+			Path path = parser.getPath("-path");
+
+			try{
+
+				InvertedIndexBuilder.checkFile(path, elements);
 
 			}
+			catch(IOException | NullPointerException e) {
 
-			Path countsFilePath = dri.countsOutput(mapOfArgs);
-
-			if(countsFilePath != null) {
-
-				elements.wordCountToJson(countsFilePath);
+				System.out.println("file path is not valid, please check the file path: " + path);
 
 			}
-			Duration elapsed = Duration.between(start, Instant.now());
-
-			double seconds = (double) elapsed.toMillis() / Duration.ofSeconds(1).toMillis();
-
-			System.out.printf("Elapsed: %f seconds%n", seconds);
-
-		}catch(IOException e) {
-
-			System.out.println("File is not valiad");
 
 		}
 
-	}
+		if (parser.hasFlag("-index")) {
 
+			Path path = parser.getPath("-index", Path.of("index.json"));
+
+			try {
+				elements.indexToJson(path);
+			}
+			catch (IOException e) {
+				System.out.println("Unable to write inverted index to JSON file: " + path);
+			}
+		}
+
+		if (parser.hasFlag("-counts")) {
+
+			System.out.println("GOT HERERE");
+
+			Path path = parser.getPath("-count", Path.of("counts.json"));
+
+			System.out.println(path.toString());
+
+			try {
+
+				elements.wordCountToJson(path);
+
+				BufferedReader rd = Files.newBufferedReader(path);
+
+				String line = null;
+
+				while((line = rd.readLine()) != null) {
+					System.out.println(line);
+				}
+
+				System.out.println("Is the file readable after writting in?  " + Files.isReadable(path));
+
+			}
+			catch (IOException | NullPointerException e){
+				System.out.println("Uable to write word count to JSON file: " + path);
+			}
+		}
+
+
+
+
+
+
+
+		Duration elapsed = Duration.between(start, Instant.now());
+
+		double seconds = (double) elapsed.toMillis() / Duration.ofSeconds(1).toMillis();
+
+		System.out.printf("Elapsed: %f seconds%n", seconds);
+
+	}
 }
+
