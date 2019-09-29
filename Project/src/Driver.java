@@ -30,6 +30,8 @@ public class Driver {
 
 		InvertedIndex elements = new InvertedIndex();
 
+		Query query = new Query();
+
 		if (parser.hasFlag("-path")) {
 
 			Path path = parser.getPath("-path");
@@ -73,9 +75,48 @@ public class Driver {
 			}
 			catch (IOException e){
 
-				System.out.println("Uable to write word count to JSON file: " + path);
+				System.out.println("Unable to write word count to JSON file: " + path);
 			}
 		}
+
+		//TODOs call function in query file for parse the file and pass in path
+		if(parser.hasFlag("-query")) {
+
+			Path path = parser.getPath("-query");
+
+			try{
+				QueryBuilder.queryParser(path, query);
+			}
+			catch(IOException e) {
+
+				System.out.println("Unable to read the query " + path);
+			}
+
+
+		}
+
+		//TODOs "-exact"
+
+		if(parser.hasFlag("-exact")) {
+
+			//query.exactSearch()
+
+		}
+
+		//TODO "-result"
+
+		if(parser.hasFlag("-results")) {
+
+			Path path = parser.getPath("-results", Path.of("results.json"));
+
+			//			try {
+			//
+			//
+			//			}
+		}
+
+
+
 
 		Duration elapsed = Duration.between(start, Instant.now());
 

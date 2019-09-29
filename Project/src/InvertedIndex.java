@@ -125,6 +125,11 @@ public class InvertedIndex {
 
 	}
 
+	public int getTotalWords(String path) {
+
+		return counts.get(path);
+	}
+
 	/**
 	 * Function for writing word index to Json object
 	 * @param path the path of a file
