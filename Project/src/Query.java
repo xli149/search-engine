@@ -148,6 +148,8 @@ public class Query {
 	//
 	//	}
 
+	//do some test here
+
 	/**
 	 * Utility function
 	 * @param word stemmed word
