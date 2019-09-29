@@ -24,6 +24,9 @@ public class Driver {
 	 */
 	public static void main(String[] args){
 
+
+		System.out.println("Driver start");
+
 		Instant start = Instant.now();
 
 		ArgumentParser parser = new ArgumentParser(args);
@@ -85,7 +88,20 @@ public class Driver {
 			Path path = parser.getPath("-query");
 
 			try{
+
 				QueryBuilder.queryParser(path, query);
+
+				if(parser.hasFlag("-exact")) {
+
+					query.exactSearch(elements);
+
+
+				}
+				//				else {
+				//
+				//					query.partialSearch(elements);
+				//
+				//				}
 			}
 			catch(IOException e) {
 
@@ -97,11 +113,7 @@ public class Driver {
 
 		//TODOs "-exact"
 
-		if(parser.hasFlag("-exact")) {
 
-			//query.exactSearch()
-
-		}
 
 		//TODO "-result"
 
@@ -109,10 +121,18 @@ public class Driver {
 
 			Path path = parser.getPath("-results", Path.of("results.json"));
 
-			//			try {
-			//
-			//
-			//			}
+			try {
+
+				query.queryToJson(path);
+
+			}
+			catch(IOException e) {
+
+				System.out.println("Unable to write query in the file " + path);
+
+			}
+
+
 		}
 
 

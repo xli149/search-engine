@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.TreeSet;
 
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
@@ -16,11 +17,14 @@ public class QueryBuilder {
 
 		Stemmer stemmer = new SnowballStemmer(DEFAULT);
 
+
+
 		try(BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)){
 
 			String line = null;
 
 			while((line = reader.readLine()) != null) {
+				TreeSet<String> words = new TreeSet<>();
 
 				String [] tokens = TextParser.parse(line);
 
@@ -30,10 +34,15 @@ public class QueryBuilder {
 
 					stemmedWords = stemmer.stem(tokens[i]).toString();
 
-					query.addSet(stemmedWords);
+					//System.out.println(stemmedWords);
+					words.add(stemmedWords);
+
+					query.addlist(words);
 
 				}
 			}
+			//			System.out.println("file " + filePath);
+			//			System.out.println(words);
 		}
 	}
 

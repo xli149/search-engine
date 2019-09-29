@@ -21,10 +21,102 @@ import java.util.TreeSet;
  */
 public class SimpleJsonWriter {
 
+	private static void queryPrinter(Map.Entry<String, String> entry, Writer writer, int level) throws IOException {
+
+		quote(entry.getKey(), writer, level);
+
+		writer.write(": ");
+
+		writer.write(entry.getValue().toString());
+
+	}
 
 
-	public static void asQueryObject() {
+	private static void writeEntryThrid(TreeMap<String, String> elements, Writer writer, int level) throws IOException {
 
+		var iterator = elements.entrySet().iterator();
+
+		writer.write("[");
+
+		if(iterator.hasNext()) {
+
+			writer.write("\n");
+
+			var entry = iterator.next();
+
+			queryPrinter(entry, writer, level + 1);
+
+		}
+
+		while(iterator.hasNext()) {
+
+			writer.write(",");
+
+			writer.write("\n");
+
+			var entry = iterator.next();
+
+			queryPrinter(entry, writer, level + 1);
+
+		}
+		indent("\n]", writer, level);
+
+	}
+
+	private static void asQueryObject(Map.Entry<String, TreeMap<String, String>> entry, Writer writer, int level) throws IOException{
+
+		quote(entry.getKey(), writer, level);
+
+		writer.write(": ");
+
+		var elements = entry.getValue();
+
+		writeEntryThrid(elements, writer, level + 1);
+
+
+
+
+	}
+	private static void asNestedQueryObject(TreeMap<String, TreeMap<String, String>> queries, Writer writer, int level) throws IOException{
+
+		var iterator = queries.entrySet().iterator();
+
+		writer.write("{");
+
+		if(iterator.hasNext()) {
+
+			writer.write("\n");
+
+			var entry = iterator.next();
+
+			asQueryObject(entry, writer, level + 1);
+
+
+		}
+
+		while(iterator.hasNext()) {
+
+			writer.write(",");
+
+			writer.write("\n");
+
+			var entry = iterator.next();
+
+			asQueryObject(entry, writer, level + 1);
+
+		}
+
+		writer.write("\n}");
+
+	}
+
+	public static void asNestedQueryObject(Path path,  TreeMap<String, TreeMap<String, String>> elements) throws IOException {
+
+		try(BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)){
+
+			asNestedQueryObject(elements, writer, 0);
+
+		}
 
 	}
 
