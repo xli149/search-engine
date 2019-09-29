@@ -1,4 +1,3 @@
-import java.nio.file.Path;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.TreeMap;
@@ -33,14 +32,14 @@ public class Query {
 	 * Adding word in order
 	 * @param word stemmed word to be added
 	 */
-	public void add(String word) {
+	public void addSet(String word) {
 
 		set.add(word);
 
 	}
 
 
-	public void add(Path path, Double scores, Integer counts) {
+	private void addMap(String path, String scores, Integer counts) {
 
 		String file = path.toString();
 
@@ -109,7 +108,7 @@ public class Query {
 
 				if(wd.startsWith(word)) {
 
-					//count += loop(wd, elements);
+					loop(wd, elements);
 
 				}
 			}
@@ -125,7 +124,7 @@ public class Query {
 	 * @param elements InvertedIndex object
 	 * @return
 	 */
-	/*private void loop(String word, InvertedIndex elements, Query query) {
+	private void loop(String word, InvertedIndex elements) {
 
 
 
@@ -137,18 +136,14 @@ public class Query {
 
 			int totalWords = elements.getTotalWords(file);
 
-			int percentage = count / totalWords;
+			String score = String.format("%.8f", count / totalWords);
 
-			String score = String.format("%.8f", percentage);
-
-			//nt score = count/totalnum;
-
-			query.add(file,score , );
+			addMap(file,score, count);
 
 		}
 
 		//		return count;
-	}*/
+	}
 
 
 

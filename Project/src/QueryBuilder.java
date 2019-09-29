@@ -30,12 +30,14 @@ public class QueryBuilder {
 
 					stemmedWords = stemmer.stem(tokens[i]).toString();
 
-					query.add(stemmedWords);
+					query.addSet(stemmedWords);
 
 				}
 			}
 		}
 	}
+
+
 
 
 }

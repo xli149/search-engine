@@ -21,6 +21,13 @@ import java.util.TreeSet;
  */
 public class SimpleJsonWriter {
 
+
+
+	public static void asQueryObject() {
+
+
+	}
+
 	/**
 	 * Utility function for reducing repeated code
 	 * @param entry entry set of String, Integer pair
