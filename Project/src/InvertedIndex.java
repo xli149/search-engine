@@ -51,6 +51,7 @@ public class InvertedIndex {
 
 		elements.get(word).get(location).add(position);
 
+		// TODO You ALWAYS put the position. You should only put the position if it is GREATER THAN the one currently stored. Otherwise this will break if words are added to the index out of order.
 		counts.putIfAbsent(location, position);
 
 		counts.put(location, position);
@@ -77,6 +78,7 @@ public class InvertedIndex {
 
 			TreeMap<String, TreeSet<Integer>> fileMap = elements.get(word);
 
+			// TODO Also worry about what happens if the file is not in your elements map!
 			TreeSet<Integer> positions = fileMap.get(file);
 
 			return Collections.unmodifiableSet(positions);
