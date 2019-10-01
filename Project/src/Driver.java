@@ -30,13 +30,15 @@ public class Driver {
 
 		InvertedIndex elements = new InvertedIndex();
 
+		InvertedIndexBuilder builder = new InvertedIndexBuilder(elements);
+
 		if (parser.hasFlag("-path")) {
 
 			Path path = parser.getPath("-path");
 
 			try{
 
-				InvertedIndexBuilder.checkFile(path, elements);
+				builder.traversDirectory(path);
 
 			}
 			catch(IOException | NullPointerException e) {

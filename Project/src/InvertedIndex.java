@@ -51,10 +51,13 @@ public class InvertedIndex {
 
 		elements.get(word).get(location).add(position);
 
-		// TODO You ALWAYS put the position. You should only put the position if it is GREATER THAN the one currently stored. Otherwise this will break if words are added to the index out of order.
 		counts.putIfAbsent(location, position);
 
-		counts.put(location, position);
+		if(counts.get(location) < position) {
+
+			counts.put(location, position);
+
+		}
 
 	}
 
@@ -72,7 +75,7 @@ public class InvertedIndex {
 	 * @param file the location of a file
 	 * @return an unmodifiable treeSet of locations
 	 */
-	public Set<Integer> getPositions(String word, String file){
+	public Set<Integer> getPositions(String word, String file) {
 
 		if (elements.containsKey(word)) {
 
