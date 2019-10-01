@@ -86,12 +86,16 @@ public class InvertedIndexBuilder{
 
 	};
 
-	//	public static final Supplier<Path> PATHS = (Path path) -> {
-	//
-	//		Files.walk(path,  FileVisitOption.FOLLOW_LINKS)
-	//		.filter(IS_TEXT)
-	//		.collect(Collectors.toCollection(ArrayList::new));
-	//	}
+	/**
+	 * @param path the path of a file
+	 * @return a ArrayList of paths
+	 * @throws IOException
+	 */
+	public static ArrayList<Path> getPaths (Path path) throws IOException{
+
+		return Files.walk(path,  FileVisitOption.FOLLOW_LINKS).filter(IS_TEXT).collect(Collectors.toCollection(ArrayList::new));
+
+	}
 
 
 	/**
@@ -104,8 +108,8 @@ public class InvertedIndexBuilder{
 	 * @throws NullPointerException if the path is null
 	 */
 	public void traversDirectory(Path start) throws IOException, NullPointerException {
-		// TODO This is pretty useful... maybe make it a separate public static method like IS_TEXT?
-		ArrayList<Path> paths = Files.walk(start,  FileVisitOption.FOLLOW_LINKS).filter(IS_TEXT).collect(Collectors.toCollection(ArrayList::new));
+
+		ArrayList<Path> paths = getPaths(start);
 
 		Iterator<Path> itr = paths.iterator();
 

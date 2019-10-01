@@ -81,10 +81,16 @@ public class InvertedIndex {
 
 			TreeMap<String, TreeSet<Integer>> fileMap = elements.get(word);
 
-			// TODO Also worry about what happens if the file is not in your elements map!
-			TreeSet<Integer> positions = fileMap.get(file);
+			if(fileMap.containsKey(file)) {
 
-			return Collections.unmodifiableSet(positions);
+				TreeSet<Integer> positions = fileMap.get(file);
+
+				return Collections.unmodifiableSet(positions);
+
+			}
+
+			return Collections.emptySet();
+
 		}
 
 		return Collections.emptySet();
