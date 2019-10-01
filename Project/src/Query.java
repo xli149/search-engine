@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -17,7 +18,7 @@ public class Query {
 	 */
 	private final ArrayList<TreeSet<String>> list;
 
-	private final TreeMap<String, TreeMap<String, String>> map;
+	private final TreeMap<String, LinkedHashMap<String, String>> map;
 
 	/**
 	 * Constructor
@@ -36,8 +37,9 @@ public class Query {
 	 */
 	public void addlist(TreeSet<String> word) {
 
-		list.add(word);
-
+		if(!list.contains(word)) {
+			list.add(word);
+		}
 	}
 
 
@@ -48,37 +50,62 @@ public class Query {
 	 */
 	private void addMap(String path, Integer totalCounts, Integer currentCounts, TreeSet<String> words) {
 
-		String file = path.toString();
+
+
+
+		//System.out.println(words);
 
 		String queries = String.join(" ", words);
 
-		System.out.println("queries " + queries);
+		//System.out.println(queries);
+		if(path == null) {
+			map.putIfAbsent(queries, new LinkedHashMap<String, String>());
 
-		double percentage = (double)currentCounts / totalCounts;
-
-		String currentScore = String.format("%.8f", percentage);
+		}
 
 
-		//TODO: ADDING comparator
-		map.putIfAbsent(queries, new TreeMap<String, String>());
+		else {
 
-		map.get(queries).putIfAbsent("where", file);
+			String file = path.toString();
 
-		map.get(queries).putIfAbsent("count", totalCounts.toString());
+			double percentage = (double)currentCounts / totalCounts;
 
-		Integer lastCounts = Integer.parseInt(map.get(queries).get("count"));
+			String currentScore = String.format("%.8f", percentage);
 
-		Integer newCounts = lastCounts + currentCounts;
 
-		map.get(queries).put("count", newCounts.toString());
 
-		map.get(queries).putIfAbsent("score", currentScore);
 
-		double newPercentage = (double) newCounts / totalCounts;
+			//TODO: ADDING comparator
+			map.putIfAbsent(queries, new LinkedHashMap<String, String>());
 
-		String newScore = String.format("%.8f", percentage);
+			map.get(queries).putIfAbsent("where", file);
 
-		map.get(queries).put("score", newScore);
+			if(map.get(queries).containsKey("count")) {
+
+				Integer lastCounts = Integer.parseInt(map.get(queries).get("count"));
+
+				Integer newCounts = lastCounts + currentCounts;
+
+				map.get(queries).put("count", newCounts.toString());
+
+				double newPercentage = (double) newCounts / totalCounts;
+
+				String newScore = String.format("%.8f", percentage);
+
+				map.get(queries).put("score", newScore);
+			}
+
+			map.get(queries).putIfAbsent("count", currentCounts.toString());
+
+			System.out.println("after passing in addMap:" +  currentCounts.toString());
+
+			System.out.println("The score: " + currentScore);
+
+
+			map.get(queries).putIfAbsent("score", currentScore);
+
+
+		}
 
 
 	}
@@ -106,6 +133,7 @@ public class Query {
 		//		ArrayList<String> existWords = set.stream()
 		//							 .filter(w->elements.getWords().contains(w))
 		//							 .collect(Collectors.toCollection(ArrayList::new));
+
 
 		var iterator = list.iterator();
 
@@ -158,91 +186,51 @@ public class Query {
 	private void loop(TreeSet<String> words, InvertedIndex elements) {
 
 
-		for(String word: words) {
 
+
+
+
+		for(String word: words) {
+			//System.out.println(word);
 			if(elements.getWords().contains(word)) {
 
 				Set<String> paths = elements.getLocations(word);
 
+				System.out.print(word + ": ");
+
 				for(String path: paths) {
 
-					int totalCounts = elements.getTotalWords(path);
+					//TODO: fix the getTotalwords function to return 0 if word is not in here
+					int totalCounts =  elements.getTotalWords(path);
 
 					int currentCounts = elements.getPositions(word, path).size();
 
-					//					double percentage = (double)currentCounts / totalCounts;
-					//
-					//					String score = String.format("%.8f", percentage);
+					System.out.print("path " + ": " + path);
+					System.out.println("currentCounts: " + " " + currentCounts);
+
+
+
+
+
 
 					addMap(path, totalCounts, currentCounts, words);
 
-
 				}
-
-
 			}
 
+			else {
+
+				addMap(null, 0, 0, words);
+
+			}
 		}
-
-
-		//		TreeSet<String> words = new TreeSet<>();
-		//
-		//		Iterator<String> iterator = set.iterator();
-		//
-		//
-		//
-		//		while(iterator.hasNext()) {
-		//
-		//			int totalCounts = 0;
-		//
-		//			int totalNum = 0;
-		//
-		//			int score;
-		//
-		//			String word = iterator.next();
-		//
-		//			if(elements.getWords().contains(word)) {
-		//
-		//
-		//				var files = elements.getLocations(word);
-		//
-		//				for(String file: files) {
-		//
-		//					int currentCount = elements.getPositions(word, file).size();
-		//
-		//					//System.out.println("Count: " + count);
-		//
-		//					int totalWords = elements.getTotalWords(file);
-		//
-		//					//System.out.println("total words " + totalWords );
-		//
-		//
-		//					addMap()
-		//
-		//
-		//				}
-		//			}
-		//		}
-		//
-		//		double percentage = (double)count / totalWords;
-		//
-		//		String score = String.format("%.8f", percentage);
-		//
-		//		//System.out.println("Score " + score);
-		//
-		//
-		//		addMap(file,score, count);
 
 	}
 
 
+
+
 	public void queryToJson(Path path) throws IOException {
-		//
-		//		var iterator = map.entrySet().iterator();
-		//		while(iterator.hasNext()) {
-		//			System.out.println("Key " + iterator.next().getKey());
-		//
-		//		}
 
 		SimpleJsonWriter.asNestedQueryObject(path, map);
 

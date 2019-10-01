@@ -4,6 +4,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -32,7 +33,7 @@ public class SimpleJsonWriter {
 	}
 
 
-	private static void writeEntryThrid(TreeMap<String, String> elements, Writer writer, int level) throws IOException {
+	private static void writeEntryThrid(LinkedHashMap<String, String> elements, Writer writer, int level) throws IOException {
 
 		var iterator = elements.entrySet().iterator();
 
@@ -63,7 +64,7 @@ public class SimpleJsonWriter {
 
 	}
 
-	private static void asQueryObject(Map.Entry<String, TreeMap<String, String>> entry, Writer writer, int level) throws IOException{
+	private static void asQueryObject(Map.Entry<String, LinkedHashMap<String, String>> entry, Writer writer, int level) throws IOException{
 
 		quote(entry.getKey(), writer, level);
 
@@ -77,7 +78,7 @@ public class SimpleJsonWriter {
 
 
 	}
-	private static void asNestedQueryObject(TreeMap<String, TreeMap<String, String>> queries, Writer writer, int level) throws IOException{
+	private static void asNestedQueryObject(TreeMap<String, LinkedHashMap<String, String>> queries, Writer writer, int level) throws IOException{
 
 		var iterator = queries.entrySet().iterator();
 
@@ -110,7 +111,7 @@ public class SimpleJsonWriter {
 
 	}
 
-	public static void asNestedQueryObject(Path path,  TreeMap<String, TreeMap<String, String>> elements) throws IOException {
+	public static void asNestedQueryObject(Path path,  TreeMap<String,LinkedHashMap<String, String>> elements) throws IOException {
 
 		try(BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)){
 
