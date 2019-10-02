@@ -4,6 +4,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
@@ -24,20 +25,28 @@ public class SimpleJsonWriter {
 
 	private static void queryPrinter(Map.Entry<String, String> entry, Writer writer, int level) throws IOException {
 
+
+
 		quote(entry.getKey(), writer, level);
 
 		writer.write(": ");
 
-		writer.write(entry.getValue().toString());
+		if(entry.getKey().equals("where")) {
 
+			quote(entry.getValue().toString(), writer, 0);
+
+		}
+		else {
+			writer.write(entry.getValue().toString());
+
+		}
 	}
 
-
-	private static void writeEntryThrid(LinkedHashMap<String, String> elements, Writer writer, int level) throws IOException {
+	private static void queryUtility(LinkedHashMap<String, String> elements, Writer writer, int level) throws IOException {
 
 		var iterator = elements.entrySet().iterator();
 
-		writer.write("[");
+		indent("{", writer, level);
 
 		if(iterator.hasNext()) {
 
@@ -59,12 +68,86 @@ public class SimpleJsonWriter {
 
 			queryPrinter(entry, writer, level + 1);
 
+
 		}
-		indent("\n]", writer, level);
+
+		writer.write("\n");
+
+		indent("}", writer, level);
 
 	}
 
-	private static void asQueryObject(Map.Entry<String, LinkedHashMap<String, String>> entry, Writer writer, int level) throws IOException{
+	private static void writeEntryThrid(ArrayList<LinkedHashMap<String, String>> elements, Writer writer, int level) throws IOException {
+
+		writer.write("[");
+
+		var iterator = elements.iterator();
+
+		if(iterator.hasNext()) {
+
+			writer.write("\n");
+
+			var element = iterator.next();
+
+			queryUtility(element, writer, level);
+
+
+
+		}
+		while(iterator.hasNext()) {
+
+			writer.write(",");
+
+			writer.write("\n");
+
+			var element = iterator.next();
+
+			queryUtility(element, writer, level);
+
+		}
+
+
+		//		for(var element : elements) {
+		//
+		//			var iterator = element.entrySet().iterator();
+		//
+		//			writer.write("\n");
+		//
+		//			indent("{", writer, level);
+		//
+		//			if(iterator.hasNext()) {
+		//
+		//				writer.write("\n");
+		//
+		//				var entry = iterator.next();
+		//
+		//				queryPrinter(entry, writer, level + 1);
+		//
+		//			}
+		//
+		//			while(iterator.hasNext()) {
+		//
+		//				writer.write(",");
+		//
+		//				writer.write("\n");
+		//
+		//				var entry = iterator.next();
+		//
+		//				queryPrinter(entry, writer, level + 1);
+		//
+		//
+		//			}
+
+		//TODO find where caused this
+		writer.write("\n");
+
+		indent("]", writer, level - 1);
+
+	}
+
+
+
+	private static void asQueryObject(Map.Entry<String, ArrayList<LinkedHashMap<String, String>>> entry, Writer writer, int level) throws IOException{
 
 		quote(entry.getKey(), writer, level);
 
@@ -72,13 +155,14 @@ public class SimpleJsonWriter {
 
 		var elements = entry.getValue();
 
+
 		writeEntryThrid(elements, writer, level + 1);
 
 
 
 
 	}
-	private static void asNestedQueryObject(TreeMap<String, LinkedHashMap<String, String>> queries, Writer writer, int level) throws IOException{
+	private static void asNestedQueryObject(TreeMap<String, ArrayList<LinkedHashMap<String, String>>> queries, Writer writer, int level) throws IOException{
 
 		var iterator = queries.entrySet().iterator();
 
@@ -111,7 +195,7 @@ public class SimpleJsonWriter {
 
 	}
 
-	public static void asNestedQueryObject(Path path,  TreeMap<String,LinkedHashMap<String, String>> elements) throws IOException {
+	public static void asNestedQueryObject(Path path,  TreeMap<String, ArrayList<LinkedHashMap<String, String>>> elements) throws IOException {
 
 		try(BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)){
 

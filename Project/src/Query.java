@@ -18,7 +18,7 @@ public class Query {
 	 */
 	private final ArrayList<TreeSet<String>> list;
 
-	private final TreeMap<String, LinkedHashMap<String, String>> map;
+	private final TreeMap<String, ArrayList<LinkedHashMap<String, String>>> map;
 
 	/**
 	 * Constructor
@@ -52,14 +52,11 @@ public class Query {
 
 
 
-
-		//System.out.println(words);
-
 		String queries = String.join(" ", words);
 
-		//System.out.println(queries);
 		if(path == null) {
-			map.putIfAbsent(queries, new LinkedHashMap<String, String>());
+
+			map.putIfAbsent(queries, new ArrayList<>());
 
 		}
 
@@ -68,43 +65,69 @@ public class Query {
 
 			String file = path.toString();
 
+			System.out.println(file);
+
 			double percentage = (double)currentCounts / totalCounts;
 
 			String currentScore = String.format("%.8f", percentage);
 
-
-
-
 			//TODO: ADDING comparator
-			map.putIfAbsent(queries, new LinkedHashMap<String, String>());
+			map.putIfAbsent(queries, new ArrayList<>());
 
-			map.get(queries).putIfAbsent("where", file);
+			if(map.get(queries).isEmpty()) {
 
-			if(map.get(queries).containsKey("count")) {
+				LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
 
-				Integer lastCounts = Integer.parseInt(map.get(queries).get("count"));
+				linkedHashMap.put("where", file);
 
-				Integer newCounts = lastCounts + currentCounts;
+				linkedHashMap.put("count", currentCounts.toString());
 
-				map.get(queries).put("count", newCounts.toString());
+				linkedHashMap.put("score", currentScore);
 
-				double newPercentage = (double) newCounts / totalCounts;
+				map.get(queries).add(linkedHashMap);
 
-				String newScore = String.format("%.8f", percentage);
-
-				map.get(queries).put("score", newScore);
 			}
 
-			map.get(queries).putIfAbsent("count", currentCounts.toString());
+			else {
 
-			System.out.println("after passing in addMap:" +  currentCounts.toString());
+				var elements = map.get(queries);
 
-			System.out.println("The score: " + currentScore);
+				for(var element : elements) {
+
+					if(element.get("where").equals(file)) {
+
+						Integer lastCounts = Integer.parseInt(element.get("count"));
+
+						Integer tempCounts = lastCounts + currentCounts;
+
+						String newCounts = tempCounts.toString();
+
+						element.put("count", newCounts);
+
+						Double tempScore = (double) tempCounts / totalCounts;
+
+						String newScore = String.format("%.8f", tempScore);
+
+						element.put("score", newScore);
+
+						return;
+
+					}
 
 
-			map.get(queries).putIfAbsent("score", currentScore);
+				}
 
+				LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
 
+				linkedHashMap.put("where", file);
+
+				linkedHashMap.put("count", currentCounts.toString());
+
+				linkedHashMap.put("score", currentScore);
+
+				map.get(queries).add(linkedHashMap);
+
+			}
 		}
 
 
@@ -117,22 +140,6 @@ public class Query {
 	 */
 	public void exactSearch(InvertedIndex elements) {
 
-		//		System.out.println("Search start");
-		//		Iterator<String> itr = set.iterator();
-		//
-		//		while(itr.hasNext()) {
-		//
-		//			String word = itr.next();
-		//
-		//			loop(word, elements);
-		//
-		//		}
-
-		//		loop(elements);
-
-		//		ArrayList<String> existWords = set.stream()
-		//							 .filter(w->elements.getWords().contains(w))
-		//							 .collect(Collectors.toCollection(ArrayList::new));
 
 
 		var iterator = list.iterator();
@@ -185,18 +192,11 @@ public class Query {
 	 */
 	private void loop(TreeSet<String> words, InvertedIndex elements) {
 
-
-
-
-
-
 		for(String word: words) {
 			//System.out.println(word);
 			if(elements.getWords().contains(word)) {
 
 				Set<String> paths = elements.getLocations(word);
-
-				System.out.print(word + ": ");
 
 				for(String path: paths) {
 
@@ -205,15 +205,9 @@ public class Query {
 
 					int currentCounts = elements.getPositions(word, path).size();
 
-					System.out.print("path " + ": " + path);
-					System.out.println("currentCounts: " + " " + currentCounts);
-
-
-
-
-
-
 					addMap(path, totalCounts, currentCounts, words);
+
+
 
 				}
 			}
