@@ -3,8 +3,6 @@ import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
 
-
-
 /**
  * Class responsible for running this project based on the provided command-line
  * arguments. See the README for details.
@@ -34,6 +32,8 @@ public class Driver {
 		InvertedIndex elements = new InvertedIndex();
 
 		Query query = new Query();
+    
+		InvertedIndexBuilder builder = new InvertedIndexBuilder(elements);
 
 		if (parser.hasFlag("-path")) {
 
@@ -41,7 +41,7 @@ public class Driver {
 
 			try{
 
-				InvertedIndexBuilder.checkFile(path, elements);
+				builder.traversDirectory(path);
 
 			}
 			catch(IOException | NullPointerException e) {
