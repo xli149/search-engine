@@ -53,7 +53,11 @@ public class InvertedIndex {
 
 		counts.putIfAbsent(location, position);
 
-		counts.put(location, position);
+		if(counts.get(location) < position) {
+
+			counts.put(location, position);
+
+		}
 
 	}
 
@@ -71,15 +75,22 @@ public class InvertedIndex {
 	 * @param file the location of a file
 	 * @return an unmodifiable treeSet of locations
 	 */
-	public Set<Integer> getPositions(String word, String file){
+	public Set<Integer> getPositions(String word, String file) {
 
 		if (elements.containsKey(word)) {
 
 			TreeMap<String, TreeSet<Integer>> fileMap = elements.get(word);
 
-			TreeSet<Integer> positions = fileMap.get(file);
+			if(fileMap.containsKey(file)) {
 
-			return Collections.unmodifiableSet(positions);
+				TreeSet<Integer> positions = fileMap.get(file);
+
+				return Collections.unmodifiableSet(positions);
+
+			}
+
+			return Collections.emptySet();
+
 		}
 
 		return Collections.emptySet();

@@ -25,14 +25,26 @@ public class InvertedIndexBuilder{
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
 	/**
+	 * Declaration of invetedIndex object
+	 */
+	private final InvertedIndex index;
+
+	/**
+	 * @param index InvertedIndex object
+	 */
+	public InvertedIndexBuilder(InvertedIndex index) {
+
+		this.index = index;
+	}
+
+	/**
 	 * Reads a file line by line, parses each line into cleaned and stemmed words,
 	 * and then adds those words to a set.
 	 *
 	 * @param filePath the path of a file
-	 * @param elements elements an object of InvertedIndex type
 	 * @throws IOException if unable to read or parse file
 	 */
-	public static void wordStem(Path filePath, InvertedIndex elements) throws IOException {
+	public void addStem(Path filePath) throws IOException {
 
 		Stemmer stemmer = new SnowballStemmer(DEFAULT);
 
@@ -48,11 +60,13 @@ public class InvertedIndexBuilder{
 
 				String stemmedWords;
 
+				String path = filePath.toString();
+
 				for (int i = 0; i < tokens.length; i++) {
 
 					stemmedWords = stemmer.stem(tokens[i]).toString();
 
-					elements.add(stemmedWords, filePath.toString(), posOfWord);
+					index.add(stemmedWords, path, posOfWord);
 
 					posOfWord++;
 
@@ -64,37 +78,22 @@ public class InvertedIndexBuilder{
 	/**
 	 * Lambda function that checks if a file ends with ".txt" or ".text"
 	 */
-	public static final Predicate<Path> IS_TEXT = (Path path) ->{
+	public static final Predicate<Path> IS_TEXT = (Path path) -> {
 
 		String name = path.getFileName().toString().toLowerCase();
 
-		if(Files.isRegularFile(path)
+		return Files.isRegularFile(path) && (name.endsWith(".txt") || name.endsWith(".text"));
 
-				&& (name.endsWith(".txt")
-
-						|| name.endsWith(".text"))) {
-
-			return true;
-
-		}
-
-		return false;
 	};
 
 	/**
-	 * Function for checking the existence of a file and pass it to get parsed
-	 * @param path the relative path of a file
-	 * @param elements elements an object of InvertedIndex type
-	 * @throws NullPointerException if file does not exit
-	 * @throws IOException if unable to write in the file
+	 * @param path the path of a file
+	 * @return a ArrayList of paths
+	 * @throws IOException
 	 */
-	public static void checkFile(Path path, InvertedIndex elements) throws NullPointerException, IOException{
+	public static ArrayList<Path> getPaths (Path path) throws IOException{
 
-		if(Files.isReadable(path)) {
-
-			traversDir(path, elements);
-
-		}
+		return Files.walk(path,  FileVisitOption.FOLLOW_LINKS).filter(IS_TEXT).collect(Collectors.toCollection(ArrayList::new));
 
 	}
 
@@ -105,19 +104,18 @@ public class InvertedIndexBuilder{
 	 * and call itself again
 	 *
 	 * @param start starting path of stream
-	 * @param elements an object of InvertedIndex type
-	 *
 	 * @throws IOException if the file is unable to read
+	 * @throws NullPointerException if the path is null
 	 */
-	private static void traversDir(Path start, InvertedIndex elements) throws IOException, NullPointerException {
+	public void traversDirectory(Path start) throws IOException, NullPointerException {
 
-		ArrayList<Path> paths = Files.walk(start,  FileVisitOption.FOLLOW_LINKS).filter(IS_TEXT).collect(Collectors.toCollection(ArrayList::new));
+		ArrayList<Path> paths = getPaths(start);
 
 		Iterator<Path> itr = paths.iterator();
 
 		while(itr.hasNext()) {
 
-			wordStem(itr.next(), elements);
+			addStem(itr.next());
 
 		}
 
