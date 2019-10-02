@@ -106,38 +106,6 @@ public class SimpleJsonWriter {
 
 		}
 
-
-		//		for(var element : elements) {
-		//
-		//			var iterator = element.entrySet().iterator();
-		//
-		//			writer.write("\n");
-		//
-		//			indent("{", writer, level);
-		//
-		//			if(iterator.hasNext()) {
-		//
-		//				writer.write("\n");
-		//
-		//				var entry = iterator.next();
-		//
-		//				queryPrinter(entry, writer, level + 1);
-		//
-		//			}
-		//
-		//			while(iterator.hasNext()) {
-		//
-		//				writer.write(",");
-		//
-		//				writer.write("\n");
-		//
-		//				var entry = iterator.next();
-		//
-		//				queryPrinter(entry, writer, level + 1);
-		//
-		//
-		//			}
-
 		//TODO find where caused this
 		writer.write("\n");
 
@@ -191,7 +159,9 @@ public class SimpleJsonWriter {
 
 		}
 
-		writer.write("\n}");
+		writer.write("\n");
+
+		writer.write("}");
 
 	}
 

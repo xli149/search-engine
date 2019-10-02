@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Utility class for performing query functionality
@@ -35,10 +36,25 @@ public class Query {
 	 * Adding word in order
 	 * @param word stemmed word to be added
 	 */
-	public void addlist(TreeSet<String> word) {
+	public void addlist(TreeSet<String> words) {
 
-		if(!list.contains(word)) {
-			list.add(word);
+
+		if(!list.contains(words)) {
+
+			for(var word : words) {
+
+				for(var set : list) {
+
+					if(set.contains(word)) {
+
+						return;
+
+					}
+
+				}
+			}
+
+			list.add(words);
 		}
 	}
 
@@ -86,6 +102,8 @@ public class Query {
 
 				map.get(queries).add(linkedHashMap);
 
+				//System.out.println("First time adding " + currentCounts);
+
 			}
 
 			else {
@@ -110,6 +128,8 @@ public class Query {
 
 						element.put("score", newScore);
 
+						System.out.println("second time adding " + tempCounts);
+
 						return;
 
 					}
@@ -117,6 +137,7 @@ public class Query {
 
 				}
 
+				System.out.println("got here?");
 				LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
 
 				linkedHashMap.put("where", file);
@@ -140,18 +161,33 @@ public class Query {
 	 */
 	public void exactSearch(InvertedIndex elements) {
 
-
-
 		var iterator = list.iterator();
 
 		while(iterator.hasNext()) {
 
 			var words = iterator.next();
 
-			loop(words, elements);
+			Set<String> wordSet = elements.getWords();
 
+			for(String word : words) {
+
+				if(wordSet.contains(word)) {
+
+					loop(words, elements, word);
+
+				}
+
+				else {
+
+					addMap(null, 0, 0, words);
+				}
+
+			}
 
 		}
+
+		sortArrayList(map);
+
 
 	}
 
@@ -160,28 +196,44 @@ public class Query {
 	 * @param elements InvertedIndex object
 	 * @return the number of the exact stemmed word in files
 	 */
-	//	public void partialSearch(InvertedIndex elements) {
-	//
-	//		var itr = set.iterator();
-	//
-	//		Set<String> words = elements.getWords();
-	//
-	//		while(itr.hasNext()) {
-	//
-	//			String word = itr.next();
-	//
-	//			for(String wd: words) {
-	//
-	//				if(wd.startsWith(word)) {
-	//
-	//					loop(wd, elements);
-	//
-	//				}
-	//			}
-	//
-	//		}
-	//
-	//	}
+	public void partialSearch(InvertedIndex elements) {
+
+		var iterator = list.iterator();
+
+		Set<String> invertedWords = elements.getWords();
+
+		while(iterator.hasNext()) {
+
+			var words = iterator.next();
+
+			for(String word: words) {
+
+				ArrayList<String> matchedWords = invertedWords
+						.stream().filter(s->s.startsWith(word))
+						.collect(Collectors.toCollection(ArrayList::new));
+
+				if(matchedWords.isEmpty()) {
+
+					addMap(null, 0, 0, words);
+
+				}
+				else {
+					for(String matchedword : matchedWords) {
+
+						loop(words, elements, matchedword);
+
+					}
+				}
+
+			}
+
+
+
+		}
+
+		sortArrayList(map);
+
+	}
 
 	//do some test here
 
@@ -190,38 +242,42 @@ public class Query {
 	 * @param word stemmed word
 	 * @param elements InvertedIndex object
 	 */
-	private void loop(TreeSet<String> words, InvertedIndex elements) {
 
-		for(String word: words) {
-			//System.out.println(word);
-			if(elements.getWords().contains(word)) {
+	//instead passing InvetedIndex obj, create a local one maybe??
+	private void loop(TreeSet<String> words, InvertedIndex elements, String word) {
 
-				Set<String> paths = elements.getLocations(word);
-
-				for(String path: paths) {
-
-					//TODO: fix the getTotalwords function to return 0 if word is not in here
-					int totalCounts =  elements.getTotalWords(path);
-
-					int currentCounts = elements.getPositions(word, path).size();
-
-					addMap(path, totalCounts, currentCounts, words);
+		System.out.println(words);
 
 
+		Set<String> paths = elements.getLocations(word);
 
-				}
-			}
+		for(String path: paths) {
 
-			else {
+			//TODO: fix the getTotalwords function to return 0 if word is not in here
+			int totalCounts =  elements.getTotalWords(path);
 
-				addMap(null, 0, 0, words);
+			int currentCounts = elements.getPositions(word, path).size();
 
-			}
+			addMap(path, totalCounts, currentCounts, words);
+
+
 		}
 
 	}
 
 
+	private void sortArrayList(TreeMap<String, ArrayList<LinkedHashMap<String, String>>> map) {
+
+		var elements = map.entrySet();
+
+		MyComparator comparator = new MyComparator();
+
+		for(var element: elements) {
+
+			element.getValue().sort(comparator);
+		}
+
+	}
 
 
 	public void queryToJson(Path path) throws IOException {

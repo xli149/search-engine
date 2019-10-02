@@ -97,11 +97,11 @@ public class Driver {
 
 
 				}
-				//				else {
-				//
-				//					query.partialSearch(elements);
-				//
-				//				}
+				else {
+
+					query.partialSearch(elements);
+
+				}
 			}
 			catch(IOException e) {
 
@@ -110,12 +110,6 @@ public class Driver {
 
 
 		}
-
-		//TODOs "-exact"
-
-
-
-		//TODO "-result"
 
 		if(parser.hasFlag("-results")) {
 
