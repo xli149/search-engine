@@ -40,9 +40,10 @@ public class QueryBuilder {
 					//System.out.println(stemmedWords);
 					words.add(stemmedWords);
 
-					query.addlist(words);
+					//query.addlist2(words);
 
 				}
+				query.addlist(words);
 			}
 		}
 	}

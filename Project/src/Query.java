@@ -39,41 +39,16 @@ public class Query {
 	public void addlist(TreeSet<String> words) {
 
 
+		for(var element : list) {
 
-		System.out.println("words: " + words);
-		System.out.println();
-		System.out.println("previous list: " + list);
-		System.out.println();
+			if(element.toString().equals(words.toString())) {
 
-		if(!list.contains(words)) {
-
-			for(var word : words) {
-
-				for(var set : list) {
-
-					if(set.contains(word)) {
-
-						return;
-
-					}
-
-				}
+				System.out.println(element.toString());
+				return;
 			}
-			list.add(words);
 		}
-		//		for(var element : list) {
-		//
-		//			if(element.toString().equals(words.toString())) {
-		//
-		//				System.out.println(element.toString());
-		//				return;
-		//			}
-		//		}
-		//
-		//		list.add(words);
 
-		System.out.println("after list: " + list);
-		System.out.println();
+		list.add(words);
 
 
 	}
