@@ -22,12 +22,17 @@ public class Driver {
 	 */
 	public static void main(String[] args){
 
+
+		System.out.println("Driver start");
+
 		Instant start = Instant.now();
 
 		ArgumentParser parser = new ArgumentParser(args);
 
 		InvertedIndex elements = new InvertedIndex();
 
+		Query query = new Query();
+    
 		InvertedIndexBuilder builder = new InvertedIndexBuilder(elements);
 
 		if (parser.hasFlag("-path")) {
@@ -73,9 +78,64 @@ public class Driver {
 			}
 			catch (IOException e){
 
-				System.out.println("Uable to write word count to JSON file: " + path);
+				System.out.println("Unable to write word count to JSON file: " + path);
 			}
 		}
+
+		//TODOs call function in query file for parse the file and pass in path
+		if(parser.hasFlag("-query")) {
+
+			Path path = parser.getPath("-query");
+
+			try{
+
+				QueryBuilder.queryParser(path, query);
+
+				if(parser.hasFlag("-exact")) {
+
+					query.exactSearch(elements);
+
+
+				}
+				else {
+
+					query.partialSearch(elements);
+
+				}
+			}
+			catch(IOException e) {
+
+				System.out.println("Unable to read the query " + path);
+			}
+			catch(NullPointerException e) {
+
+				System.out.println("Path is not valid " + path);
+
+			}
+
+
+		}
+
+		if(parser.hasFlag("-results")) {
+
+			Path path = parser.getPath("-results", Path.of("results.json"));
+
+			try {
+
+				query.queryToJson(path);
+
+			}
+			catch(IOException e) {
+
+				System.out.println("Unable to write query in the file " + path);
+
+			}
+
+
+		}
+
+
+
 
 		Duration elapsed = Duration.between(start, Instant.now());
 
