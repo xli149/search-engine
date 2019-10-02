@@ -13,7 +13,7 @@ public class QueryBuilder {
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
 
-	public static void queryParser(Path filePath, Query query) throws IOException {
+	public static void queryParser(Path filePath, Query query) throws IOException , NullPointerException {
 
 		Stemmer stemmer = new SnowballStemmer(DEFAULT);
 
@@ -24,6 +24,7 @@ public class QueryBuilder {
 			String line = null;
 
 			while((line = reader.readLine()) != null) {
+
 				TreeSet<String> words = new TreeSet<>();
 
 				String [] tokens = TextParser.parse(line);
@@ -31,6 +32,8 @@ public class QueryBuilder {
 				String stemmedWords;
 
 				for (int i = 0; i < tokens.length; i++) {
+
+
 
 					stemmedWords = stemmer.stem(tokens[i]).toString();
 
@@ -41,8 +44,6 @@ public class QueryBuilder {
 
 				}
 			}
-			//			System.out.println("file " + filePath);
-			//			System.out.println(words);
 		}
 	}
 

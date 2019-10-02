@@ -107,6 +107,11 @@ public class Driver {
 
 				System.out.println("Unable to read the query " + path);
 			}
+			catch(NullPointerException e) {
+
+				System.out.println("Path is not valid " + path);
+
+			}
 
 
 		}

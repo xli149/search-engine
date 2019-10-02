@@ -39,6 +39,12 @@ public class Query {
 	public void addlist(TreeSet<String> words) {
 
 
+
+		System.out.println("words: " + words);
+		System.out.println();
+		System.out.println("previous list: " + list);
+		System.out.println();
+
 		if(!list.contains(words)) {
 
 			for(var word : words) {
@@ -53,9 +59,23 @@ public class Query {
 
 				}
 			}
-
 			list.add(words);
 		}
+		//		for(var element : list) {
+		//
+		//			if(element.toString().equals(words.toString())) {
+		//
+		//				System.out.println(element.toString());
+		//				return;
+		//			}
+		//		}
+		//
+		//		list.add(words);
+
+		System.out.println("after list: " + list);
+		System.out.println();
+
+
 	}
 
 
@@ -81,7 +101,7 @@ public class Query {
 
 			String file = path.toString();
 
-			System.out.println(file);
+			//System.out.println(file);
 
 			double percentage = (double)currentCounts / totalCounts;
 
@@ -128,7 +148,7 @@ public class Query {
 
 						element.put("score", newScore);
 
-						System.out.println("second time adding " + tempCounts);
+						//System.out.println("second time adding " + tempCounts);
 
 						return;
 
@@ -137,7 +157,7 @@ public class Query {
 
 				}
 
-				System.out.println("got here?");
+				//System.out.println("got here?");
 				LinkedHashMap<String, String> linkedHashMap = new LinkedHashMap<>();
 
 				linkedHashMap.put("where", file);
@@ -161,6 +181,8 @@ public class Query {
 	 */
 	public void exactSearch(InvertedIndex elements) {
 
+
+
 		var iterator = list.iterator();
 
 		while(iterator.hasNext()) {
@@ -172,6 +194,8 @@ public class Query {
 			for(String word : words) {
 
 				if(wordSet.contains(word)) {
+
+					//System.out.println(words);
 
 					loop(words, elements, word);
 
@@ -218,6 +242,7 @@ public class Query {
 
 				}
 				else {
+
 					for(String matchedword : matchedWords) {
 
 						loop(words, elements, matchedword);
@@ -246,10 +271,11 @@ public class Query {
 	//instead passing InvetedIndex obj, create a local one maybe??
 	private void loop(TreeSet<String> words, InvertedIndex elements, String word) {
 
-		System.out.println(words);
+
 
 
 		Set<String> paths = elements.getLocations(word);
+
 
 		for(String path: paths) {
 
