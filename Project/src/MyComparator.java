@@ -1,6 +1,11 @@
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 
+/**
+ * Utility class for creating my own comparator
+ * @author chrislee
+ *
+ */
 public class MyComparator implements Comparator<LinkedHashMap<String, String>>{
 
 	@Override
@@ -21,7 +26,6 @@ public class MyComparator implements Comparator<LinkedHashMap<String, String>>{
 		if(Double.compare(score1, score2) < 0) {
 
 			return 1;
-
 		}
 		else if(Double.compare(score1, score2) == 0){
 
@@ -37,14 +41,10 @@ public class MyComparator implements Comparator<LinkedHashMap<String, String>>{
 
 				return -1;
 			}
-
 		}
 		else {
 			return -1;
 		}
 
 	}
-
-
-
 }
