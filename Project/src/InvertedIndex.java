@@ -136,6 +136,11 @@ public class InvertedIndex {
 
 	}
 
+	/**
+	 * Return the total number words of a file
+	 * @param path
+	 * @return the number of words in a file
+	 */
 	public int getTotalWords(String path) {
 
 		return counts.get(path);
