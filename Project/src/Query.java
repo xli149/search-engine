@@ -52,11 +52,6 @@ public class Query {
 
 		list.add(words);
 
-		System.out.println(words);
-
-		System.out.println(list);
-
-
 	}
 
 	/**
