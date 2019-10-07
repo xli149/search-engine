@@ -174,5 +174,36 @@ public class InvertedIndex {
 		return this.elements.toString();
 
 	}
+	
+	/*
+	 * TODO 
+	 * public List<SearchResult> search(Collection<String> queries, boolean exact)
+	 * public List<SearchResult> exactSearch(Collection<String> queries)
+	 * 
+	 * public List<SearchResult> partialSearch(Collection<String> queries) {
+	 * 		List<SearchResult> results = ...;
+	 *    Map<String, SearchResult> lookup = ...;
+	 * 
+	 * 		for each search query
+	 * 			for each word in our index
+	 * 				if our word matches our query
+	 * 					for each location of that word
+	 * 						if we have seen this location before (seeing if the location is a key in our lookup map)
+	 * 							update an existing result object (getting the result and calling an update method)
+	 * 						else 
+	 * 							create a new result object
+	 * 							need to add the result to the list AND the lookup map
+	 * 
+	 * 
+	 * 		Collections.sort(results);
+	 * 		return results;
+	 * }
+	 * 
+	 * public class SearchResult implements Comparable<SearchResult> {
+	 * 		private String where;
+	 * 		private int count;
+	 * 		private double score;
+	 * }
+	 */
 
 }

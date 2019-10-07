@@ -23,7 +23,8 @@ public class Query {
 	 * A map of queries
 	 */
 	private final TreeMap<String, ArrayList<LinkedHashMap<String, String>>> map;
-
+	// TODO stemmed word --> results (keys (where, score, count) to values as strings)
+	
 	/**
 	 * Constructor
 	 */
