@@ -3,6 +3,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 import opennlp.tools.stemmer.Stemmer;
@@ -55,4 +58,12 @@ public class QueryBuilder {
 			}
 		}
 	}
+	
+	/* TODO
+	private final InvertedIndex index;
+	private final TreeMap<String, ArrayList<InvertedIndex.SearchResult>> map;
+	
+	public void parseLine(String line, boolean exact) <--- could use your old TextFileStemmer uniqueStems method (one stemmer per line)
+	public void parseFile(Path path, boolean exact)
+	*/
 }
