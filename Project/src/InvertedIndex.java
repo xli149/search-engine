@@ -1,10 +1,14 @@
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.stream.Collectors;
 
 /**
  * Unity Class for parsing the file and store the word index and word count
@@ -25,6 +29,7 @@ public class InvertedIndex {
 	 */
 	private final TreeMap<String, Integer> counts;
 
+
 	/**
 	 * Constructor
 	 */
@@ -33,6 +38,8 @@ public class InvertedIndex {
 		elements = new TreeMap<>();
 
 		counts = new TreeMap<>();
+
+		new ArrayList<>();
 
 	}
 
@@ -174,36 +181,287 @@ public class InvertedIndex {
 		return this.elements.toString();
 
 	}
-	
-	/*
-	 * TODO 
-	 * public List<SearchResult> search(Collection<String> queries, boolean exact)
-	 * public List<SearchResult> exactSearch(Collection<String> queries)
-	 * 
-	 * public List<SearchResult> partialSearch(Collection<String> queries) {
-	 * 		List<SearchResult> results = ...;
-	 *    Map<String, SearchResult> lookup = ...;
-	 * 
-	 * 		for each search query
-	 * 			for each word in our index
-	 * 				if our word matches our query
-	 * 					for each location of that word
-	 * 						if we have seen this location before (seeing if the location is a key in our lookup map)
-	 * 							update an existing result object (getting the result and calling an update method)
-	 * 						else 
-	 * 							create a new result object
-	 * 							need to add the result to the list AND the lookup map
-	 * 
-	 * 
-	 * 		Collections.sort(results);
-	 * 		return results;
-	 * }
-	 * 
-	 * public class SearchResult implements Comparable<SearchResult> {
-	 * 		private String where;
-	 * 		private int count;
-	 * 		private double score;
-	 * }
+
+	/**
+	 * exact search method for checking the one-to-one word from query to invertedindex
+	 * @param queries  collection of query words
+	 * @return an arraylist contains SearchResult to be added in map
 	 */
+	private ArrayList<SearchResult> exactSearch(Collection<String> queries) {
+
+		ArrayList<SearchResult> results = new ArrayList<>();
+
+		Map<String, SearchResult> lookUp = new HashMap<>();
+
+		var list  = queries;
+
+		var iterator = list.iterator();
+
+		while(iterator.hasNext()) {
+
+			var word = iterator.next();
+
+			Set<String> wordSet = getWords();
+
+
+			if(wordSet.contains(word)) {
+				update(results,lookUp, word);
+
+			}
+
+		}
+
+		Collections.sort(results);
+
+		return results;
+
+	}
+
+	/**
+	 * partial search method for checking the starwith word from query to invertedindex
+	 * @param queries  collection of query words
+	 * @return an arraylist contains SearchResult to be added in map
+	 */
+	private ArrayList<SearchResult> partialSearch(Collection<String> queries) {
+
+		ArrayList<SearchResult> results = new ArrayList<>();
+
+		Map<String, SearchResult> lookUp = new HashMap<>();
+
+		var list = queries;
+
+		var iterator = list.iterator();
+
+		Set<String> invertedWords = getWords();
+
+		while(iterator.hasNext()) {
+
+			var word = iterator.next();
+
+			ArrayList<String> matchedWords = invertedWords
+					.stream().filter(s->s.startsWith(word))
+					.collect(Collectors.toCollection(ArrayList::new));
+
+			for(String matchedWord : matchedWords) {
+
+				update(results,lookUp, matchedWord);
+
+			}
+
+		}
+
+		Collections.sort(results);
+
+		return results;
+	}
+
+	/**
+	 * Utility method for update result arraylist and lookUp map
+	 * @param results an arrayList of searchResult obj to be add into map
+	 * @param lookUp a map for checking if a file has existed
+	 * @param matchedWord the matched word from query to invertedIndex
+	 */
+	private void update(ArrayList<SearchResult> results,Map<String, SearchResult> lookUp, String matchedWord) {
+
+		Set<String> paths = getLocations(matchedWord);
+
+		for(String path: paths) {
+
+			int totalCounts = getTotalWords(path);
+
+			int currentCounts = getPositions(matchedWord, path).size();
+
+			String file = path.toString();
+
+			double percentage = (double)currentCounts / totalCounts;
+
+			String currentScore = String.format("%.8f", percentage);
+
+			if(lookUp.containsKey(path)) {
+
+				var element = lookUp.get(path);
+
+				Integer lastCounts = element.getCount();
+
+				Integer tempCounts = lastCounts + currentCounts;
+
+				element.setCount(tempCounts);
+
+				Double tempScore = (double) tempCounts / totalCounts;
+
+				String newScore = String.format("%.8f", tempScore);
+
+				element.setScore(newScore);
+
+			}
+			else {
+
+				SearchResult searchReasult = new SearchResult(file, currentCounts, currentScore);
+
+				results.add(searchReasult);
+
+				lookUp.put(file, searchReasult);
+
+			}
+
+		}
+
+	}
+
+	/**
+	 * Search method for calling exactSearch and partialSearch methods
+	 * @param queries collection of query words
+	 * @param exact boolean value to determine using exactSearch or partialSearch
+	 * @return an arrayList of SearchResult obj to be add to query map
+	 */
+	public ArrayList<SearchResult> search(Collection<String> queries, boolean exact){
+
+		if(exact) {
+
+			return exactSearch(queries);
+
+		}
+
+		else {
+
+			return partialSearch(queries);
+
+		}
+
+
+	}
+
+	/**
+	 * Nested inner class
+	 * @author chrislee
+	 *
+	 */
+	public static class SearchResult implements Comparable<SearchResult> {
+
+		/**
+		 * file that holds the word
+		 */
+		private String where;
+
+		/**
+		 * times the word shows up in that file
+		 */
+		private int count;
+
+		/**
+		 * frequency of the word in that file
+		 */
+		private String score;
+
+		/**
+		 * Constructor
+		 * @param where file that holds the word
+		 * @param count times the word shows up in that file
+		 * @param score frequency of the word in that file
+		 */
+		public SearchResult(String where, int count, String score) {
+
+			this.where = where;
+
+			this.count = count;
+
+			this.score = score;
+
+		}
+
+		/**
+		 * set value of where
+		 * @param location file that holds the word
+		 */
+		public void setLocation(String location) {
+
+			this.where = location;
+
+		}
+
+		/**
+		 * set value of count
+		 * @param newCount times the word shows up in that file
+		 */
+		public void setCount (int newCount) {
+
+			this.count = newCount;
+
+		}
+
+		/**
+		 * set value of score
+		 * @param score frequency of the word in that file
+		 */
+		public void setScore (String score) {
+
+			this.score = score;
+
+		}
+
+		/**
+		 * @return the file name that word is in
+		 */
+		public String getLocation() {
+
+			return where;
+		}
+
+		/**
+		 * @return the number that the word in that file
+		 */
+		public int getCount() {
+
+			return count;
+
+		}
+		/**
+		 * @return the percentage of the frequency of the word
+		 */
+		public String getScore() {
+
+			return score;
+
+		}
+
+		@Override
+		public int compareTo(SearchResult o) {
+
+			if(Double.parseDouble(this.getScore()) < Double.parseDouble(o.getScore())) {
+
+				return 1;
+
+			}
+
+			else if(Double.parseDouble(this.getScore()) == Double.parseDouble(o.getScore())){
+
+				if(this.getCount() < o.getCount()) {
+
+					return 1;
+				}
+				else if(this.getCount() == o.getCount()){
+
+					return this.getLocation().compareTo(o.getLocation());
+
+				}
+				else {
+
+					return -1;
+				}
+			}
+			else {
+				return -1;
+			}
+
+
+
+		}
+
+
+	}
 
 }
+
+
+
+
