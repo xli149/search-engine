@@ -31,9 +31,9 @@ public class Driver {
 
 		InvertedIndex elements = new InvertedIndex();
 
-		Query query = new Query();
-    
 		InvertedIndexBuilder builder = new InvertedIndexBuilder(elements);
+
+		QueryBuilder queryBuilder = new QueryBuilder(elements);
 
 		if (parser.hasFlag("-path")) {
 
@@ -82,24 +82,20 @@ public class Driver {
 			}
 		}
 
-		//TODOs call function in query file for parse the file and pass in path
 		if(parser.hasFlag("-query")) {
 
 			Path path = parser.getPath("-query");
 
 			try{
 
-				QueryBuilder.queryParser(path, query);
-
 				if(parser.hasFlag("-exact")) {
 
-					query.exactSearch(elements);
-
+					queryBuilder.parseFile(path, true);
 
 				}
 				else {
 
-					query.partialSearch(elements);
+					queryBuilder.parseFile(path, false);
 
 				}
 			}
@@ -122,7 +118,7 @@ public class Driver {
 
 			try {
 
-				query.queryToJson(path);
+				queryBuilder.queryToJson(path);
 
 			}
 			catch(IOException e) {
@@ -133,9 +129,6 @@ public class Driver {
 
 
 		}
-
-
-
 
 		Duration elapsed = Duration.between(start, Instant.now());
 
