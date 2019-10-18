@@ -10,6 +10,8 @@ import java.util.TreeSet;
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+// TODO Capitalize consistently in Javadoc
+
 /**
  * Utility class for build query map
  * @author chrislee
@@ -41,8 +43,8 @@ public class QueryBuilder {
 
 	/**
 	 * parse query file line by line
-	 * @param line
-	 * @param exact
+	 * @param line TODO describe
+	 * @param exact TODO describe
 	 */
 	public void parseLine(String line, boolean exact) {
 
@@ -73,6 +75,34 @@ public class QueryBuilder {
 		}
 
 	}
+	
+//	TODO Better efficency
+//	public void parseLine2(String line, boolean exact) {
+//
+//		Stemmer stemmer = new SnowballStemmer(DEFAULT);
+//
+//		TreeSet<String> words = new TreeSet<>();
+//
+//		String [] tokens = TextParser.parse(line);
+//
+//		String stemmedWords;
+//
+//		for (int i = 0; i < tokens.length; i++) {
+//
+//			stemmedWords = stemmer.stem(tokens[i]).toString();
+//
+//			words.add(stemmedWords);
+//
+//		}
+//
+//		String queries = String.join(" ", words);
+//		
+//		if (!words.isEmpty() && !map.containsKey(queries)) {
+//		
+//			ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
+//			map.putIfAbsent(queries, result);
+//		}
+//	}
 
 	/**
 	 *  The default stemmer algorithm used by this class.

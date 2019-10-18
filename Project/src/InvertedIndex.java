@@ -201,8 +201,12 @@ public class InvertedIndex {
 
 			var word = iterator.next();
 
-			Set<String> wordSet = getWords();
-
+			Set<String> wordSet = getWords(); // TODO Access directly
+			
+//			TODO
+//			if (elements.containsKey(word)) {
+//				update(results,lookUp, word);
+//			}
 
 			if(wordSet.contains(word)) {
 				update(results,lookUp, word);
@@ -232,7 +236,7 @@ public class InvertedIndex {
 
 		var iterator = list.iterator();
 
-		Set<String> invertedWords = getWords();
+		Set<String> invertedWords = getWords(); // TODO Access directly
 
 		while(iterator.hasNext()) {
 
@@ -247,8 +251,14 @@ public class InvertedIndex {
 				update(results,lookUp, matchedWord);
 
 			}
-
+			
 		}
+		
+		/* TODO Start this way...
+		for (String word : elements.keySet()) {
+			then see this: https://github.com/usf-cs212-fall2019/lectures/blob/master/Data%20Structures/src/FindDemo.java#L146-L163
+		}
+		*/
 
 		Collections.sort(results);
 
@@ -263,9 +273,12 @@ public class InvertedIndex {
 	 */
 	private void update(ArrayList<SearchResult> results,Map<String, SearchResult> lookUp, String matchedWord) {
 
-		Set<String> paths = getLocations(matchedWord);
+		Set<String> paths = getLocations(matchedWord); // TODO Don't use public method here, access the elements directly
 
+		// TODO for(String path : elements.get(matchedWord).keySet()) {
 		for(String path: paths) {
+			
+			// TODO Change all of these to access your data directly
 
 			int totalCounts = getTotalWords(path);
 
@@ -273,13 +286,15 @@ public class InvertedIndex {
 
 			String file = path.toString();
 
-			double percentage = (double)currentCounts / totalCounts;
+			double percentage = (double)currentCounts / totalCounts; // TODO Remove---let the result object take care of this for you
 
 			String currentScore = String.format("%.8f", percentage);
 
 			if(lookUp.containsKey(path)) {
 
 				var element = lookUp.get(path);
+				
+				// TODO element.updateCount(path); (and remove the rest of this work)
 
 				Integer lastCounts = element.getCount();
 
@@ -336,12 +351,12 @@ public class InvertedIndex {
 	 * @author chrislee
 	 *
 	 */
-	public static class SearchResult implements Comparable<SearchResult> {
+	public static class SearchResult implements Comparable<SearchResult> { // TODO public class SearchResult (not static)
 
 		/**
 		 * file that holds the word
 		 */
-		private String where;
+		private String where; // TODO final
 
 		/**
 		 * times the word shows up in that file
@@ -351,7 +366,7 @@ public class InvertedIndex {
 		/**
 		 * frequency of the word in that file
 		 */
-		private String score;
+		private String score; // TODO Remove
 
 		/**
 		 * Constructor
@@ -359,6 +374,7 @@ public class InvertedIndex {
 		 * @param count times the word shows up in that file
 		 * @param score frequency of the word in that file
 		 */
+		// TODO public SearchResult(String where), set the count to 0
 		public SearchResult(String where, int count, String score) {
 
 			this.where = where;
@@ -373,12 +389,20 @@ public class InvertedIndex {
 		 * set value of where
 		 * @param location file that holds the word
 		 */
-		public void setLocation(String location) {
+		public void setLocation(String location) { // TODO Remove
 
 			this.where = location;
 
 		}
 
+		/*
+		 * TODO Instead of set count, set score...
+		 * 
+		 * public void updateCount(String word) {
+		 * 		count += elements.get(word).get(where).size();
+		 * }
+		 */
+		
 		/**
 		 * set value of count
 		 * @param newCount times the word shows up in that file
@@ -418,11 +442,22 @@ public class InvertedIndex {
 		/**
 		 * @return the percentage of the frequency of the word
 		 */
-		public String getScore() {
+		public String getScore() { // TODO Return double
 
 			return score;
+			
+			// TODO return (double) count / counts.get(where); (option 1)
+			
+			/*
+			 * TODO 
+			 * 1) Calculating on the fly.
+			 * 2) The other option is to calculate and save every time count changes.
+			 * 3) To save when a change has been made ("dirty") and if the data is "dirty" when you access the score recalculate it
+			 */
 
 		}
+		
+		// TODO public String getFormattedScore() { returns the formatted 8 decimal point score }
 
 		@Override
 		public int compareTo(SearchResult o) {
