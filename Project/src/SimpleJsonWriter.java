@@ -50,7 +50,7 @@ public class SimpleJsonWriter {
 
 		quote("score", writer, level + 1);
 
-		writer.write(": " + element.getScore() + "\n");
+		writer.write(": " + element.getFormattedScore() + "\n");
 
 		indent("}", writer, level);
 
