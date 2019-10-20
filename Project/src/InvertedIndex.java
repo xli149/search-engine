@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
-import java.util.stream.Collectors;
 
 /**
  * Unity Class for parsing the file and store the word index and word count
@@ -220,27 +219,25 @@ public class InvertedIndex {
 
 		Set<String> invertedWords = elements.keySet();
 
+		TreeSet<String> matchedWords = new TreeSet<>(invertedWords);
+
 		while(iterator.hasNext()) {
 
 			var word = iterator.next();
 
-			ArrayList<String> matchedWords = invertedWords
-					.stream().filter(s->s.startsWith(word))
-					.collect(Collectors.toCollection(ArrayList::new));
+			for(String matchedWord : matchedWords.tailSet(word)) {
 
-			for(String matchedWord : matchedWords) {
+				if(!matchedWord.startsWith(word)) {
+
+					break;
+
+				}
 
 				update(results,lookUp, matchedWord);
 
 			}
 
 		}
-
-		/* TODO Start this way...
-		for (String word : elements.keySet()) {
-			then see this: https://github.com/usf-cs212-fall2019/lectures/blob/master/Data%20Structures/src/FindDemo.java#L146-L163
-		}
-		 */
 
 		Collections.sort(results);
 
