@@ -172,9 +172,9 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Exact search method for checking the one-to-one word from query to invertedindex
+	 * Exact search method for checking the one-to-one word from query to invertedIndex
 	 * @param queries  collection of query words
-	 * @return an arraylist contains SearchResult to be added in map
+	 * @return an arrayList contains SearchResult to be added in map
 	 */
 	private ArrayList<SearchResult> exactSearch(Collection<String> queries) {
 
@@ -184,11 +184,7 @@ public class InvertedIndex {
 
 		var list  = queries;
 
-		var iterator = list.iterator();
-
-		while(iterator.hasNext()) {
-
-			var word = iterator.next();
+		for(String word:list) {
 
 			if (elements.containsKey(word)) {
 				update(results,lookUp, word);
@@ -203,9 +199,9 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Partial search method for checking the starwith word from query to invertedindex
+	 * Partial search method for checking the star-with word from query to invertedIndex
 	 * @param queries  collection of query words
-	 * @return an arraylist contains SearchResult to be added in map
+	 * @return an arrayList contains SearchResult to be added in map
 	 */
 	private ArrayList<SearchResult> partialSearch(Collection<String> queries) {
 
@@ -215,15 +211,11 @@ public class InvertedIndex {
 
 		var list = queries;
 
-		var iterator = list.iterator();
-
 		Set<String> invertedWords = elements.keySet();
 
 		TreeSet<String> matchedWords = new TreeSet<>(invertedWords);
 
-		while(iterator.hasNext()) {
-
-			var word = iterator.next();
+		for(String word:list) {
 
 			for(String matchedWord : matchedWords.tailSet(word)) {
 
