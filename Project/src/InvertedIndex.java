@@ -9,6 +9,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+// TODO Need to bring the formatting here to a consistent and professional level.
+
 /**
  * Unity Class for parsing the file and store the word index and word count
  *
@@ -184,10 +186,10 @@ public class InvertedIndex {
 
 		var list  = queries;
 
-		for(String word:list) {
+		for(String word:list) { // TODO Formatting
 
 			if (elements.containsKey(word)) {
-				update(results,lookUp, word);
+				update(results,lookUp, word); // TODO Formatting
 			}
 
 		}
@@ -214,6 +216,11 @@ public class InvertedIndex {
 		Set<String> invertedWords = elements.keySet();
 
 		TreeSet<String> matchedWords = new TreeSet<>(invertedWords);
+		/*
+		 * TODO NOOOOOO Do not make an expensive copy every search! 
+		 * You had to adapt the code to use maps directly! Use tailMap.keySet instead!
+		 * 
+		 */
 
 		for(String word:list) {
 
@@ -236,12 +243,13 @@ public class InvertedIndex {
 		return results;
 	}
 
+	// TODO Fix formatting (in parameter list, space after commas)
 	/**
 	 * Utility method for update result arraylist and lookUp map
 	 * @param results an arrayList of searchResult obj to be add into map
 	 * @param lookUp a map for checking if a file has existed
 	 * @param matchedWord the matched word from query to invertedIndex
-	 */
+	 */ 
 	private void update(ArrayList<SearchResult> results,Map<String, SearchResult> lookUp, String matchedWord) {
 
 
@@ -362,13 +370,15 @@ public class InvertedIndex {
 		/**
 		 * @return the percentage of the frequency of the word
 		 */
-		public double getScore() {
+		public double getScore() { // TODO Fix blank lines
 
 
 			return (double) count / counts.get(where);
 
 		}
 
+		// TODO Still need to add a description to every single Javadoc!
+		
 		/**
 		 * @return string formatted score
 		 */
@@ -418,5 +428,5 @@ public class InvertedIndex {
 }
 
 
-
+// TODO Fix all of these blank lines
 

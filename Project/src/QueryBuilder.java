@@ -10,6 +10,8 @@ import java.util.TreeSet;
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+// TODO Use of blank lines seems a little inconsistent in this file.
+
 /**
  * Utility class for build query map
  * @author chrislee
@@ -71,6 +73,7 @@ public class QueryBuilder {
 		}
 	}
 
+	// TODO Can make the DEFAULT below static too.
 	/**
 	 *  The default stemmer algorithm used by this class.
 	 */
