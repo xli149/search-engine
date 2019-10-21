@@ -36,6 +36,22 @@ public class InvertedIndexBuilder{
 
 		this.index = index;
 	}
+	
+	/*
+	 * TODO To prepare for project 3, make this change here:
+	 * 
+	 * public static void addStem(Path filePath, InvertedIndex index) throws IOException {
+	 * 		... the same code you have now in addStem ...
+	 * }
+	 * 
+	 * then change your currnet addStem method to this:
+	 * 
+	 * public void addStem(Path filePath) throws IOException {
+	 * 		addStem(filePath, this.index);
+	 * }
+	 * 
+	 * It will help to have both a static and non-static version of this method!
+	 */
 
 	/**
 	 * Reads a file line by line, parses each line into cleaned and stemmed words,
@@ -87,6 +103,8 @@ public class InvertedIndexBuilder{
 	};
 
 	/**
+	 * TODO Add description
+	 * 
 	 * @param path the path of a file
 	 * @return a ArrayList of paths
 	 * @throws IOException
