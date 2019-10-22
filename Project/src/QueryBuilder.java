@@ -10,8 +10,6 @@ import java.util.TreeSet;
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
-// TODO Use of blank lines seems a little inconsistent in this file.
-
 /**
  * Utility class for build query map
  * @author chrislee
@@ -69,15 +67,15 @@ public class QueryBuilder {
 		if (!words.isEmpty() && !map.containsKey(queries)) {
 
 			ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
+
 			map.putIfAbsent(queries, result);
 		}
 	}
 
-	// TODO Can make the DEFAULT below static too.
 	/**
 	 *  The default stemmer algorithm used by this class.
 	 */
-	public final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
+	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
 	/**
 	 * Method for parsing the file and store the words into a treeSet

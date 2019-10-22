@@ -36,31 +36,27 @@ public class InvertedIndexBuilder{
 
 		this.index = index;
 	}
-	
-	/*
-	 * TODO To prepare for project 3, make this change here:
-	 * 
-	 * public static void addStem(Path filePath, InvertedIndex index) throws IOException {
-	 * 		... the same code you have now in addStem ...
-	 * }
-	 * 
-	 * then change your currnet addStem method to this:
-	 * 
-	 * public void addStem(Path filePath) throws IOException {
-	 * 		addStem(filePath, this.index);
-	 * }
-	 * 
-	 * It will help to have both a static and non-static version of this method!
-	 */
 
 	/**
-	 * Reads a file line by line, parses each line into cleaned and stemmed words,
+	 * Non-static method that calls the static addStem method
+	 * @param filePath
+	 * @throws IOException
+	 */
+	public void addStem(Path filePath) throws IOException{
+
+		addStem(filePath, this.index);
+
+	}
+
+	/**
+	 * Static method that reads a file line by line, parses each line into cleaned and stemmed words,
 	 * and then adds those words to a set.
 	 *
 	 * @param filePath the path of a file
+	 * @param index the invertedIndex Object
 	 * @throws IOException if unable to read or parse file
 	 */
-	public void addStem(Path filePath) throws IOException {
+	public static void addStem(Path filePath, InvertedIndex index) throws IOException {
 
 		Stemmer stemmer = new SnowballStemmer(DEFAULT);
 
@@ -103,11 +99,10 @@ public class InvertedIndexBuilder{
 	};
 
 	/**
-	 * TODO Add description
-	 * 
+	 * Walking through the files and return a collection of paths
 	 * @param path the path of a file
 	 * @return a ArrayList of paths
-	 * @throws IOException
+	 * @throws IOException if file does not exist
 	 */
 	public static ArrayList<Path> getPaths (Path path) throws IOException{
 
@@ -133,7 +128,7 @@ public class InvertedIndexBuilder{
 
 		while(itr.hasNext()) {
 
-			addStem(itr.next());
+			addStem(itr.next(), index);
 
 		}
 
