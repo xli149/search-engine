@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
@@ -27,6 +30,8 @@ public class QueryBuilder {
 	 */
 	private final TreeMap<String, ArrayList<InvertedIndex.SearchResult>> map;
 
+	private final static Logger logger = LogManager.getLogger();
+
 	/**
 	 * Constructor
 	 * @param index invertedIndex instance
@@ -44,7 +49,7 @@ public class QueryBuilder {
 	 * @param line the line to be parsed
 	 * @param exact flag for choosing searching method
 	 */
-	public void parseLine(String line, boolean exact) {
+	public void parseLine(String line, boolean exact) throws IOException{
 
 		Stemmer stemmer = new SnowballStemmer(DEFAULT);
 
@@ -84,17 +89,49 @@ public class QueryBuilder {
 	 * @throws IOException if the file is unable to read
 	 * @throws NullPointerException if the path is null
 	 */
-	public void parseFile(Path filePath, boolean exact) throws IOException , NullPointerException {
+	public void parseFile(Path filePath, boolean exact, int threads) throws IOException , NullPointerException {
+
+		logger.debug("Query start parsing file: " + Thread.currentThread().getId());
 
 		try(BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)){
 
 			String line = null;
 
-			while((line = reader.readLine()) != null) {
-				parseLine(line, exact);
+			if(threads != 0) {
 
+				WorkQueue queue = new WorkQueue(threads);
+
+				while((line = reader.readLine()) != null) {
+
+					queue.execute(new Task(line, exact));
+
+				}
+
+				try {
+
+					queue.finished();
+
+					queue.shutDown();
+
+				} catch (InterruptedException e) {
+
+					logger.debug("Thread: " + Thread.currentThread().getId() + " get interrupted");
+
+				}
+			}
+			else {
+
+				while((line = reader.readLine()) != null) {
+
+					parseLine(line, exact);
+
+				}
 			}
 		}
+
+
+		logger.debug("Query finished parsing file: " + Thread.currentThread().getId());
+
 	}
 
 	/**
@@ -107,5 +144,51 @@ public class QueryBuilder {
 		SimpleJsonWriter.asNestedQueryObject(path, map);
 
 	}
+
+	private class Task implements Runnable{
+
+
+
+		private String line;
+
+		private boolean exact;
+
+
+		public Task(String line, boolean exact) {
+
+			this.line = line;
+
+			this.exact = exact;
+
+
+		}
+
+
+		@Override
+		public void run() {
+
+			logger.debug("Thread: "+ Thread.currentThread().getId() + " is runninng");
+
+			try {
+
+				synchronized(map) {
+
+					parseLine(line, exact);
+
+				}
+
+			} catch (IOException e) {
+
+				logger.debug("Thread: " + Thread.currentThread().getId() + "gets IOException");
+
+			}
+
+			logger.debug("Thread: "+ Thread.currentThread().getId() + " is finished");
+		}
+
+
+
+	}
+
 
 }

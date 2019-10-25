@@ -35,13 +35,28 @@ public class Driver {
 
 		QueryBuilder queryBuilder = new QueryBuilder(elements);
 
+		int threads = 0;
+
+		if(parser.hasFlag("-threads")) {
+
+			try {
+
+				int num = Integer.parseInt(parser.getString("-threads", "5"));
+
+			}catch(NumberFormatException ex) {
+
+				System.out.println("Please input an integer number for threads");
+			}
+
+		}
+
 		if (parser.hasFlag("-path")) {
 
 			Path path = parser.getPath("-path");
 
 			try{
 
-				builder.traversDirectory(path);
+				builder.traversDirectory(path, threads);
 
 			}
 			catch(IOException | NullPointerException e) {
@@ -90,12 +105,12 @@ public class Driver {
 
 				if(parser.hasFlag("-exact")) {
 
-					queryBuilder.parseFile(path, true);
+					queryBuilder.parseFile(path, true, threads);
 
 				}
 				else {
 
-					queryBuilder.parseFile(path, false);
+					queryBuilder.parseFile(path, false, threads);
 
 				}
 			}

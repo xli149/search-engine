@@ -9,6 +9,9 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
@@ -28,6 +31,8 @@ public class InvertedIndexBuilder{
 	 * Declaration of invetedIndex object
 	 */
 	private final InvertedIndex index;
+
+	private final static Logger logger = LogManager.getLogger();
 
 	/**
 	 * @param index InvertedIndex object
@@ -120,18 +125,94 @@ public class InvertedIndexBuilder{
 	 * @throws IOException if the file is unable to read
 	 * @throws NullPointerException if the path is null
 	 */
-	public void traversDirectory(Path start) throws IOException, NullPointerException {
+	public void traversDirectory(Path start, int threads) throws IOException, NullPointerException {
+
+		logger.debug("travers dirctory starts: Thread: " + Thread.currentThread().getId() );
 
 		ArrayList<Path> paths = getPaths(start);
 
 		Iterator<Path> itr = paths.iterator();
 
-		while(itr.hasNext()) {
+		if(threads != 0) {
 
-			addStem(itr.next(), index);
+			WorkQueue queue = new WorkQueue(threads);
+
+			while(itr.hasNext()) {
+
+				queue.execute(new Task(itr.next(), index));
+
+			}
+
+			try {
+
+				queue.finished();
+
+				queue.shutDown();
+
+			} catch (InterruptedException e) {
+
+				logger.debug("Thread: " + Thread.currentThread().getId() + "gets interrupted");
+			}
+		}
+
+		else {
+
+			while(itr.hasNext()) {
+
+				addStem(itr.next(), index);
+
+			}
+
 
 		}
 
+		logger.debug("travers dirctory finished: Thread: " + Thread.currentThread().getId() );
 	}
+
+	private static class Task implements Runnable{
+
+
+
+		private Path path;
+
+		private InvertedIndex index;
+
+		public Task(Path path, InvertedIndex index) {
+
+			this.path = path;
+
+			this.index = index;
+
+		}
+
+
+		@Override
+		public void run() {
+
+
+			logger.debug("Query start parsing file: " + Thread.currentThread().getId());
+
+			try {
+
+				synchronized(index) {
+
+					addStem(path, index);
+
+				}
+
+			} catch (IOException e) {
+
+				logger.debug("Thread: " + Thread.currentThread().getId() + "gets IOException");
+
+			}
+
+			logger.debug("Query finished parsing file: " + Thread.currentThread().getId());
+		}
+
+
+
+
+	}
+
 
 }
