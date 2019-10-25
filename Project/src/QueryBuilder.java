@@ -129,7 +129,6 @@ public class QueryBuilder {
 			}
 		}
 
-
 		logger.debug("Query finished parsing file: " + Thread.currentThread().getId());
 
 	}

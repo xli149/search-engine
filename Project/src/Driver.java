@@ -41,7 +41,7 @@ public class Driver {
 
 			try {
 
-				int num = Integer.parseInt(parser.getString("-threads", "5"));
+				threads = Integer.parseInt(parser.getString("-threads", "5"));
 
 			}catch(NumberFormatException ex) {
 
