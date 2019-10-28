@@ -108,7 +108,6 @@ public class Driver {
 
 			}
 
-
 		}
 
 		if(parser.hasFlag("-results")) {
