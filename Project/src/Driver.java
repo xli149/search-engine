@@ -22,7 +22,6 @@ public class Driver {
 	 */
 	public static void main(String[] args){
 
-
 		System.out.println("Driver start");
 
 		Instant start = Instant.now();
