@@ -86,6 +86,11 @@ public class Driver {
 			Path path = parser.getPath("-query");
 
 			try{
+				/*
+				 * TODO No need for if/else, just do:
+				 * 
+				 * queryBuilder.parseFile(path, parser.hasFlag("-exact"));
+				 */
 
 				if(parser.hasFlag("-exact")) {
 
