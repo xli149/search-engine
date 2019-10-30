@@ -9,6 +9,9 @@ import java.util.Iterator;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
@@ -19,7 +22,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
  * @version Fall 2019
  *
  */
-public class InvertedIndexBuilder{
+public class MultiThreadInvertedIndexBuilder{
 
 	/** The default stemmer algorithm used by this class. */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
@@ -27,12 +30,17 @@ public class InvertedIndexBuilder{
 	/**
 	 * Declaration of invetedIndex object
 	 */
-	private final InvertedIndex index;
+	private final MultiThreadInvertedIndex index;
 
 	/**
-	 * @param index InvertedIndex object
+	 * Logger Object for logging purpose
 	 */
-	public InvertedIndexBuilder(InvertedIndex index) {
+	private final static Logger logger = LogManager.getLogger();
+
+	/**
+	 * @param index MultiThreadInvertedIndex object
+	 */
+	public MultiThreadInvertedIndexBuilder(MultiThreadInvertedIndex index) {
 
 		this.index = index;
 	}
@@ -53,10 +61,10 @@ public class InvertedIndexBuilder{
 	 * and then adds those words to a set.
 	 *
 	 * @param filePath the path of a file
-	 * @param index the invertedIndex Object
+	 * @param index the MultiThreadInvertedIndex Object
 	 * @throws IOException if unable to read or parse file
 	 */
-	public static void addStem(Path filePath, InvertedIndex index) throws IOException {
+	public static void addStem(Path filePath, MultiThreadInvertedIndex index) throws IOException {
 
 		Stemmer stemmer = new SnowballStemmer(DEFAULT);
 
@@ -116,21 +124,91 @@ public class InvertedIndexBuilder{
 	 * and call itself again
 	 *
 	 * @param start starting path of stream
+	 * @param threads number of threads to be used
 	 * @throws IOException if the file is unable to read
 	 * @throws NullPointerException if the path is null
 	 */
-	public void traversDirectory(Path start) throws IOException, NullPointerException {
+	public void traversDirectory(Path start, int threads) throws IOException, NullPointerException {
+
+		logger.debug("travers dirctory starts: Thread: " + Thread.currentThread().getId() );
 
 		ArrayList<Path> paths = getPaths(start);
 
 		Iterator<Path> itr = paths.iterator();
 
+		WorkQueue queue = new WorkQueue(threads);
+
 		while(itr.hasNext()) {
 
-			addStem(itr.next(), index);
+			queue.execute(new Task(itr.next(), index));
 
 		}
 
+		try {
+
+			queue.finished();
+
+			queue.shutDown();
+
+		} catch (InterruptedException e) {
+
+			logger.debug("Thread: " + Thread.currentThread().getId() + "gets interrupted");
+		}
+
+		logger.debug("travers dirctory finished: Thread: " + Thread.currentThread().getId() );
 	}
-  
+
+	/**
+	 * Nested class for creating Tasks
+	 * @author chrislee
+	 */
+	private static class Task implements Runnable{
+
+		/**
+		 * The path of directory
+		 */
+		private Path path;
+
+		/**
+		 * Object of MultiThreadInvertedIndex
+		 */
+		private MultiThreadInvertedIndex index;
+
+		/**
+		 * Constructor
+		 * @param path Directory to traverse
+		 * @param index object to MultiThreadInvertedIndex
+		 */
+		public Task(Path path, MultiThreadInvertedIndex index) {
+
+			this.path = path;
+
+			this.index = index;
+
+		}
+
+		@Override
+		public void run() {
+
+			logger.debug("Query start parsing file: " + Thread.currentThread().getId());
+
+			try {
+
+				synchronized(index) {
+
+					addStem(path, index);
+
+				}
+
+			} catch (IOException e) {
+
+				logger.debug("Thread: " + Thread.currentThread().getId() + "gets IOException");
+
+			}
+
+			logger.debug("Query finished parsing file: " + Thread.currentThread().getId());
+		}
+
+	}
+
 }
