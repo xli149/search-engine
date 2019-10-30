@@ -68,7 +68,7 @@ public class QueryBuilder {
 
 			ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
 
-			map.putIfAbsent(queries, result);
+			map.putIfAbsent(queries, result); // TODO Can just put(...), know it will be absent
 		}
 	}
 

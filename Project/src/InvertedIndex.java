@@ -184,7 +184,7 @@ public class InvertedIndex {
 
 		var list  = queries;
 
-		for(String word:list) {
+		for(String word:list) { // TODO Formatting, "word : list" with spaces
 
 			if (elements.containsKey(word)) {
 
@@ -213,7 +213,7 @@ public class InvertedIndex {
 
 		var list = queries;
 
-		for(String word:list) {
+		for(String word:list) { // TODO Fix formatting, "word : list" with spaces
 
 			for(String matchedWord : elements.tailMap(word).keySet()) {
 
@@ -290,7 +290,6 @@ public class InvertedIndex {
 
 		}
 
-
 	}
 
 	/**
@@ -325,7 +324,7 @@ public class InvertedIndex {
 		/**
 		 * @param word the word to be updated on its count
 		 */
-		public void updateCount(String word) {
+		public void updateCount(String word) { 
 
 			count += elements.get(word).get(where).size();
 		}
@@ -404,7 +403,7 @@ public class InvertedIndex {
 			}
 			else {
 				return -1;
-			}
+			} // TODO Fix formatting below (extra blank lines)
 
 
 
