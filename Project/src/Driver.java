@@ -86,22 +86,9 @@ public class Driver {
 			Path path = parser.getPath("-query");
 
 			try{
-				/*
-				 * TODO No need for if/else, just do:
-				 * 
-				 * queryBuilder.parseFile(path, parser.hasFlag("-exact"));
-				 */
 
-				if(parser.hasFlag("-exact")) {
+				queryBuilder.parseFile(path, parser.hasFlag("-exact"));
 
-					queryBuilder.parseFile(path, true);
-
-				}
-				else {
-
-					queryBuilder.parseFile(path, false);
-
-				}
 			}
 			catch(IOException e) {
 
@@ -129,7 +116,6 @@ public class Driver {
 				System.out.println("Unable to write query in the file " + path);
 
 			}
-
 
 		}
 

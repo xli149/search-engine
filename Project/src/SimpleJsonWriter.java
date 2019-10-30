@@ -345,7 +345,6 @@ public class SimpleJsonWriter {
 
 	}
 
-
 	/**
 	 * Writes stemmed words as a nested pretty JSON object. The generic notation used
 	 * allows this method to be used for any type of map with any type of nested
@@ -492,6 +491,5 @@ public class SimpleJsonWriter {
 		quote(element, writer);
 
 	}
-
 
 }

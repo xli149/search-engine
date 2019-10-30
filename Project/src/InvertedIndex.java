@@ -184,7 +184,7 @@ public class InvertedIndex {
 
 		var list  = queries;
 
-		for(String word:list) { // TODO Formatting, "word : list" with spaces
+		for(String word : list) {
 
 			if (elements.containsKey(word)) {
 
@@ -213,7 +213,7 @@ public class InvertedIndex {
 
 		var list = queries;
 
-		for(String word:list) { // TODO Fix formatting, "word : list" with spaces
+		for(String word:list) {
 
 			for(String matchedWord : elements.tailMap(word).keySet()) {
 
@@ -324,7 +324,7 @@ public class InvertedIndex {
 		/**
 		 * @param word the word to be updated on its count
 		 */
-		public void updateCount(String word) { 
+		public void updateCount(String word) {
 
 			count += elements.get(word).get(where).size();
 		}
@@ -339,8 +339,8 @@ public class InvertedIndex {
 
 		}
 
-
 		/**
+		 * Return the locations
 		 * @return the file name that word is in
 		 */
 		public String getLocation() {
@@ -349,6 +349,7 @@ public class InvertedIndex {
 		}
 
 		/**
+		 * Return the number of words
 		 * @return the number that the word in that file
 		 */
 		public int getCount() {
@@ -357,6 +358,7 @@ public class InvertedIndex {
 
 		}
 		/**
+		 * Return the percentage
 		 * @return the percentage of the frequency of the word
 		 */
 		public double getScore() {
@@ -402,13 +404,12 @@ public class InvertedIndex {
 				}
 			}
 			else {
+
 				return -1;
-			} // TODO Fix formatting below (extra blank lines)
 
-
+			}
 
 		}
-
 
 	}
 
