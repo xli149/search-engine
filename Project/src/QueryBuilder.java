@@ -18,7 +18,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 public class QueryBuilder {
 
 	/**
-	 * Declaration of invertedIndex type obj
+	 * Declaration of invertedIndex type object
 	 */
 	private final InvertedIndex index;
 
@@ -68,7 +68,7 @@ public class QueryBuilder {
 
 			ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
 
-			map.putIfAbsent(queries, result);
+			map.put(queries, result);
 		}
 	}
 

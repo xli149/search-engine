@@ -136,31 +136,15 @@ public class Driver {
 			Path path = parser.getPath("-query");
 
 			try{
+
 				if(threads > 0) {
 
-					if(parser.hasFlag("-exact")) {
+					threadQueryBuilder.parseFile(path, parser.hasFlag("-exact"), threads);
 
-						threadQueryBuilder.parseFile(path, true, threads);
-
-					}
-					else {
-
-						threadQueryBuilder.parseFile(path, false, threads);
-
-					}
 				}
 				else {
 
-					if(parser.hasFlag("-exact")) {
-
-						queryBuilder.parseFile(path, true);
-
-					}
-					else {
-
-						queryBuilder.parseFile(path, false);
-
-					}
+					queryBuilder.parseFile(path, parser.hasFlag("-exact"));
 				}
 			}
 			catch(IOException e) {

@@ -10,9 +10,6 @@ import java.util.LinkedList;
  */
 public class WorkQueue {
 
-	// TODO Modify existing methods if necessary.
-	// TODO Add new methods if necessary.
-	//private static final Logger logger = LogManager.getLogger();
 	/**
 	 * Pool of worker threads that will wait in the background until work is
 	 * available.
@@ -28,6 +25,9 @@ public class WorkQueue {
 	/** The default number of threads to use when not specified. */
 	public static final int DEFAULT = 5;
 
+	/**
+	 * The number of tasks are pending
+	 */
 	public int pending;
 
 	/**
@@ -56,17 +56,12 @@ public class WorkQueue {
 
 		pending = 0;
 
-
-
-		// start the threads so they are waiting in the background
 		for (int i = 0; i < threads; i++) {
 
 
 			workers[i] = new PoolWorker();
 
 			workers[i].start();
-
-
 
 		}
 
@@ -80,8 +75,6 @@ public class WorkQueue {
 	 */
 	public void execute(Runnable r) {
 
-		//logger.debug("Add runnable object to queue " + Thread.currentThread().getId());
-
 		synchronized (queue) {
 
 			queue.addLast(r);
@@ -90,17 +83,15 @@ public class WorkQueue {
 
 			queue.notifyAll();
 
-
 		}
-		//logger.debug("Finished adding runnable object to queue " + Thread.currentThread().getId());
 
 	}
 
 	/**
 	 * Waits for all pending work to be finished.
+	 * @throws InterruptedException if another thread is trying to interrupt current thread
 	 */
 	public void finished() throws InterruptedException {
-		// TODO IMPLEMENT THIS METHOD
 
 		synchronized(queue) {
 
@@ -117,7 +108,7 @@ public class WorkQueue {
 	 * but threads in-progress will not be interrupted.
 	 */
 	public void shutDown() {
-		// safe to do unsynchronized due to volatile keyword
+
 		shutdown = true;
 
 		synchronized (queue) {
@@ -138,6 +129,9 @@ public class WorkQueue {
 
 	}
 
+	/**
+	 * Increase the number of pending tasks
+	 */
 	public void increment() {
 
 		synchronized(queue) {
@@ -148,6 +142,9 @@ public class WorkQueue {
 
 	}
 
+	/**
+	 * Decrease the number of pending tasks
+	 */
 	public void decrement() {
 
 		synchronized(queue) {
@@ -171,10 +168,8 @@ public class WorkQueue {
 	 */
 	private class PoolWorker extends Thread {
 
-
 		@Override
 		public void run() {
-			//logger.debug("new thread started" + "Theard: " + Thread.currentThread().getId());
 
 			Runnable r = null;
 
@@ -198,9 +193,6 @@ public class WorkQueue {
 						}
 					}
 
-					// exit while for one of two reasons:
-					// (a) queue has work, or (b) shutdown has been called
-
 					if (shutdown) {
 
 						break;
@@ -209,22 +201,20 @@ public class WorkQueue {
 					else {
 
 						r = queue.removeFirst();
-						//
-
 
 					}
 				}
 				try {
+
 					r.run();
-					//logger.debug("new thread finished" + "Theard: " + Thread.currentThread().getId());
+
 					decrement();
 				}
 				catch (RuntimeException ex) {
-					// catch runtime exceptions to avoid leaking threads
+
 					System.err.println("Warning: Work queue encountered an exception while running.");
 				}
 			}
-
 
 		}
 	}

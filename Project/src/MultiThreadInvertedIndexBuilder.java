@@ -32,6 +32,9 @@ public class MultiThreadInvertedIndexBuilder{
 	 */
 	private final MultiThreadInvertedIndex index;
 
+	/**
+	 * Logger Object for logging purpose
+	 */
 	private final static Logger logger = LogManager.getLogger();
 
 	/**
@@ -115,13 +118,13 @@ public class MultiThreadInvertedIndexBuilder{
 
 	}
 
-
 	/**
 	 * Recursively checking if a file descriptor points to a file or not
 	 * pass it to parse if it is a file, otherwise get a list of sub-folders
 	 * and call itself again
 	 *
 	 * @param start starting path of stream
+	 * @param threads number of threads to be used
 	 * @throws IOException if the file is unable to read
 	 * @throws NullPointerException if the path is null
 	 */
@@ -155,14 +158,27 @@ public class MultiThreadInvertedIndexBuilder{
 		logger.debug("travers dirctory finished: Thread: " + Thread.currentThread().getId() );
 	}
 
+	/**
+	 * Nested class for creating Tasks
+	 * @author chrislee
+	 */
 	private static class Task implements Runnable{
 
-
-
+		/**
+		 * The path of directory
+		 */
 		private Path path;
 
+		/**
+		 * Object of MultiThreadInvertedIndex
+		 */
 		private MultiThreadInvertedIndex index;
 
+		/**
+		 * Constructor
+		 * @param path Directory to traverse
+		 * @param index object to MultiThreadInvertedIndex
+		 */
 		public Task(Path path, MultiThreadInvertedIndex index) {
 
 			this.path = path;
@@ -171,10 +187,8 @@ public class MultiThreadInvertedIndexBuilder{
 
 		}
 
-
 		@Override
 		public void run() {
-
 
 			logger.debug("Query start parsing file: " + Thread.currentThread().getId());
 
@@ -195,10 +209,6 @@ public class MultiThreadInvertedIndexBuilder{
 			logger.debug("Query finished parsing file: " + Thread.currentThread().getId());
 		}
 
-
-
-
 	}
-
 
 }

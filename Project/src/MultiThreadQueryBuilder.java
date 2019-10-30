@@ -21,7 +21,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 public class MultiThreadQueryBuilder {
 
 	/**
-	 * Declaration of invertedIndex type obj
+	 * Declaration of invertedIndex type object
 	 */
 	private final MultiThreadInvertedIndex index;
 
@@ -30,6 +30,9 @@ public class MultiThreadQueryBuilder {
 	 */
 	private final TreeMap<String, ArrayList<MultiThreadInvertedIndex.SearchResult>> map;
 
+	/**
+	 * Logger object for logging purpose
+	 */
 	private final static Logger logger = LogManager.getLogger();
 
 	/**
@@ -48,6 +51,7 @@ public class MultiThreadQueryBuilder {
 	 * Parse query file line by line
 	 * @param line the line to be parsed
 	 * @param exact flag for choosing searching method
+	 * @throws IOException if the file is not readable
 	 */
 	public void parseLine(String line, boolean exact) throws IOException{
 
@@ -86,6 +90,7 @@ public class MultiThreadQueryBuilder {
 	 * Method for parsing the file and store the words into a treeSet
 	 * @param filePath path of a file
 	 * @param exact flag to determine using exact search or partial search
+	 * @param threads the number of threads to be used
 	 * @throws IOException if the file is unable to read
 	 * @throws NullPointerException if the path is null
 	 */
@@ -134,24 +139,34 @@ public class MultiThreadQueryBuilder {
 
 	}
 
+	/**
+	 * Nested class for creating Task object
+	 * @author chrislee
+	 */
 	private class Task implements Runnable{
 
-
-
+		/**
+		 * The line to be parsed
+		 */
 		private String line;
 
+		/**
+		 * The function to be used for parsing
+		 */
 		private boolean exact;
 
-
+		/**
+		 * Constructor
+		 * @param line the line to be parsed
+		 * @param exact boolean value for choosing search function
+		 */
 		public Task(String line, boolean exact) {
 
 			this.line = line;
 
 			this.exact = exact;
 
-
 		}
-
 
 		@Override
 		public void run() {
@@ -175,9 +190,6 @@ public class MultiThreadQueryBuilder {
 			logger.debug("Thread: "+ Thread.currentThread().getId() + " is finished");
 		}
 
-
-
 	}
-
 
 }

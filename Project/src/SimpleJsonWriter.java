@@ -492,6 +492,4 @@ public class SimpleJsonWriter {
 		quote(element, writer);
 
 	}
-
-
 }
