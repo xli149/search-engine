@@ -28,19 +28,53 @@ public class Driver {
 
 		ArgumentParser parser = new ArgumentParser(args);
 
-		InvertedIndex elements = new InvertedIndex();
+		InvertedIndex index = new InvertedIndex();
 
-		InvertedIndexBuilder builder = new InvertedIndexBuilder(elements);
+		InvertedIndexBuilder builder = new InvertedIndexBuilder(index);
 
-		QueryBuilder queryBuilder = new QueryBuilder(elements);
+		QueryBuilder queryBuilder = new QueryBuilder(index);
+
+		int threads = 0;
+
+		MultiThreadInvertedIndex threadIndex = new MultiThreadInvertedIndex();
+
+		MultiThreadInvertedIndexBuilder threadBuilder =  new MultiThreadInvertedIndexBuilder(threadIndex);
+
+		MultiThreadQueryBuilder threadQueryBuilder = new MultiThreadQueryBuilder(threadIndex);
+
+
+		if(parser.hasFlag("-threads")) {
+
+			try {
+
+				threads = Integer.parseInt(parser.getString("-threads", "5"));
+
+				if(threads < 0) {
+
+					threads = 5;
+				}
+
+			}catch(NumberFormatException ex) {
+
+				System.out.println("Please input an integer number for threads");
+			}
+
+		}
 
 		if (parser.hasFlag("-path")) {
 
 			Path path = parser.getPath("-path");
 
 			try{
+				if(threads > 0) {
 
-				builder.traversDirectory(path);
+					threadBuilder.traversDirectory(path, threads);
+
+				}
+				else {
+
+					builder.traversDirectory(path);
+				}
 
 			}
 			catch(IOException | NullPointerException e) {
@@ -56,8 +90,15 @@ public class Driver {
 			Path path = parser.getPath("-index", Path.of("index.json"));
 
 			try {
+				if(threads > 0) {
 
-				elements.indexToJson(path);
+					threadIndex.indexToJson(path);
+
+				}
+				else {
+
+					index.indexToJson(path);
+				}
 
 			}
 			catch (IOException e) {
@@ -72,7 +113,15 @@ public class Driver {
 
 			try {
 
-				elements.wordCountToJson(path);
+				if(threads > 0) {
+
+					threadIndex.wordCountToJson(path);
+
+				}
+				else {
+
+					index.wordCountToJson(path);
+				}
 
 			}
 			catch (IOException e){
@@ -87,12 +136,23 @@ public class Driver {
 
 			try{
 
-				queryBuilder.parseFile(path, parser.hasFlag("-exact"));
+				if(threads > 0) {
 
+					threadQueryBuilder.parseFile(path, parser.hasFlag("-exact"), threads);
+
+				}
+        
+				else {
+
+					queryBuilder.parseFile(path, parser.hasFlag("-exact"));
+          
+				}
+        
 			}
 			catch(IOException e) {
 
 				System.out.println("Unable to read the query " + path);
+        
 			}
 			catch(NullPointerException e) {
 
@@ -108,7 +168,16 @@ public class Driver {
 
 			try {
 
-				queryBuilder.queryToJson(path);
+				if(threads > 0) {
+
+					threadQueryBuilder.queryToJson(path);
+
+				}
+				else {
+
+					queryBuilder.queryToJson(path);
+
+				}
 
 			}
 			catch(IOException e) {
