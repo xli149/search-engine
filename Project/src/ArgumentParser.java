@@ -28,7 +28,6 @@ public class ArgumentParser {
 	 * Initializes this argument map and then parsers the arguments into flag/value
 	 * pairs where possible. Some flags may not have associated values. If a flag is
 	 * repeated, its value is overwritten.
-	 *
 	 * @param args the command line arguments to parse
 	 */
 	public ArgumentParser(String[] args) {
@@ -42,7 +41,6 @@ public class ArgumentParser {
 	/**
 	 * Parses the arguments into flag/value pairs where possible. Some flags may not
 	 * have associated values. If a flag is repeated, its value is overwritten.
-	 *
 	 * @param args the command line arguments to parse
 	 */
 	private void parse(String[] args) {
@@ -71,7 +69,6 @@ public class ArgumentParser {
 	/**
 	 * Determines whether the argument is a flag. Flags start with a dash "-"
 	 * character, followed by at least one other character.
-	 *
 	 * @param arg the argument to test if its a flag
 	 * @return {@code true} if the argument is a flag
 	 *
@@ -102,7 +99,6 @@ public class ArgumentParser {
 
 	/**
 	 * Returns the number of unique flags.
-	 *
 	 * @return number of unique flags
 	 */
 	public int numFlags() {
@@ -113,7 +109,6 @@ public class ArgumentParser {
 
 	/**
 	 * Determines whether the specified flag exists.
-	 *
 	 * @param flag the flag to search for
 	 * @return {@code true} if the flag exists
 	 */
@@ -125,7 +120,6 @@ public class ArgumentParser {
 
 	/**
 	 * Determines whether the specified flag is mapped to a non-null value.
-	 *
 	 * @param flag the flag to search for
 	 * @return {@code true} if the flag is mapped to a non-null value
 	 */
@@ -152,9 +146,8 @@ public class ArgumentParser {
 	 * Returns the value to which the specified flag is mapped as a {@link String},
 	 * or the default value if there is no mapping for the flag.
 	 *
-	 * @param flag         the flag whose associated value is to be returned
-	 * @param defaultValue the default value to return if there is no mapping for
-	 *                     the flag
+	 * @param flag  the flag whose associated value is to be returned
+	 * @param defaultValue the default value to return if there is no mapping for the flag
 	 * @return the value to which the specified flag is mapped, or the default value
 	 *         if there is no mapping for the flag
 	 */
@@ -208,10 +201,4 @@ public class ArgumentParser {
 
 	}
 
-	/**
-	 * A simple main method that parses the command-line arguments provided and
-	 * prints the result to the console.
-	 *
-	 * @param args the command-line arguments to parse
-	 */
 }

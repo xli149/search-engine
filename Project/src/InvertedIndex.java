@@ -184,7 +184,7 @@ public class InvertedIndex {
 
 		var list  = queries;
 
-		for(String word:list) {
+		for(String word : list) {
 
 			if (elements.containsKey(word)) {
 
@@ -290,7 +290,6 @@ public class InvertedIndex {
 
 		}
 
-
 	}
 
 	/**
@@ -340,8 +339,8 @@ public class InvertedIndex {
 
 		}
 
-
 		/**
+		 * Return the locations
 		 * @return the file name that word is in
 		 */
 		public String getLocation() {
@@ -350,6 +349,7 @@ public class InvertedIndex {
 		}
 
 		/**
+		 * Return the number of words
 		 * @return the number that the word in that file
 		 */
 		public int getCount() {
@@ -358,6 +358,7 @@ public class InvertedIndex {
 
 		}
 		/**
+		 * Return the percentage
 		 * @return the percentage of the frequency of the word
 		 */
 		public double getScore() {
@@ -403,13 +404,12 @@ public class InvertedIndex {
 				}
 			}
 			else {
+
 				return -1;
+
 			}
 
-
-
 		}
-
 
 	}
 

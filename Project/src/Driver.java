@@ -22,7 +22,6 @@ public class Driver {
 	 */
 	public static void main(String[] args){
 
-
 		System.out.println("Driver start");
 
 		Instant start = Instant.now();
@@ -142,21 +141,24 @@ public class Driver {
 					threadQueryBuilder.parseFile(path, parser.hasFlag("-exact"), threads);
 
 				}
+        
 				else {
 
 					queryBuilder.parseFile(path, parser.hasFlag("-exact"));
+          
 				}
+        
 			}
 			catch(IOException e) {
 
 				System.out.println("Unable to read the query " + path);
+        
 			}
 			catch(NullPointerException e) {
 
 				System.out.println("Path is not valid " + path);
 
 			}
-
 
 		}
 
@@ -184,7 +186,6 @@ public class Driver {
 
 			}
 
-
 		}
 
 		Duration elapsed = Duration.between(start, Instant.now());
@@ -195,4 +196,3 @@ public class Driver {
 
 	}
 }
-

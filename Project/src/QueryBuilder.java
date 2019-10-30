@@ -69,7 +69,9 @@ public class QueryBuilder {
 			ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
 
 			map.put(queries, result);
+      
 		}
+    
 	}
 
 	/**
@@ -91,6 +93,7 @@ public class QueryBuilder {
 			String line = null;
 
 			while((line = reader.readLine()) != null) {
+
 				parseLine(line, exact);
 
 			}

@@ -110,7 +110,6 @@ public class InvertedIndexBuilder{
 
 	}
 
-
 	/**
 	 * Recursively checking if a file descriptor points to a file or not
 	 * pass it to parse if it is a file, otherwise get a list of sub-folders
@@ -133,4 +132,5 @@ public class InvertedIndexBuilder{
 		}
 
 	}
+  
 }
