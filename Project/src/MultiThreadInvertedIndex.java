@@ -19,7 +19,7 @@ import java.util.TreeSet;
 public class MultiThreadInvertedIndex {
 
 	/**
-	 * Collection for stemmed word index of a file
+	 * Collection for stemmed word index of a file.
 	 */
 	private final TreeMap<String, TreeMap<String, TreeSet<Integer>>> elements;
 
