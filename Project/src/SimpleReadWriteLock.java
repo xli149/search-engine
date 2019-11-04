@@ -143,7 +143,7 @@ public class SimpleReadWriteLock {
 
 				reader--;
 
-				lock.notifyAll();
+				lock.notifyAll(); // TODO Only do if reader is 0
 			}
 
 

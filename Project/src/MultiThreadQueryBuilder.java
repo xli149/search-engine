@@ -13,6 +13,8 @@ import org.apache.logging.log4j.Logger;
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+//TODO extend single threaded version
+
 /**
  * Utility class for build query map
  * @author chrislee

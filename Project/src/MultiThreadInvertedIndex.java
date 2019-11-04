@@ -9,6 +9,12 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/*
+ * TODO extends InvertedIndex
+ * See this: https://github.com/usf-cs212-fall2019/template-readwritelock/blob/master/ReadWriteLock/src/ThreadSafeIndexedSet.java
+ * See this: https://github.com/usf-cs212-fall2019/lectures/blob/master/Multithreading%20Synchronization/src/ConcurrentSet.java
+ */
+
 /**
  * Unity Class for parsing the file and store the word index and word count
  *
@@ -268,6 +274,8 @@ public class MultiThreadInvertedIndex {
 
 	}
 
+	// TODO Search should use a read lock.
+	
 	/**
 	 * Exact search method for checking the one-to-one word from query to MultithreadInvertedIndex
 	 * @param queries  collection of query words
