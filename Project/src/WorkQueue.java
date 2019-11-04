@@ -28,7 +28,7 @@ public class WorkQueue {
 	/**
 	 * The number of tasks are pending
 	 */
-	public int pending;
+	public int pending; // TODO private
 
 	/**
 	 * Starts a work queue with the default number of threads.
@@ -79,7 +79,7 @@ public class WorkQueue {
 
 			queue.addLast(r);
 
-			increment();
+			increment(); // TODO Move before synchronized (queue)
 
 			queue.notifyAll();
 
@@ -91,13 +91,13 @@ public class WorkQueue {
 	 * Waits for all pending work to be finished.
 	 * @throws InterruptedException if another thread is trying to interrupt current thread
 	 */
-	public void finished() throws InterruptedException {
+	public void finished() throws InterruptedException { // TODO Make synchronized
 
-		synchronized(queue) {
+		synchronized(queue) { // TODO Remove
 
 			if(pending > 0) {
 
-				queue.wait();
+				queue.wait(); // TODO this.wait()
 
 			}
 		}
@@ -132,9 +132,9 @@ public class WorkQueue {
 	/**
 	 * Increase the number of pending tasks
 	 */
-	public void increment() {
+	public void increment() { // TODO private synchronized
 
-		synchronized(queue) {
+		synchronized(queue) { // TODO Remove
 
 			pending++;
 
@@ -145,15 +145,15 @@ public class WorkQueue {
 	/**
 	 * Decrease the number of pending tasks
 	 */
-	public void decrement() {
+	public void decrement() { // TODO private synchronized
 
-		synchronized(queue) {
+		synchronized(queue) { // TODO Remove
 
 			pending--;
 
 			if(pending == 0) {
 
-				queue.notifyAll();
+				queue.notifyAll(); // TODO this.notifyAll
 
 			}
 		}
@@ -204,11 +204,12 @@ public class WorkQueue {
 
 					}
 				}
+				
 				try {
 
 					r.run();
 
-					decrement();
+					decrement(); // TODO Move into a finally block
 				}
 				catch (RuntimeException ex) {
 

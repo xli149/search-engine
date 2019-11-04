@@ -15,6 +15,8 @@ import org.apache.logging.log4j.Logger;
 import opennlp.tools.stemmer.Stemmer;
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
+// TODO extend single threaded version
+
 /**
  * Unity Class for parsing the file and store the word index and word count
  *
@@ -64,7 +66,7 @@ public class MultiThreadInvertedIndexBuilder{
 	 * @param index the MultiThreadInvertedIndex Object
 	 * @throws IOException if unable to read or parse file
 	 */
-	public static void addStem(Path filePath, MultiThreadInvertedIndex index) throws IOException {
+	public static void addStem(Path filePath, MultiThreadInvertedIndex index) throws IOException { // TODO Remove
 
 		MultiThreadInvertedIndex localIndex =  new MultiThreadInvertedIndex();
 
@@ -223,6 +225,14 @@ public class MultiThreadInvertedIndexBuilder{
 			logger.debug("Query start parsing file: " + Thread.currentThread().getId());
 
 			try {
+				
+				/*
+				 * InvertedIndex local = new InvertedIndex();
+				 * 
+				 * InvertedIndexBuilder.addStem(path, local);
+				 * 
+				 * index.addAll(local);
+				 */
 
 
 

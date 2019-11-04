@@ -9,6 +9,11 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+/*
+ * TODO Either just remove because you don't have to multithread this part or
+ * reuse the implementations somehow
+ */
+
 /**
  * Outputs several simple data structures in "pretty" JSON format where
  * newlines are used to separate elements and nested elements are indented.

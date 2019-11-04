@@ -412,5 +412,20 @@ public class InvertedIndex {
 		}
 
 	}
-
+	
+	/* TODO
+	public void addAll(InvertedIndex other) {
+		// update the other.index and this.index here
+		for (String word : other.elements.keySet()) {
+			if (this.elements.containsKey(word) == false) {
+				this.elements.put(word, other.elements.get(word));
+			}
+			else {
+				// you figure this one out
+			}
+		}
+		
+		
+		// update the other.counts and this.counts here
+		}*/
 }
