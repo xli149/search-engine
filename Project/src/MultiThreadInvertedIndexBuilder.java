@@ -6,8 +6,6 @@ import java.util.Iterator;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// TODO extend single threaded version
-
 /**
  * Unity Class for parsing the file and store the word index and word count
  *
@@ -36,7 +34,6 @@ public class MultiThreadInvertedIndexBuilder extends InvertedIndexBuilder{
 
 		this.index = index;
 	}
-
 
 	/**
 	 * Recursively checking if a file descriptor points to a file or not
