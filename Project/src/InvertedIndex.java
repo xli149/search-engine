@@ -176,7 +176,7 @@ public class InvertedIndex {
 	 * @param queries  collection of query words
 	 * @return an arrayList contains SearchResult to be added in map
 	 */
-	private ArrayList<SearchResult> exactSearch(Collection<String> queries) {
+	public ArrayList<SearchResult> exactSearch(Collection<String> queries) {
 
 		ArrayList<SearchResult> results = new ArrayList<>();
 
@@ -205,7 +205,7 @@ public class InvertedIndex {
 	 * @param queries  collection of query words
 	 * @return an arrayList contains SearchResult to be added in map
 	 */
-	private ArrayList<SearchResult> partialSearch(Collection<String> queries) {
+	public ArrayList<SearchResult> partialSearch(Collection<String> queries) {
 
 		ArrayList<SearchResult> results = new ArrayList<>();
 
@@ -241,7 +241,6 @@ public class InvertedIndex {
 	 * @param matchedWord the matched word from query to invertedIndex
 	 */
 	private void update(ArrayList<SearchResult> results, Map<String, SearchResult> lookUp, String matchedWord) {
-
 
 		for(String path : elements.get(matchedWord).keySet()) {
 
@@ -412,20 +411,34 @@ public class InvertedIndex {
 		}
 
 	}
-	
-	/* TODO
+
+	/**
+	 * Utility method for adding local InvertedIndex to InvertedIndex
+	 * @param other the local InvertedIndex
+	 */
 	public void addAll(InvertedIndex other) {
-		// update the other.index and this.index here
+
 		for (String word : other.elements.keySet()) {
+
 			if (this.elements.containsKey(word) == false) {
+
 				this.elements.put(word, other.elements.get(word));
+
 			}
 			else {
-				// you figure this one out
+
+				this.elements.get(word).putAll(other.elements.get(word));
+
 			}
+
 		}
-		
-		
-		// update the other.counts and this.counts here
-		}*/
+
+		for(String path : other.counts.keySet()) {
+
+			this.counts.put(path, other.counts.get(path));
+
+		}
+
+	}
+
 }

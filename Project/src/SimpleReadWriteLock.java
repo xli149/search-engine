@@ -50,6 +50,7 @@ public class SimpleReadWriteLock {
 	 * Initializes a new simple read/write lock.
 	 */
 	public SimpleReadWriteLock() {
+
 		readerLock = new ReadLock();
 
 		writerLock = new WriteLock();
@@ -112,7 +113,6 @@ public class SimpleReadWriteLock {
 
 			synchronized (lock) {
 
-
 				while(writer > 0) {
 
 					try {
@@ -143,9 +143,12 @@ public class SimpleReadWriteLock {
 
 				reader--;
 
-				lock.notifyAll(); // TODO Only do if reader is 0
-			}
+				if(reader == 0) {
 
+					lock.notifyAll();
+
+				}
+			}
 
 		}
 

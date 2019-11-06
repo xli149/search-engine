@@ -69,9 +69,9 @@ public class QueryBuilder {
 			ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
 
 			map.put(queries, result);
-      
+
 		}
-    
+
 	}
 
 	/**

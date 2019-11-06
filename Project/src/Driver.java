@@ -141,18 +141,18 @@ public class Driver {
 					threadQueryBuilder.parseFile(path, parser.hasFlag("-exact"), threads);
 
 				}
-        
+
 				else {
 
 					queryBuilder.parseFile(path, parser.hasFlag("-exact"));
-          
+
 				}
-        
+
 			}
 			catch(IOException e) {
 
 				System.out.println("Unable to read the query " + path);
-        
+
 			}
 			catch(NullPointerException e) {
 

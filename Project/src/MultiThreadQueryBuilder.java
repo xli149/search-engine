@@ -3,34 +3,16 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-
-import opennlp.tools.stemmer.Stemmer;
-import opennlp.tools.stemmer.snowball.SnowballStemmer;
-
-//TODO extend single threaded version
 
 /**
  * Utility class for build query map
  * @author chrislee
  *
  */
-public class MultiThreadQueryBuilder {
-
-	/**
-	 * Declaration of invertedIndex type object
-	 */
-	private final MultiThreadInvertedIndex index;
-
-	/**
-	 * Query map
-	 */
-	private final TreeMap<String, ArrayList<MultiThreadInvertedIndex.SearchResult>> map;
+public class MultiThreadQueryBuilder extends QueryBuilder {
 
 	/**
 	 * Logger object for logging purpose
@@ -38,14 +20,19 @@ public class MultiThreadQueryBuilder {
 	private final static Logger logger = LogManager.getLogger();
 
 	/**
+	 * The object of InvertedIndex
+	 */
+	private final InvertedIndex index;
+
+	/**
 	 * Constructor
 	 * @param index invertedIndex instance
 	 */
-	public MultiThreadQueryBuilder(MultiThreadInvertedIndex index) {
+	public MultiThreadQueryBuilder(InvertedIndex index) {
+
+		super(index);
 
 		this.index = index;
-
-		map = new TreeMap<>();
 
 	}
 
@@ -53,40 +40,12 @@ public class MultiThreadQueryBuilder {
 	 * Parse query file line by line
 	 * @param line the line to be parsed
 	 * @param exact flag for choosing searching method
-	 * @throws IOException if the file is not readable
 	 */
-	public void parseLine(String line, boolean exact) throws IOException{
+	@Override
+	public void parseLine(String line, boolean exact){
 
-		Stemmer stemmer = new SnowballStemmer(DEFAULT);
-
-		TreeSet<String> words = new TreeSet<>();
-
-		String [] tokens = TextParser.parse(line);
-
-		String stemmedWords;
-
-		for (int i = 0; i < tokens.length; i++) {
-
-			stemmedWords = stemmer.stem(tokens[i]).toString();
-
-			words.add(stemmedWords);
-
-		}
-
-		String queries = String.join(" ", words);
-
-		if (!words.isEmpty() && !map.containsKey(queries)) {
-
-			ArrayList<MultiThreadInvertedIndex.SearchResult> result = index.search(words, exact);
-
-			map.putIfAbsent(queries, result);
-		}
+		super.parseLine(line, exact);
 	}
-
-	/**
-	 *  The default stemmer algorithm used by this class.
-	 */
-	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
 	/**
 	 * Method for parsing the file and store the words into a treeSet
@@ -135,9 +94,10 @@ public class MultiThreadQueryBuilder {
 	 * @param path a path of file
 	 * @throws IOException
 	 */
+	@Override
 	public void queryToJson(Path path) throws IOException {
 
-		MultiThreadJsonWriter.asNestedQueryObject(path, map);
+		super.queryToJson(path);
 
 	}
 
@@ -175,17 +135,9 @@ public class MultiThreadQueryBuilder {
 
 			logger.debug("Thread: "+ Thread.currentThread().getId() + " is runninng");
 
-			try {
+			synchronized(index) {
 
-				synchronized(map) {
-
-					parseLine(line, exact);
-
-				}
-
-			} catch (IOException e) {
-
-				logger.debug("Thread: " + Thread.currentThread().getId() + "gets IOException");
+				parseLine(line, exact);
 
 			}
 

@@ -28,7 +28,7 @@ public class WorkQueue {
 	/**
 	 * The number of tasks are pending
 	 */
-	public int pending; // TODO private
+	private int pending;
 
 	/**
 	 * Starts a work queue with the default number of threads.
@@ -75,11 +75,11 @@ public class WorkQueue {
 	 */
 	public void execute(Runnable r) {
 
+		increment();
+
 		synchronized (queue) {
 
 			queue.addLast(r);
-
-			increment(); // TODO Move before synchronized (queue)
 
 			queue.notifyAll();
 
@@ -91,15 +91,12 @@ public class WorkQueue {
 	 * Waits for all pending work to be finished.
 	 * @throws InterruptedException if another thread is trying to interrupt current thread
 	 */
-	public void finished() throws InterruptedException { // TODO Make synchronized
+	public synchronized void finished() throws InterruptedException {
 
-		synchronized(queue) { // TODO Remove
+		if(pending > 0) {
 
-			if(pending > 0) {
+			this.wait();
 
-				queue.wait(); // TODO this.wait()
-
-			}
 		}
 	}
 
@@ -132,30 +129,23 @@ public class WorkQueue {
 	/**
 	 * Increase the number of pending tasks
 	 */
-	public void increment() { // TODO private synchronized
+	private synchronized void increment() {
 
-		synchronized(queue) { // TODO Remove
-
-			pending++;
-
-		}
+		pending++;
 
 	}
 
 	/**
 	 * Decrease the number of pending tasks
 	 */
-	public void decrement() { // TODO private synchronized
+	private synchronized void decrement() {
 
-		synchronized(queue) { // TODO Remove
+		pending--;
 
-			pending--;
+		if(pending == 0) {
 
-			if(pending == 0) {
+			this.notifyAll();
 
-				queue.notifyAll(); // TODO this.notifyAll
-
-			}
 		}
 
 	}
@@ -192,7 +182,6 @@ public class WorkQueue {
 
 						}
 					}
-
 					if (shutdown) {
 
 						break;
@@ -204,17 +193,22 @@ public class WorkQueue {
 
 					}
 				}
-				
 				try {
 
 					r.run();
 
-					decrement(); // TODO Move into a finally block
 				}
 				catch (RuntimeException ex) {
 
 					System.err.println("Warning: Work queue encountered an exception while running.");
+
 				}
+				finally {
+
+					decrement();
+
+				}
+
 			}
 
 		}
