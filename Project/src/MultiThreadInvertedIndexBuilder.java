@@ -125,9 +125,6 @@ public class MultiThreadInvertedIndexBuilder extends InvertedIndexBuilder{
 
 
 
-				//addStem(path, index);
-
-
 
 			} catch (IOException e) {
 
