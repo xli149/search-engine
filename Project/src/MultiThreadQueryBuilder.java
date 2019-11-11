@@ -135,7 +135,7 @@ public class MultiThreadQueryBuilder extends QueryBuilder {
 
 			logger.debug("Thread: "+ Thread.currentThread().getId() + " is runninng");
 
-			synchronized(index) {
+			synchronized(index) { // TODO Not really benefiting much for the multithreading yet
 
 				parseLine(line, exact);
 
@@ -145,5 +145,17 @@ public class MultiThreadQueryBuilder extends QueryBuilder {
 		}
 
 	}
+	
+	/*
+	 * TODO When we do need ot modify the implementation... it is better to create
+	 * a QueryBuilderInterface with the common methods and then implement it 
+	 * in both your single and multithreaded query builder classes.
+	 * 
+	 * Pass in a work queue
+	 * Re-implement parseLine to just add work to the queue
+	 * 
+	 *  In the task run method... copy/paste the parseLine from the single threaded
+	 *  version and figure out where you have to synchronize access to map
+	 */
 
 }

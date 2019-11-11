@@ -426,7 +426,14 @@ public class InvertedIndex {
 
 			}
 			else {
-
+				/*
+				 * TODO Not safe, put erases what was there originally
+				 * loop through locations...
+				 * if (this.elements.get(word).containsKey(location)
+				 * 		put
+				 * else
+				 * 		addAll
+				 */
 				this.elements.get(word).putAll(other.elements.get(word));
 
 			}
@@ -434,10 +441,17 @@ public class InvertedIndex {
 		}
 
 		for(String path : other.counts.keySet()) {
-
+			/*
+			 * TODO Not safe to call put like this...
+			 */
 			this.counts.put(path, other.counts.get(path));
 
 		}
+		
+		/*
+		 * TODO Look at using map.merge method with Math::max Integer::max
+		 * just for the counts map.
+		 */
 
 	}
 

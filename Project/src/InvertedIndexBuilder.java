@@ -126,7 +126,7 @@ public class InvertedIndexBuilder{
 		Iterator<Path> itr = paths.iterator();
 
 		while(itr.hasNext()) {
-
+			// TODO addStem(itr.next());
 			addStem(itr.next(), index);
 
 		}

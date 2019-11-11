@@ -42,6 +42,41 @@ public class Driver {
 
 		MultiThreadQueryBuilder threadQueryBuilder = new MultiThreadQueryBuilder(threadIndex);
 
+		/*
+		 * TODO
+
+		ArgumentParser parser = new ArgumentParser(args);
+
+		InvertedIndex index;
+
+		InvertedIndexBuilder builder;
+
+		QueryBuilderInterface queryBuilder;
+		
+		WorkQueue workers = null;
+
+		if threads...
+		 	MultiThreadedInvertedIndex threadSafe = new MultiThreadedInvertedIndex();
+		 	index = threadSafe;
+			builder = new MultithreadedIndexBuilder(threadSafe, workers);
+			queryBuilder = new MultithreadedQueryBuilder(threadSafe, workers);
+		else...
+			index = new InvertedIndex();
+			etc.
+
+		
+		if (parser.hasFlag("-index")) {
+			index.indexToJSON(path);
+		}
+
+		...
+		
+		if workers != null
+				shutdown the queue
+		 */
+		
+		
+		
 
 		if(parser.hasFlag("-threads")) {
 

@@ -227,6 +227,7 @@ public class MultiThreadInvertedIndex extends InvertedIndex{
 
 	}
 
+	// TODO Remove this one
 	/**
 	 * Search method for calling exactSearch and partialSearch methods
 	 * @param queries collection of query words
@@ -250,4 +251,6 @@ public class MultiThreadInvertedIndex extends InvertedIndex{
 		}
 
 	}
+	
+	// TODO Add partialSearch, exactSearch, addAll
 }
