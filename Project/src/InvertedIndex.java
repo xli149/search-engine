@@ -426,15 +426,23 @@ public class InvertedIndex {
 
 			}
 			else {
-				/*
-				 * TODO Not safe, put erases what was there originally
-				 * loop through locations...
-				 * if (this.elements.get(word).containsKey(location)
-				 * 		put
-				 * else
-				 * 		addAll
-				 */
-				this.elements.get(word).putAll(other.elements.get(word));
+
+				var locations = other.elements.get(word).keySet();
+
+				for(var location: locations)
+
+					if(this.elements.get(word).containsKey(location)) {
+
+						var newLocations = other.elements.get(word).get(location);
+
+						this.elements.get(word).get(location).addAll(newLocations);
+
+					}
+					else {
+
+						this.elements.get(word).putAll(other.elements.get(word));
+
+					}
 
 			}
 
@@ -447,7 +455,7 @@ public class InvertedIndex {
 			this.counts.put(path, other.counts.get(path));
 
 		}
-		
+
 		/*
 		 * TODO Look at using map.merge method with Math::max Integer::max
 		 * just for the counts map.

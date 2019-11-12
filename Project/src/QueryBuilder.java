@@ -15,7 +15,7 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
  * @author chrislee
  *
  */
-public class QueryBuilder {
+public class QueryBuilder implements QueryBuilderInterface {
 
 	/**
 	 * Declaration of invertedIndex type object
@@ -44,6 +44,7 @@ public class QueryBuilder {
 	 * @param line the line to be parsed
 	 * @param exact flag for choosing searching method
 	 */
+	@Override
 	public void parseLine(String line, boolean exact) {
 
 		Stemmer stemmer = new SnowballStemmer(DEFAULT);
@@ -86,6 +87,7 @@ public class QueryBuilder {
 	 * @throws IOException if the file is unable to read
 	 * @throws NullPointerException if the path is null
 	 */
+	@Override
 	public void parseFile(Path filePath, boolean exact) throws IOException , NullPointerException {
 
 		try(BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)){
@@ -105,6 +107,7 @@ public class QueryBuilder {
 	 * @param path a path of file
 	 * @throws IOException
 	 */
+	@Override
 	public void queryToJson(Path path) throws IOException {
 
 		SimpleJsonWriter.asNestedQueryObject(path, map);

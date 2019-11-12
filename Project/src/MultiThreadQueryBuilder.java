@@ -3,16 +3,22 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.TreeMap;
+import java.util.TreeSet;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import opennlp.tools.stemmer.Stemmer;
+import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
 /**
  * Utility class for build query map
  * @author chrislee
  *
  */
-public class MultiThreadQueryBuilder extends QueryBuilder {
+public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 
 	/**
 	 * Logger object for logging purpose
@@ -22,17 +28,33 @@ public class MultiThreadQueryBuilder extends QueryBuilder {
 	/**
 	 * The object of InvertedIndex
 	 */
-	private final InvertedIndex index;
+	private final MultiThreadInvertedIndex index;
+
+	private final WorkQueue queue;
+
+
+	/**
+	 *  The default stemmer algorithm used by this class.
+	 */
+	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
+
+
+	/**
+	 * Query map
+	 */
+	private final TreeMap<String, ArrayList<InvertedIndex.SearchResult>> map;
 
 	/**
 	 * Constructor
 	 * @param index invertedIndex instance
 	 */
-	public MultiThreadQueryBuilder(InvertedIndex index) {
-
-		super(index);
+	public MultiThreadQueryBuilder(MultiThreadInvertedIndex index, WorkQueue queue) {
 
 		this.index = index;
+
+		this.queue = queue;
+
+		map = new TreeMap<>();
 
 	}
 
@@ -44,7 +66,8 @@ public class MultiThreadQueryBuilder extends QueryBuilder {
 	@Override
 	public void parseLine(String line, boolean exact){
 
-		super.parseLine(line, exact);
+		queue.execute(new Task(line, exact));
+
 	}
 
 	/**
@@ -55,7 +78,8 @@ public class MultiThreadQueryBuilder extends QueryBuilder {
 	 * @throws IOException if the file is unable to read
 	 * @throws NullPointerException if the path is null
 	 */
-	public void parseFile(Path filePath, boolean exact, int threads) throws IOException , NullPointerException {
+	@Override
+	public void parseFile(Path filePath, boolean exact) throws IOException , NullPointerException {
 
 		logger.debug("Query start parsing file: " + Thread.currentThread().getId());
 
@@ -63,25 +87,23 @@ public class MultiThreadQueryBuilder extends QueryBuilder {
 
 			String line = null;
 
-			WorkQueue queue = new WorkQueue(threads);
-
 			while((line = reader.readLine()) != null) {
 
-				queue.execute(new Task(line, exact));
+				parseLine( line, exact);
 
 			}
 
-			try {
+		}
 
-				queue.finished();
+		try {
 
-				queue.shutDown();
+			queue.finished();
 
-			} catch (InterruptedException e) {
+			queue.shutDown();
 
-				logger.debug("Thread: " + Thread.currentThread().getId() + " get interrupted");
+		} catch (InterruptedException e) {
 
-			}
+			logger.debug("Thread: " + Thread.currentThread().getId() + " get interrupted");
 
 		}
 
@@ -97,7 +119,7 @@ public class MultiThreadQueryBuilder extends QueryBuilder {
 	@Override
 	public void queryToJson(Path path) throws IOException {
 
-		super.queryToJson(path);
+		SimpleJsonWriter.asNestedQueryObject(path, map);
 
 	}
 
@@ -135,27 +157,38 @@ public class MultiThreadQueryBuilder extends QueryBuilder {
 
 			logger.debug("Thread: "+ Thread.currentThread().getId() + " is runninng");
 
-			synchronized(index) { // TODO Not really benefiting much for the multithreading yet
+			Stemmer stemmer = new SnowballStemmer(DEFAULT);
 
-				parseLine(line, exact);
+			TreeSet<String> words = new TreeSet<>();
 
+			String [] tokens = TextParser.parse(line);
+
+			String stemmedWords;
+
+			for (int i = 0; i < tokens.length; i++) {
+
+				stemmedWords = stemmer.stem(tokens[i]).toString();
+
+				words.add(stemmedWords);
+
+			}
+
+			String queries = String.join(" ", words);
+
+			synchronized(map) {
+
+				if (!words.isEmpty() && !map.containsKey(queries)) {
+
+					ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
+
+					map.put(queries, result);
+
+				}
 			}
 
 			logger.debug("Thread: "+ Thread.currentThread().getId() + " is finished");
 		}
 
 	}
-	
-	/*
-	 * TODO When we do need ot modify the implementation... it is better to create
-	 * a QueryBuilderInterface with the common methods and then implement it 
-	 * in both your single and multithreaded query builder classes.
-	 * 
-	 * Pass in a work queue
-	 * Re-implement parseLine to just add work to the queue
-	 * 
-	 *  In the task run method... copy/paste the parseLine from the single threaded
-	 *  version and figure out where you have to synchronize access to map
-	 */
 
 }

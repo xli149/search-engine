@@ -28,88 +28,63 @@ public class Driver {
 
 		ArgumentParser parser = new ArgumentParser(args);
 
-		InvertedIndex index = new InvertedIndex();
-
-		InvertedIndexBuilder builder = new InvertedIndexBuilder(index);
-
-		QueryBuilder queryBuilder = new QueryBuilder(index);
-
-		int threads = 0;
-
-		MultiThreadInvertedIndex threadIndex = new MultiThreadInvertedIndex();
-
-		MultiThreadInvertedIndexBuilder threadBuilder =  new MultiThreadInvertedIndexBuilder(threadIndex);
-
-		MultiThreadQueryBuilder threadQueryBuilder = new MultiThreadQueryBuilder(threadIndex);
-
-		/*
-		 * TODO
-
-		ArgumentParser parser = new ArgumentParser(args);
-
 		InvertedIndex index;
 
 		InvertedIndexBuilder builder;
 
 		QueryBuilderInterface queryBuilder;
-		
+
 		WorkQueue workers = null;
 
-		if threads...
-		 	MultiThreadedInvertedIndex threadSafe = new MultiThreadedInvertedIndex();
-		 	index = threadSafe;
-			builder = new MultithreadedIndexBuilder(threadSafe, workers);
-			queryBuilder = new MultithreadedQueryBuilder(threadSafe, workers);
-		else...
-			index = new InvertedIndex();
-			etc.
-
-		
-		if (parser.hasFlag("-index")) {
-			index.indexToJSON(path);
-		}
-
-		...
-		
-		if workers != null
-				shutdown the queue
-		 */
-		
-		
-		
-
 		if(parser.hasFlag("-threads")) {
+
+			int threads;
 
 			try {
 
 				threads = Integer.parseInt(parser.getString("-threads", "5"));
 
-				if(threads < 0) {
+				if(threads <= 0) {
 
 					threads = 5;
 				}
 
+				workers = new WorkQueue(threads);
+
 			}catch(NumberFormatException ex) {
 
-				System.out.println("Please input an integer number for threads");
+				workers = new WorkQueue();
+
 			}
 
+			MultiThreadInvertedIndex threadSafe = new MultiThreadInvertedIndex();
+
+			index = threadSafe;
+
+			builder = new MultiThreadInvertedIndexBuilder(threadSafe, workers);
+
+			queryBuilder = new MultiThreadQueryBuilder(threadSafe, workers);
+
 		}
+		else {
+			index = new InvertedIndex();
+
+			builder = new InvertedIndexBuilder(index);
+
+			queryBuilder = new QueryBuilder(index);
+
+		}
+
 
 		if (parser.hasFlag("-path")) {
 
 			Path path = parser.getPath("-path");
 
 			try{
-				if(threads > 0) {
 
-					threadBuilder.traversDirectory(path, threads);
 
-				}
-				else {
+				builder.traversDirectory(path);
 
-					builder.traversDirectory(path);
-				}
 
 			}
 			catch(IOException | NullPointerException e) {
@@ -125,15 +100,10 @@ public class Driver {
 			Path path = parser.getPath("-index", Path.of("index.json"));
 
 			try {
-				if(threads > 0) {
 
-					threadIndex.indexToJson(path);
 
-				}
-				else {
+				index.indexToJson(path);
 
-					index.indexToJson(path);
-				}
 
 			}
 			catch (IOException e) {
@@ -148,15 +118,9 @@ public class Driver {
 
 			try {
 
-				if(threads > 0) {
 
-					threadIndex.wordCountToJson(path);
+				index.wordCountToJson(path);
 
-				}
-				else {
-
-					index.wordCountToJson(path);
-				}
 
 			}
 			catch (IOException e){
@@ -171,17 +135,7 @@ public class Driver {
 
 			try{
 
-				if(threads > 0) {
-
-					threadQueryBuilder.parseFile(path, parser.hasFlag("-exact"), threads);
-
-				}
-
-				else {
-
-					queryBuilder.parseFile(path, parser.hasFlag("-exact"));
-
-				}
+				queryBuilder.parseFile(path, parser.hasFlag("-exact"));
 
 			}
 			catch(IOException e) {
@@ -203,16 +157,10 @@ public class Driver {
 
 			try {
 
-				if(threads > 0) {
 
-					threadQueryBuilder.queryToJson(path);
+				queryBuilder.queryToJson(path);
 
-				}
-				else {
 
-					queryBuilder.queryToJson(path);
-
-				}
 
 			}
 			catch(IOException e) {
@@ -220,6 +168,12 @@ public class Driver {
 				System.out.println("Unable to write query in the file " + path);
 
 			}
+
+		}
+
+		if(workers != null) {
+
+			workers.shutDown();
 
 		}
 

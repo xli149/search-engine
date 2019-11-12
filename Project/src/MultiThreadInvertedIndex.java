@@ -227,21 +227,19 @@ public class MultiThreadInvertedIndex extends InvertedIndex{
 
 	}
 
-	// TODO Remove this one
 	/**
-	 * Search method for calling exactSearch and partialSearch methods
-	 * @param queries collection of query words
-	 * @param exact boolean value to determine using exactSearch or partialSearch
-	 * @return an arrayList of SearchResult obj to be add to query map
+	 * Exact search method for checking the one-to-one word from query to invertedIndex
+	 * @param queries  collection of query words
+	 * @return an arrayList contains SearchResult to be added in map
 	 */
 	@Override
-	public ArrayList<SearchResult> search(Collection<String> queries, boolean exact){
+	public ArrayList<SearchResult> exactSearch(Collection<String> queries) {
 
 		lock.readLock().lock();
 
 		try {
 
-			return super.search(queries, exact);
+			return super.exactSearch(queries);
 
 		}
 		finally {
@@ -251,6 +249,46 @@ public class MultiThreadInvertedIndex extends InvertedIndex{
 		}
 
 	}
-	
-	// TODO Add partialSearch, exactSearch, addAll
+
+	/**
+	 * Partial search method for checking the star-with word from query to invertedIndex
+	 * @param queries  collection of query words
+	 * @return an arrayList contains SearchResult to be added in map
+	 */
+	@Override
+	public ArrayList<SearchResult> partialSearch(Collection<String> queries) {
+
+		lock.readLock().lock();
+
+		try {
+
+			return super.partialSearch(queries);
+
+		}
+		finally {
+
+			lock.readLock().unlock();
+
+		}
+
+	}
+
+	@Override
+	public void addAll(InvertedIndex other) {
+
+		lock.writeLock().lock();
+
+		try {
+
+			super.addAll(other);
+
+		}
+		finally {
+
+			lock.writeLock().unlock();
+
+		}
+
+	}
+
 }
