@@ -25,6 +25,7 @@ public class MultiThreadInvertedIndexBuilder extends InvertedIndexBuilder{
 	 */
 	private final static Logger logger = LogManager.getLogger();
 
+	// TODO Take a MultiThreadInvertedIndex as a parameter
 	/**
 	 * @param index MultiThreadInvertedIndex object
 	 */
@@ -35,6 +36,23 @@ public class MultiThreadInvertedIndexBuilder extends InvertedIndexBuilder{
 		this.index = index;
 	}
 
+	/*
+	 * TODO No longer overrides the original traverseDirectory...
+	 * so remove the threads parameter here and move it to the constructor
+	 * 
+	 * Even better, instead of passing a threads param, pass to the constructor
+	 * a work queue that is used by both your threaded builder and query builder 
+	 * classes.
+	 * 
+	 * If you pass a work queue, traverseDirectory is basically:
+	 * 
+	 * super.traverseDirectory(start);
+	 * queue.finish();
+	 * 
+	 * And then override addStem (which is called by traverseDirectory)
+	 * to add a task to the work queue.
+	 */
+	
 	/**
 	 * Recursively checking if a file descriptor points to a file or not
 	 * pass it to parse if it is a file, otherwise get a list of sub-folders
@@ -116,7 +134,7 @@ public class MultiThreadInvertedIndexBuilder extends InvertedIndexBuilder{
 
 				InvertedIndexBuilder.addStem(path, local);
 
-				synchronized(index) {
+				synchronized(index) { // TODO Remove
 
 					index.addAll(local);
 
