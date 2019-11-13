@@ -23,11 +23,14 @@ public class MultiThreadInvertedIndexBuilder extends InvertedIndexBuilder{
 	 */
 	private final static Logger logger = LogManager.getLogger();
 
-
+	/**
+	 * The queue to be used for MultiThreading usage
+	 */
 	private final WorkQueue queue;
 
 	/**
 	 * @param index MultiThreadInvertedIndex object
+	 * @param queue passed by Driver class for MultiThreading usage
 	 */
 	public MultiThreadInvertedIndexBuilder(MultiThreadInvertedIndex index, WorkQueue queue) {
 
@@ -63,7 +66,6 @@ public class MultiThreadInvertedIndexBuilder extends InvertedIndexBuilder{
 
 		logger.debug("travers dirctory finished: Thread: " + Thread.currentThread().getId() );
 	}
-
 
 	/**
 	 * Nested class for creating Tasks

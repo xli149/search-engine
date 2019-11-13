@@ -40,7 +40,6 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 	 */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
-
 	/**
 	 * Query map
 	 */

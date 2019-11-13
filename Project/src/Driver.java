@@ -75,7 +75,6 @@ public class Driver {
 
 		}
 
-
 		if (parser.hasFlag("-path")) {
 
 			Path path = parser.getPath("-path");

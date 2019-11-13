@@ -44,7 +44,7 @@
 		</Logger>
 		
 		<!-- This is the configuration used by all other loggers. -->
-		<Root level="ALL">
+		<Root level="OFF">
 			<AppenderRef ref="Console" level="INFO" />
 			
 		</Root>

@@ -28,7 +28,6 @@ public class InvertedIndex {
 	 */
 	private final TreeMap<String, Integer> counts;
 
-
 	/**
 	 * Constructor
 	 */

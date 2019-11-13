@@ -34,5 +34,4 @@ public interface QueryBuilderInterface {
 	 */
 	public abstract void queryToJson(Path path) throws IOException ;
 
-
 }
