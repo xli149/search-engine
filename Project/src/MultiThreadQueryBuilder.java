@@ -30,8 +30,10 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 	 */
 	private final MultiThreadInvertedIndex index;
 
+	/**
+	 * The queue to be used for MultiThreads
+	 */
 	private final WorkQueue queue;
-
 
 	/**
 	 *  The default stemmer algorithm used by this class.
@@ -47,6 +49,7 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 	/**
 	 * Constructor
 	 * @param index invertedIndex instance
+	 * @param queue queue passed from Driver class for MultiThreading usage
 	 */
 	public MultiThreadQueryBuilder(MultiThreadInvertedIndex index, WorkQueue queue) {
 
@@ -74,7 +77,6 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 	 * Method for parsing the file and store the words into a treeSet
 	 * @param filePath path of a file
 	 * @param exact flag to determine using exact search or partial search
-	 * @param threads the number of threads to be used
 	 * @throws IOException if the file is unable to read
 	 * @throws NullPointerException if the path is null
 	 */

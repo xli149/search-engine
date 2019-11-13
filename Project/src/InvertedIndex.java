@@ -292,7 +292,7 @@ public class InvertedIndex {
 	}
 
 	/**
-	 * Nested inner class
+	 * Nested inner class for SearchResult objects
 	 * @author chrislee
 	 *
 	 */
@@ -429,7 +429,7 @@ public class InvertedIndex {
 
 				var locations = other.elements.get(word).keySet();
 
-				for(var location: locations)
+				for(var location: locations) {
 
 					if(this.elements.get(word).containsKey(location)) {
 
@@ -440,26 +440,17 @@ public class InvertedIndex {
 					}
 					else {
 
-						this.elements.get(word).putAll(other.elements.get(word));
+						this.elements.get(word).put(location, other.elements.get(word).get(location));
 
 					}
+
+				}
 
 			}
 
 		}
 
-		for(String path : other.counts.keySet()) {
-			/*
-			 * TODO Not safe to call put like this...
-			 */
-			this.counts.put(path, other.counts.get(path));
-
-		}
-
-		/*
-		 * TODO Look at using map.merge method with Math::max Integer::max
-		 * just for the counts map.
-		 */
+		other.counts.forEach((k,v) -> this.counts.merge(k, v, Integer::max));
 
 	}
 
