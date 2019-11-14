@@ -16,7 +16,7 @@ public interface QueryBuilderInterface {
 	 * @throws IOException if the file is not valid to read/write
 	 * @throws NullPointerException if the file does not exist
 	 */
-	public abstract void parseLine(String line, boolean exact)throws IOException , NullPointerException;
+	public abstract void parseLine(String line, boolean exact) throws IOException , NullPointerException;
 
 	/**
 	 * Method for parsing files to be inherited
@@ -25,8 +25,28 @@ public interface QueryBuilderInterface {
 	 * @throws IOException if the file is not valid to read/write
 	 * @throws NullPointerException  if the file does not exist
 	 */
-	public abstract void parseFile(Path filePath, boolean exact)throws IOException , NullPointerException;
+	public abstract void parseFile(Path filePath, boolean exact) throws IOException , NullPointerException;
 
+	/*
+	 * TODO Make parseFile have a default implementation. Then reuse this implementation 
+	 * in both the single and multithreaded query builders.
+
+	public default void parseFile(Path filePath, boolean exact) throws IOException , NullPointerException {
+
+		try(BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)){
+
+			String line = null;
+
+			while((line = reader.readLine()) != null) {
+
+				parseLine(line, exact);
+
+			}
+		}
+	}
+
+	 */
+	
 	/**
 	 * Method for writing query to json format
 	 * @param path the path of the file to be written in
