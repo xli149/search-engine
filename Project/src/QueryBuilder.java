@@ -1,7 +1,4 @@
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.TreeMap;
@@ -47,12 +44,18 @@ public class QueryBuilder implements QueryBuilderInterface {
 	@Override
 	public void parseLine(String line, boolean exact) {
 
+		String [] tokens = TextParser.parse(line);
+
+		if(tokens.length == 0) {
+
+			return;
+
+		}
+
 		Stemmer stemmer = new SnowballStemmer(DEFAULT);
 
 		TreeSet<String> words = new TreeSet<>();
 
-		String [] tokens = TextParser.parse(line);
-		
 		String stemmedWords;
 
 		for (int i = 0; i < tokens.length; i++) {
@@ -65,34 +68,15 @@ public class QueryBuilder implements QueryBuilderInterface {
 
 		String queries = String.join(" ", words);
 
-		if (!words.isEmpty() && !map.containsKey(queries)) {
+		if (map.containsKey(queries)) {
 
-			ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
-
-			map.put(queries, result);
+			return;
 
 		}
-		
-		/*
-		 * TODO Lets make a couple more optimizations...
 
-  (do this first before creating a stemmer or treeset...)
-	String [] tokens = TextParser.parse(line);
+		ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
 
-  (now test if we need to continue)
-  if tokens is empty...
-      return;
-  
-  (now create the stemmer object and treeset)
-  (add to treeset)
-  
-  String queries = String.join(" ", words);
-  
-  (now test again if we need to continue)
-  if (map.containsKey(queries)) { return; }
-  
-	(now you know you should search and update the map)
-		 */
+		map.put(queries, result);
 
 	}
 
@@ -100,29 +84,6 @@ public class QueryBuilder implements QueryBuilderInterface {
 	 *  The default stemmer algorithm used by this class.
 	 */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
-
-	// TODO Remove, rely on default implementation (see interface comments).
-	/**
-	 * Method for parsing the file and store the words into a treeSet
-	 * @param filePath path of a file
-	 * @param exact flag to determine using exact search or partial search
-	 * @throws IOException if the file is unable to read
-	 * @throws NullPointerException if the path is null
-	 */
-	@Override
-	public void parseFile(Path filePath, boolean exact) throws IOException , NullPointerException {
-
-		try(BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)){
-
-			String line = null;
-
-			while((line = reader.readLine()) != null) {
-
-				parseLine(line, exact);
-
-			}
-		}
-	}
 
 	/**
 	 * Method for writing json object

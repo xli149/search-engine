@@ -162,7 +162,7 @@ public class Driver {
 		}
 
 		if(workers != null) {
-			// TODO This is the only place you should shutdown the queue. Make sure you don't shutdown anywhere else!
+
 			workers.shutDown();
 
 		}

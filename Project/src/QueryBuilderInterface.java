@@ -1,4 +1,7 @@
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 
 /**
@@ -25,11 +28,6 @@ public interface QueryBuilderInterface {
 	 * @throws IOException if the file is not valid to read/write
 	 * @throws NullPointerException  if the file does not exist
 	 */
-	public abstract void parseFile(Path filePath, boolean exact) throws IOException , NullPointerException;
-
-	/*
-	 * TODO Make parseFile have a default implementation. Then reuse this implementation 
-	 * in both the single and multithreaded query builders.
 
 	public default void parseFile(Path filePath, boolean exact) throws IOException , NullPointerException {
 
@@ -45,8 +43,6 @@ public interface QueryBuilderInterface {
 		}
 	}
 
-	 */
-	
 	/**
 	 * Method for writing query to json format
 	 * @param path the path of the file to be written in
