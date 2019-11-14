@@ -52,7 +52,7 @@ public class QueryBuilder implements QueryBuilderInterface {
 		TreeSet<String> words = new TreeSet<>();
 
 		String [] tokens = TextParser.parse(line);
-
+		
 		String stemmedWords;
 
 		for (int i = 0; i < tokens.length; i++) {
@@ -72,6 +72,27 @@ public class QueryBuilder implements QueryBuilderInterface {
 			map.put(queries, result);
 
 		}
+		
+		/*
+		 * TODO Lets make a couple more optimizations...
+
+  (do this first before creating a stemmer or treeset...)
+	String [] tokens = TextParser.parse(line);
+
+  (now test if we need to continue)
+  if tokens is empty...
+      return;
+  
+  (now create the stemmer object and treeset)
+  (add to treeset)
+  
+  String queries = String.join(" ", words);
+  
+  (now test again if we need to continue)
+  if (map.containsKey(queries)) { return; }
+  
+	(now you know you should search and update the map)
+		 */
 
 	}
 
@@ -80,6 +101,7 @@ public class QueryBuilder implements QueryBuilderInterface {
 	 */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
+	// TODO Remove, rely on default implementation (see interface comments).
 	/**
 	 * Method for parsing the file and store the words into a treeSet
 	 * @param filePath path of a file

@@ -51,7 +51,7 @@ public class Driver {
 
 				workers = new WorkQueue(threads);
 
-			}catch(NumberFormatException ex) {
+			} catch(NumberFormatException ex) {
 
 				workers = new WorkQueue();
 
@@ -81,9 +81,7 @@ public class Driver {
 
 			try{
 
-
 				builder.traversDirectory(path);
-
 
 			}
 			catch(IOException | NullPointerException e) {
@@ -100,9 +98,7 @@ public class Driver {
 
 			try {
 
-
 				index.indexToJson(path);
-
 
 			}
 			catch (IOException e) {
@@ -117,9 +113,7 @@ public class Driver {
 
 			try {
 
-
 				index.wordCountToJson(path);
-
 
 			}
 			catch (IOException e){
@@ -156,10 +150,7 @@ public class Driver {
 
 			try {
 
-
 				queryBuilder.queryToJson(path);
-
-
 
 			}
 			catch(IOException e) {
@@ -171,7 +162,7 @@ public class Driver {
 		}
 
 		if(workers != null) {
-
+			// TODO This is the only place you should shutdown the queue. Make sure you don't shutdown anywhere else!
 			workers.shutDown();
 
 		}

@@ -95,12 +95,23 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 			}
 
 		}
+		
+		/*
+		 * TODO Remove the try block above and replace with 
+
+		QueryBuilderInterface.super.parseFile(filePath, exact);
+		
+		...so you can re-use that default implementation.
+		(see interface comment)
+		
+		...keep the finish below but NOT the shutdown! Then you cannot reuse the queue.
+		 */
 
 		try {
 
 			queue.finished();
 
-			queue.shutDown();
+			queue.shutDown(); // TODO Remove!
 
 		} catch (InterruptedException e) {
 
@@ -179,7 +190,7 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 			synchronized(map) {
 
 				if (!words.isEmpty() && !map.containsKey(queries)) {
-
+					// TODO Oh no! Our search is now inside a synchronized block of code!
 					ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
 
 					map.put(queries, result);
@@ -188,6 +199,19 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 			}
 
 			logger.debug("Thread: "+ Thread.currentThread().getId() + " is finished");
+			
+			/*
+			 * TODO See comments in single-threaded version. Move to that approach.
+			 * 
+			 * THEN, ONLY synchronize 2 parts:
+			 * 
+			 * 1) synchronize the if map.containsKey block
+			 * 
+			 * 2) synchronize the map.put block
+			 * 
+			 * Make sure the index.search call happens inbetween but NOT inside of the
+			 * two synchronized blocks.
+			 */
 		}
 
 	}
