@@ -28,7 +28,6 @@ public interface QueryBuilderInterface {
 	 * @throws IOException if the file is not valid to read/write
 	 * @throws NullPointerException  if the file does not exist
 	 */
-
 	public default void parseFile(Path filePath, boolean exact) throws IOException , NullPointerException {
 
 		try(BufferedReader reader = Files.newBufferedReader(filePath, StandardCharsets.UTF_8)){
@@ -48,6 +47,6 @@ public interface QueryBuilderInterface {
 	 * @param path the path of the file to be written in
 	 * @throws IOException if the file is not allowed to be written in
 	 */
-	public abstract void queryToJson(Path path) throws IOException ;
+	public abstract void queryToJson(Path path) throws IOException;
 
 }
