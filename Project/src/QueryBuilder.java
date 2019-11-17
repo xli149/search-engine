@@ -79,7 +79,8 @@ public class QueryBuilder implements QueryBuilderInterface {
 		map.put(queries, result);
 
 	}
-
+	
+	// TODO I think this can actually move into the interface.
 	/**
 	 *  The default stemmer algorithm used by this class.
 	 */
