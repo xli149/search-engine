@@ -33,11 +33,6 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 	private final WorkQueue queue;
 
 	/**
-	 *  The default stemmer algorithm used by this class.
-	 */
-	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
-
-	/**
 	 * Query map
 	 */
 	private final TreeMap<String, ArrayList<InvertedIndex.SearchResult>> map;

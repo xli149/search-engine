@@ -4,6 +4,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import opennlp.tools.stemmer.snowball.SnowballStemmer;
+
 /**
  * Utility interface inherited by both QueryBuilder
  * and MultithreadQueryBuilder class
@@ -48,5 +50,10 @@ public interface QueryBuilderInterface {
 	 * @throws IOException if the file is not allowed to be written in
 	 */
 	public abstract void queryToJson(Path path) throws IOException;
+
+	/**
+	 *  The default stemmer algorithm used by this class.
+	 */
+	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
 }

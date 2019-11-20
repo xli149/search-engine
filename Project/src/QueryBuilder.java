@@ -10,7 +10,6 @@ import opennlp.tools.stemmer.snowball.SnowballStemmer;
 /**
  * Utility class for build query map
  * @author chrislee
- *
  */
 public class QueryBuilder implements QueryBuilderInterface {
 
@@ -79,12 +78,6 @@ public class QueryBuilder implements QueryBuilderInterface {
 		map.put(queries, result);
 
 	}
-	
-	// TODO I think this can actually move into the interface.
-	/**
-	 *  The default stemmer algorithm used by this class.
-	 */
-	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
 	/**
 	 * Method for writing json object

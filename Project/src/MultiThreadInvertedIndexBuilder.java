@@ -101,7 +101,6 @@ public class MultiThreadInvertedIndexBuilder extends InvertedIndexBuilder{
 
 				index.addAll(local);
 
-
 			} catch (IOException e) {
 
 				logger.debug("Thread: " + Thread.currentThread().getId() + "gets IOException");
