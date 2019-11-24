@@ -95,7 +95,7 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 	}
 
 	@Override
-	public List<InvertedIndex.SearchResult> results(String query){
+	public List<InvertedIndex.SearchResult> results(String query) throws IOException{
 
 		if(map.containsKey(query)) {
 

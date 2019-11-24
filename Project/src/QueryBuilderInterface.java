@@ -62,6 +62,6 @@ public interface QueryBuilderInterface {
 	 * @param query the query to be searched
 	 * @return an unmodifiable list
 	 */
-	public List<InvertedIndex.SearchResult> results(String query);
+	public List<InvertedIndex.SearchResult> results(String query) throws IOException;
 
 }
