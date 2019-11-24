@@ -32,8 +32,14 @@ public class MultiThreadWebCrawler{
 	 */
 	private final MultiThreadInvertedIndex index;
 
+	/**
+	 * The limit of times to crawl a web site
+	 */
 	private int limit;
 
+	/**
+	 * Work queue to be used for passing the tasks
+	 */
 	private WorkQueue queue;
 
 	/**
@@ -41,12 +47,16 @@ public class MultiThreadWebCrawler{
 	 */
 	private URL seed;
 
+	/**
+	 * A set for checking repeating urls
+	 */
 	private Set<URL> lookUp;
 
 	/**
 	 * Default constructor
 	 * @param index the object of MultiThreadInvertedIndex
 	 * @param seed the seed link for web crawling
+	 * @param queue Work queue to be used for passing the tasks
 	 */
 	public MultiThreadWebCrawler(MultiThreadInvertedIndex index, URL seed, WorkQueue queue) {
 
@@ -59,6 +69,7 @@ public class MultiThreadWebCrawler{
 	 * @param index the object of MultiThreadInvertedIndex
 	 * @param limit the limit number of link to crawl
 	 * @param seed the seed link for web crawling
+	 * @param queue Work queue to be used for passing the tasks
 	 */
 	public MultiThreadWebCrawler(MultiThreadInvertedIndex index, int limit, URL seed, WorkQueue queue) {
 
@@ -132,8 +143,7 @@ public class MultiThreadWebCrawler{
 
 	/**
 	 * Method for crawling webs by BFS
-	 * @param threads number of worker threads
-	 * @throws MalformedURLException
+	 * @throws MalformedURLException if url is not correctly provided
 	 */
 	public void webCrawling() throws MalformedURLException {
 
@@ -162,15 +172,11 @@ public class MultiThreadWebCrawler{
 		 * The path of directory
 		 */
 		private URL url;
+
 		/**
 		 * Constructor
 		 * @param url the url to be added and generated more urls
-		 * @param index object to MultiThreadInvertedIndex
-		 * @param queue work queue
-		 * @param limit number allowed for parsing links
 		 */
-
-
 		public Task(URL url) {
 
 			this.url = url;
@@ -226,13 +232,5 @@ public class MultiThreadWebCrawler{
 		}
 
 	}
-
-
-
-
-
-
-
-
 
 }

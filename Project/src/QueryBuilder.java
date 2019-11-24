@@ -82,7 +82,7 @@ public class QueryBuilder implements QueryBuilderInterface {
 	}
 
 	@Override
-	public List<InvertedIndex.SearchResult> results(String query) throws IOException{
+	public List<InvertedIndex.SearchResult> results(String query){
 
 		if(map.containsKey(query)) {
 

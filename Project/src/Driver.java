@@ -60,7 +60,6 @@ public class Driver {
 			limit = 50;
 		}
 
-
 		if(parser.hasFlag("-threads")) {
 
 			int threads;
@@ -99,7 +98,6 @@ public class Driver {
 			queryBuilder = new QueryBuilder(index);
 
 		}
-
 
 		if(parser.hasFlag("-url")) {
 

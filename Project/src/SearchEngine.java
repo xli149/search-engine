@@ -7,10 +7,21 @@ import org.eclipse.jetty.servlet.ServletHolder;
  */
 public class SearchEngine {
 
+	/**
+	 * Port to be used
+	 */
 	public final int port;
 
+	/**
+	 * QueryBuilder object passed in to be used
+	 */
 	private final QueryBuilderInterface queryBuilder;
 
+	/**
+	 * SearchEngine constructor
+	 * @param port the port to be used by server
+	 * @param queryBuilder queryBuilder object to be used to create query
+	 */
 	public SearchEngine(int port, QueryBuilderInterface queryBuilder) {
 
 		this.port = port;
@@ -20,10 +31,7 @@ public class SearchEngine {
 	}
 
 	/**
-	 * Starts a Jetty server on port 8080, and maps /check requests to the
-	 * {@link HeaderServlet}.
-	 *
-	 * @param args - unused
+	 * Starts a Jetty server on the port and maps /check requests to the servlet
 	 * @throws Exception
 	 */
 

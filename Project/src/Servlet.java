@@ -25,13 +25,18 @@ public class Servlet extends HttpServlet {
 	 * the HTTP headers of that URL.
 	 */
 
-	private static final String TITLE = "Link Checker";
+	//	private static final String TITLE = "Link Checker";
 
-	//	private final SearchEngine searchEngine;
-
+	/**
+	 * queryBuilder to be used
+	 */
 	private final QueryBuilderInterface queryBuilder;
 
 
+	/**
+	 * Servlet constructor
+	 * @param queryBuilder queryBuilder queryBuilder object to be used to create query
+	 */
 	public Servlet(QueryBuilderInterface queryBuilder) {
 
 		super();
@@ -52,8 +57,6 @@ public class Servlet extends HttpServlet {
 
 		String input = request.getParameter("link");
 
-		//			System.out.println("got heere");
-
 		//TODOs Avoid XSS attacks
 
 		//String quert = StringEscapeUtils.escapeHtml4(input);
@@ -67,9 +70,6 @@ public class Servlet extends HttpServlet {
 			if(links != null) {
 
 				//				out.print("not results");
-
-
-
 
 				for(int i = 0; i < links.size(); i++) {
 
@@ -87,6 +87,12 @@ public class Servlet extends HttpServlet {
 
 	}
 
+	/**
+	 * Utility function for html formating
+	 * @param request the http request
+	 * @param response the http response
+	 * @throws IOException if the output stream cannot be written in
+	 */
 	private static void printForm(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PrintWriter out = response.getWriter();
 		out.printf("<form method=\"get\" action=\"%s\">%n", request.getServletPath());

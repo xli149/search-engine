@@ -57,6 +57,11 @@ public interface QueryBuilderInterface {
 	 */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
-	public List<InvertedIndex.SearchResult> results(String query) throws IOException;
+	/**
+	 * Functionfor returning unmodifiable list
+	 * @param query the query to be searched
+	 * @return an unmodifiable list
+	 */
+	public List<InvertedIndex.SearchResult> results(String query);
 
 }

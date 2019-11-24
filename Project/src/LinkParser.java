@@ -6,31 +6,21 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 /**
  * Parses URL links from the anchor tags within HTML text.
  */
 public class LinkParser {
 
-
+	/**
+	 * Regular expression for parsing the links
+	 */
 	private final static String regex = "(?is)<a[^\\>]*href\\s*=\\s*\\\\*\\\"*(.+?)\\\"";
-	/**
-	 * Removes the fragment component of a URL (if present), and properly encodes
-	 * the query string (if necessary).
-	 *
-	 * @param url the url to clean
-	 * @return cleaned url (or original url if any issues occurred)
-	 */
-
-
 
 	/**
-	 * Logger Object for logging purpose
+	 * Function for cleaning the url
+	 * @param url the url to be cleaned
+	 * @return the cleaned url
 	 */
-	private final static Logger logger = LogManager.getLogger();
-
 	public static URL clean(URL url) {
 		try {
 			return new URI(url.getProtocol(), url.getUserInfo(), url.getHost(),
@@ -69,10 +59,6 @@ public class LinkParser {
 
 			try {
 
-				//				logger.debug("before clean " + new URL(base, matcher.group(1)));
-
-				//logger.debug("if have this html " + MultiThreadWebCrawler.lookUp.contains(new URL(base, matcher.group(1))));
-
 				URL newUrl = clean(new URL(base, matcher.group(1)));
 
 				links.add(newUrl);
@@ -82,9 +68,7 @@ public class LinkParser {
 				System.out.println("Url formmated wrong");
 			}
 
-
 		}
-
 
 		return links;
 	}

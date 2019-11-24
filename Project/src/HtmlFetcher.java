@@ -65,7 +65,6 @@ public class HtmlFetcher {
 
 		return -1;
 
-
 	}
 
 	/**
@@ -86,7 +85,6 @@ public class HtmlFetcher {
 			}
 
 		}
-
 
 		return false;
 
@@ -114,26 +112,14 @@ public class HtmlFetcher {
 	 * @see #isRedirect(Map)
 	 */
 	public static String fetch(URL url, int redirects) {
-		/*
-		 * TODO Modify this implementation to match Javadoc. Must use sockets,
-		 * may not use a URLConnection object!
-		 */
-
-		//		System.out.println(url);
 
 		try {
 
 			Map<String, List<String>> headers = HttpsFetcher.fetch(url);
-			//System.out.println(getStatusCode(headers));
 
 			if(getStatusCode(headers) == 200  && isHtml(headers)) {
 
-				//System.out.println(headers);
-
-
-
 				return String.join("\n", headers.get("Content"));
-
 
 			}
 			else if (isHtml(headers) && isRedirect(headers)&& redirects > 0){
@@ -155,8 +141,6 @@ public class HtmlFetcher {
 
 			}
 
-
-
 		}catch(IOException ex) {
 
 			System.out.println("Cannot get the headers");
@@ -164,7 +148,6 @@ public class HtmlFetcher {
 		}
 
 		return null;
-
 
 	}
 
@@ -180,10 +163,14 @@ public class HtmlFetcher {
 	 * @see #fetch(URL, int)
 	 */
 	public static String fetch(String url, int redirects) {
+
 		try {
+
 			return fetch(new URL(url), redirects);
+
 		}
 		catch (MalformedURLException e) {
+
 			return null;
 		}
 	}
@@ -199,7 +186,9 @@ public class HtmlFetcher {
 	 * @see #fetch(URL, int)
 	 */
 	public static String fetch(String url) {
+
 		return fetch(url, 3);
+
 	}
 
 	/**
@@ -210,6 +199,8 @@ public class HtmlFetcher {
 	 *         resource is not html
 	 */
 	public static String fetch(URL url) {
+
 		return fetch(url, 3);
+
 	}
 }
