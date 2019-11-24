@@ -61,6 +61,7 @@ public interface QueryBuilderInterface {
 	 * Functionfor returning unmodifiable list
 	 * @param query the query to be searched
 	 * @return an unmodifiable list
+	 * @throws IOException if the query is not able to be written
 	 */
 	public List<InvertedIndex.SearchResult> results(String query) throws IOException;
 
