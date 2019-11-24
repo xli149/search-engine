@@ -13,8 +13,9 @@ public class HtmlCleaner {
 	public static String stripHtml(String html) {
 
 		html = stripBlockElements(html);
-		//		System.out.println(html);
+
 		html = stripTags(html);
+
 		html = stripEntities(html);
 
 		return html;
@@ -30,18 +31,19 @@ public class HtmlCleaner {
 	public static String stripBlockElements(String html) {
 
 		html = stripComments(html);
-		html = stripElement(html, "head");
-		html = stripElement(html, "style");
-		html = stripElement(html, "script");
-		html = stripElement(html, "noscript");
-		html = stripElement(html, "svg");
-		//		html = stripElement(html, "")
 
+		html = stripElement(html, "head");
+
+		html = stripElement(html, "style");
+
+		html = stripElement(html, "script");
+
+		html = stripElement(html, "noscript");
+
+		html = stripElement(html, "svg");
 
 		return html;
 	}
-
-	// THE FOLLOWING REPLACE WITH THE EMPTY STRING
 
 	/**
 	 * Replaces all HTML entities with an empty string. For example,
@@ -66,8 +68,6 @@ public class HtmlCleaner {
 
 		return html.replaceAll("(?si)<.*?>", "");
 	}
-
-	// THE FOLLOWING REPLACE WITH A SINGLE SPACE
 
 	/**
 	 * Replaces all HTML comments with a single space. For example, "A<!-- B -->C"

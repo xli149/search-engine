@@ -111,49 +111,17 @@ public class MultiThreadWebCrawler{
 
 		String cleanedHtml = null;
 
-		//		if (url.equals(new URL("https://www.cs.usfca.edu/~cs212/docs/jdk-12.0.2_doc-all/api/java.desktop/java/awt/desktop/AboutHandler.html"))) {
-		//			//			System.out.println("BOOM");
-		//			//			System.out.println(uncleanedHtml);
-		//			logger.debug(uncleanedHtml);
-		//			cleanedHtml = HtmlCleaner.stripBlockElements(uncleanedHtml);
-		//
-		//			//			cleanedHtml = HtmlCleaner.stripTags(cleanedHtml);
-		//
-		//			System.out.println(cleanedHtml);
-		//
-		//
-		//
-		//		}
-		//		else {
 		cleanedHtml = HtmlCleaner.stripHtml(uncleanedHtml);
-		//		}
 
 		int posOfWord = 1;
-
-
 
 		String [] tokens = TextParser.parse(cleanedHtml);
 
 		String stemmedWords;
 
-		//		logger.debug(url);
-		//
-		//		ArrayList<String> test = new ArrayList<String>();
-		//
-		//		Collections.addAll(test, tokens);
-
-		//		logger.debug(test);
-
 		for (int i = 0; i < tokens.length; i++) {
 
 			stemmedWords = stemmer.stem(tokens[i]).toString();
-
-			//			logger.debug(tokens[i]);
-
-			//			if(i%10 == 0) {
-			//
-			//				//				logger.debug("\n");
-			//			}
 
 			index.add(stemmedWords, url.toString(), posOfWord);
 
@@ -169,15 +137,11 @@ public class MultiThreadWebCrawler{
 	 */
 	public void webCrawling() throws MalformedURLException {
 
-		//		logger.debug("travers website's link starts: Thread: " + Thread.currentThread().getId());
-
 		queue.execute(new Task(seed));
 
 		try {
 
 			queue.finished();
-
-			//			queue.shutDown();
 
 		} catch (InterruptedException e) {
 
@@ -228,12 +192,7 @@ public class MultiThreadWebCrawler{
 
 				itr = links.iterator();
 
-
 				MultiThreadWebCrawler.addStem(url, local);
-
-				if(url.toString().startsWith("https://www.cs.usfca.edu/~cs212/docs/jdk-12.0.2_doc-all/api/java.desktop/java/awt/desktop/AboutHandle")){
-					System.out.println(local);
-				}
 
 				synchronized(queue) {
 
