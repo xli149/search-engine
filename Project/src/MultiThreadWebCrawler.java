@@ -160,6 +160,12 @@ public class MultiThreadWebCrawler{
 
 		logger.debug("travers dirctory finished: Thread: " + Thread.currentThread().getId() );
 
+		for(var key: index.getLocations()) {
+
+			System.out.println(key);
+
+		}
+
 	}
 
 	/**
