@@ -1,4 +1,6 @@
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -36,6 +38,29 @@ public class Driver {
 
 		WorkQueue workers = null;
 
+		MultiThreadWebCrawler webCrawler;
+
+		SearchEngine searchEngine;
+
+		String seed;
+
+		int limit;
+
+		int port;
+
+		if(parser.hasValue("-limit")) {
+
+			limit = Integer.parseInt(parser.getString("-limit"));
+
+			limit = limit > 0 ? limit : 50;
+
+		}
+		else{
+
+			limit = 50;
+		}
+
+
 		if(parser.hasFlag("-threads")) {
 
 			int threads;
@@ -72,6 +97,38 @@ public class Driver {
 			builder = new InvertedIndexBuilder(index);
 
 			queryBuilder = new QueryBuilder(index);
+
+		}
+
+
+		if(parser.hasFlag("-url")) {
+
+			try {
+
+				MultiThreadInvertedIndex threadSafe = new MultiThreadInvertedIndex();
+
+				if(!parser.hasFlag("-thread")) {
+
+					workers = new WorkQueue();
+
+					index = threadSafe;
+
+					builder = new MultiThreadInvertedIndexBuilder(threadSafe, workers);
+
+					queryBuilder = new MultiThreadQueryBuilder(threadSafe, workers);
+				}
+
+				seed = parser.getString("-url");
+
+				webCrawler = new MultiThreadWebCrawler(threadSafe,limit, new URL(seed), workers);
+
+				webCrawler.webCrawling();
+
+			} catch (MalformedURLException e) {
+
+				System.out.println("Invalid url");
+
+			}
 
 		}
 
@@ -156,6 +213,24 @@ public class Driver {
 			catch(IOException e) {
 
 				System.out.println("Unable to write query in the file " + path);
+
+			}
+
+		}
+
+		if(parser.hasFlag("-port")) {
+
+			port = Integer.parseInt(parser.getString("-port", "8080"));
+
+			searchEngine = new SearchEngine(port, queryBuilder);
+
+			try {
+
+				searchEngine.server();
+
+			} catch (Exception e) {
+
+				System.out.println("Server is unable to set up");
 
 			}
 

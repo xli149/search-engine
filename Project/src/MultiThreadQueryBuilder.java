@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -89,6 +91,19 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 		}
 
 		logger.debug("Query finished parsing file: " + Thread.currentThread().getId());
+
+	}
+
+	@Override
+	public List<InvertedIndex.SearchResult> results(String query) throws IOException{
+
+		if(map.containsKey(query)) {
+
+			return Collections.unmodifiableList(map.get(query));
+
+		}
+
+		return null;
 
 	}
 
