@@ -3,6 +3,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
 import opennlp.tools.stemmer.snowball.SnowballStemmer;
 
@@ -55,5 +56,7 @@ public interface QueryBuilderInterface {
 	 *  The default stemmer algorithm used by this class.
 	 */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
+
+	public List<InvertedIndex.SearchResult> results(String query) throws IOException;
 
 }

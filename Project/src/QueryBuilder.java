@@ -1,6 +1,8 @@
 import java.io.IOException;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -76,6 +78,19 @@ public class QueryBuilder implements QueryBuilderInterface {
 		ArrayList<InvertedIndex.SearchResult> result = index.search(words, exact);
 
 		map.put(queries, result);
+
+	}
+
+	@Override
+	public List<InvertedIndex.SearchResult> results(String query) throws IOException{
+
+		if(map.containsKey(query)) {
+
+			return Collections.unmodifiableList(map.get(query));
+
+		}
+
+		return null;
 
 	}
 
