@@ -32,13 +32,15 @@ public class Driver {
 
 		InvertedIndex index;
 
+		MultiThreadInvertedIndex threadSafe = null;
+
 		InvertedIndexBuilder builder;
 
 		QueryBuilderInterface queryBuilder;
 
 		WorkQueue workers = null;
 
-		MultiThreadWebCrawler webCrawler;
+		MultiThreadWebCrawler webCrawler = null;
 
 		SearchEngine searchEngine;
 
@@ -81,7 +83,7 @@ public class Driver {
 
 			}
 
-			MultiThreadInvertedIndex threadSafe = new MultiThreadInvertedIndex();
+			threadSafe = new MultiThreadInvertedIndex();
 
 			index = threadSafe;
 
@@ -103,7 +105,7 @@ public class Driver {
 
 			try {
 
-				MultiThreadInvertedIndex threadSafe = new MultiThreadInvertedIndex();
+				threadSafe = new MultiThreadInvertedIndex();
 
 				if(!parser.hasFlag("-thread")) {
 
@@ -220,7 +222,7 @@ public class Driver {
 
 			port = Integer.parseInt(parser.getString("-port", "8080"));
 
-			searchEngine = new SearchEngine(port, queryBuilder);
+			searchEngine = new SearchEngine(port, queryBuilder, webCrawler, threadSafe);
 
 			try {
 

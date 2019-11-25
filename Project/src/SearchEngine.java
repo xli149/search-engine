@@ -18,15 +18,25 @@ public class SearchEngine {
 	private final QueryBuilderInterface queryBuilder;
 
 	/**
+	 * The webCrawler object for crawling a webSite
+	 */
+	private final MultiThreadWebCrawler webCrawler;
+
+	private final MultiThreadInvertedIndex index;
+	/**
 	 * SearchEngine constructor
 	 * @param port the port to be used by server
 	 * @param queryBuilder queryBuilder object to be used to create query
 	 */
-	public SearchEngine(int port, QueryBuilderInterface queryBuilder) {
+	public SearchEngine(int port, QueryBuilderInterface queryBuilder, MultiThreadWebCrawler webCrawler, MultiThreadInvertedIndex index) {
 
 		this.port = port;
 
 		this.queryBuilder = queryBuilder;
+
+		this.webCrawler = webCrawler;
+
+		this.index = index;
 
 	}
 
@@ -41,7 +51,9 @@ public class SearchEngine {
 
 		ServletHandler handler = new ServletHandler();
 
-		handler.addServletWithMapping(new ServletHolder(new Servlet(queryBuilder)), "/check" );
+		handler.addServletWithMapping(new ServletHolder(new Servlet(queryBuilder, webCrawler)), "/check" );
+
+		handler.addServletWithMapping(new ServletHolder(new LocationServlet(index)), "/counts" );
 
 		server.setHandler(handler);
 

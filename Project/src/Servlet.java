@@ -40,16 +40,20 @@ public class Servlet extends HttpServlet {
 	 */
 	private final QueryBuilderInterface queryBuilder;
 
+	private final MultiThreadWebCrawler webCrawler;
+
 
 	/**
 	 * Servlet constructor
 	 * @param queryBuilder queryBuilder queryBuilder object to be used to create query
 	 */
-	public Servlet(QueryBuilderInterface queryBuilder) {
+	public Servlet(QueryBuilderInterface queryBuilder, MultiThreadWebCrawler webCrawler) {
 
 		super();
 
 		this.queryBuilder = queryBuilder;
+
+		this.webCrawler = webCrawler;
 
 		messages = new ConcurrentLinkedQueue<>();
 
@@ -60,7 +64,6 @@ public class Servlet extends HttpServlet {
 			throws ServletException, IOException {
 
 		response.setContentType("text/html");
-		response.setStatus(HttpServletResponse.SC_OK);
 
 		PrintWriter out = response.getWriter();
 
@@ -142,6 +145,17 @@ public class Servlet extends HttpServlet {
 		out.printf("					</button>%n");
 		out.printf("			  </div>%n");
 		out.printf("			</form>%n");
+
+		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/counts");
+		out.printf("				<div class=\"control\">%n");
+		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						&nbsp;%n");
+		out.printf("						Locations Browser%n");
+		out.printf("					</button>%n");
+		out.printf("			  </div>%n");
+		out.printf("			</form>%n");
+
 		out.printf("		</div>%n");
 		out.printf("	</section>%n");
 		out.printf("%n");
@@ -193,6 +207,8 @@ public class Servlet extends HttpServlet {
 		}
 
 		response.setStatus(HttpServletResponse.SC_OK);
+
+		System.out.println(request.getServletPath());
 
 		response.sendRedirect(request.getServletPath());
 	}
