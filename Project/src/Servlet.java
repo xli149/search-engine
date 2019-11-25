@@ -25,8 +25,6 @@ public class Servlet extends HttpServlet {
 	 * the HTTP headers of that URL.
 	 */
 
-	//	private static final String TITLE = "Link Checker";
-
 	/**
 	 * queryBuilder to be used
 	 */
@@ -57,10 +55,6 @@ public class Servlet extends HttpServlet {
 
 		String input = request.getParameter("link");
 
-		//TODOs Avoid XSS attacks
-
-		//String quert = StringEscapeUtils.escapeHtml4(input);
-
 		if(input != null) {
 
 			queryBuilder.parseLine(input, false);
@@ -68,8 +62,6 @@ public class Servlet extends HttpServlet {
 			List<InvertedIndex.SearchResult> links = queryBuilder.results(input);
 
 			if(links != null) {
-
-				//				out.print("not results");
 
 				for(int i = 0; i < links.size(); i++) {
 
@@ -81,9 +73,7 @@ public class Servlet extends HttpServlet {
 
 		}
 
-
 		response.setStatus(HttpServletResponse.SC_OK);
-
 
 	}
 
@@ -106,5 +96,3 @@ public class Servlet extends HttpServlet {
 		out.printf("</form>\n%n");
 	}
 }
-
-

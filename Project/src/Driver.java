@@ -32,6 +32,8 @@ public class Driver {
 
 		InvertedIndex index;
 
+		MultiThreadInvertedIndex threadSafe;
+
 		InvertedIndexBuilder builder;
 
 		QueryBuilderInterface queryBuilder;
@@ -81,7 +83,7 @@ public class Driver {
 
 			}
 
-			MultiThreadInvertedIndex threadSafe = new MultiThreadInvertedIndex();
+			threadSafe = new MultiThreadInvertedIndex();
 
 			index = threadSafe;
 
@@ -103,7 +105,7 @@ public class Driver {
 
 			try {
 
-				MultiThreadInvertedIndex threadSafe = new MultiThreadInvertedIndex();
+				threadSafe = new MultiThreadInvertedIndex();
 
 				if(!parser.hasFlag("-thread")) {
 
