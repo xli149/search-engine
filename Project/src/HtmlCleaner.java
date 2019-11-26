@@ -100,6 +100,5 @@ public class HtmlCleaner {
 
 		return html.replaceAll("(?si)<" + name + "\\b.*?>.*?<\\/" + name +".*?>", " ");
 
-
 	}
 }

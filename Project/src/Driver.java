@@ -32,7 +32,9 @@ public class Driver {
 
 		InvertedIndex index;
 
+
 		MultiThreadInvertedIndex threadSafe = null;
+
 
 		InvertedIndexBuilder builder;
 

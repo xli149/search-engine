@@ -39,7 +39,9 @@ public class Servlet extends CookieBaseServlet {
 	 * the HTTP headers of that URL.
 	 */
 
+
 	private static final String TITLE = "Link Checker";
+
 
 	/**
 	 * queryBuilder to be used
@@ -146,6 +148,7 @@ public class Servlet extends CookieBaseServlet {
 
 		}
 
+
 		out.printf("			</div>%n");
 		out.printf("%n");
 		out.printf("		</div>%n");
@@ -235,15 +238,18 @@ public class Servlet extends CookieBaseServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
+
 		//		System.out.println(request.getRequestURI());
 
 		response.setContentType("text/html");
 
 		String message = request.getParameter("message");
 
+
 		String seed = request.getParameter("seed");
 
 		seed = seed == null ? "" : seed;
+
 
 		message = message == null ? "" : message;
 
@@ -262,6 +268,7 @@ public class Servlet extends CookieBaseServlet {
 			messages.add("<p> New links resources has been added</p>");
 
 		}
+
 
 
 
@@ -300,6 +307,7 @@ public class Servlet extends CookieBaseServlet {
 		//		System.out.println(request.getServletPath());
 
 		response.sendRedirect(request.getServletPath());
+
 	}
 
 	/**
@@ -390,5 +398,3 @@ public class Servlet extends CookieBaseServlet {
 
 	}
 }
-
-
