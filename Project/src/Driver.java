@@ -120,9 +120,9 @@ public class Driver {
 
 				seed = parser.getString("-url");
 
-				webCrawler = new MultiThreadWebCrawler(threadSafe,limit, new URL(seed), workers);
+				webCrawler = new MultiThreadWebCrawler(threadSafe,limit, workers);
 
-				webCrawler.webCrawling();
+				webCrawler.webCrawling(new URL(seed));
 
 			} catch (MalformedURLException e) {
 

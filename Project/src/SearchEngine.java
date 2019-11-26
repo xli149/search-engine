@@ -1,3 +1,5 @@
+import java.util.LinkedList;
+
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -22,11 +24,18 @@ public class SearchEngine {
 	 */
 	private final MultiThreadWebCrawler webCrawler;
 
+	private final LinkedList<String> suggestQueries;
+
+	/**
+	 * The MultiThreadInvertedIndex object
+	 */
 	private final MultiThreadInvertedIndex index;
 	/**
 	 * SearchEngine constructor
 	 * @param port the port to be used by server
 	 * @param queryBuilder queryBuilder object to be used to create query
+	 * @param webCrawler the webCrawler object
+	 * @param index the MultiThreadInvertedIndex
 	 */
 	public SearchEngine(int port, QueryBuilderInterface queryBuilder, MultiThreadWebCrawler webCrawler, MultiThreadInvertedIndex index) {
 
@@ -37,6 +46,8 @@ public class SearchEngine {
 		this.webCrawler = webCrawler;
 
 		this.index = index;
+
+		this.suggestQueries = new LinkedList<>();
 
 	}
 
@@ -51,9 +62,11 @@ public class SearchEngine {
 
 		ServletHandler handler = new ServletHandler();
 
-		handler.addServletWithMapping(new ServletHolder(new Servlet(queryBuilder, webCrawler)), "/check" );
+		handler.addServletWithMapping(new ServletHolder(new Servlet(queryBuilder, webCrawler, suggestQueries)), "/check" );
 
 		handler.addServletWithMapping(new ServletHolder(new LocationServlet(index)), "/counts" );
+
+		handler.addServletWithMapping(new ServletHolder(new CookieIndexServlet()), "/history");
 
 		server.setHandler(handler);
 

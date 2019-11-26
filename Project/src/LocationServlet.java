@@ -28,12 +28,20 @@ public class LocationServlet extends HttpServlet{
 
 		for(var count : counts.entrySet()) {
 
-			out.printf("<p><a href=\\\"%s\\\">%s</a> : %s </p>",count.getKey(), count.getKey(), count.getValue());
+			//TODO Unsolved: link cannot be found
+
+			//			URL cleanedUrl = LinkParser.clean(new URL(count.getKey()));
+
+			String formatted = String.format("<p><a href=\"%s\">%s</a> : %s </p>",count.getKey(), count.getKey(), count.getValue());
+
+			out.printf(formatted);
 
 
 		}
 
 		response.setStatus(HttpServletResponse.SC_OK);
+
+		//		response.sendRedirect(request.getServletPath());
 
 	}
 
