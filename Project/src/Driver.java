@@ -32,7 +32,9 @@ public class Driver {
 
 		InvertedIndex index;
 
-		MultiThreadInvertedIndex threadSafe;
+
+		MultiThreadInvertedIndex threadSafe = null;
+
 
 		InvertedIndexBuilder builder;
 
@@ -40,7 +42,7 @@ public class Driver {
 
 		WorkQueue workers = null;
 
-		MultiThreadWebCrawler webCrawler;
+		MultiThreadWebCrawler webCrawler = null;
 
 		SearchEngine searchEngine;
 
@@ -120,9 +122,9 @@ public class Driver {
 
 				seed = parser.getString("-url");
 
-				webCrawler = new MultiThreadWebCrawler(threadSafe,limit, new URL(seed), workers);
+				webCrawler = new MultiThreadWebCrawler(threadSafe,limit, workers);
 
-				webCrawler.webCrawling();
+				webCrawler.webCrawling(new URL(seed));
 
 			} catch (MalformedURLException e) {
 
@@ -222,7 +224,7 @@ public class Driver {
 
 			port = Integer.parseInt(parser.getString("-port", "8080"));
 
-			searchEngine = new SearchEngine(port, queryBuilder);
+			searchEngine = new SearchEngine(port, queryBuilder, webCrawler, threadSafe);
 
 			try {
 

@@ -94,6 +94,13 @@ public class QueryBuilder implements QueryBuilderInterface {
 
 	}
 
+	@Override
+	public void parseLinks(String line, boolean exact) {
+
+		parseLine(line, exact);
+
+	}
+
 	/**
 	 * Method for writing json object
 	 * @param path a path of file

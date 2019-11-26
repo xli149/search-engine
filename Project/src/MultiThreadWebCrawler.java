@@ -45,7 +45,7 @@ public class MultiThreadWebCrawler{
 	/**
 	 * The seed url
 	 */
-	private URL seed;
+	//	private URL seed;
 
 	/**
 	 * A set for checking repeating urls
@@ -58,9 +58,9 @@ public class MultiThreadWebCrawler{
 	 * @param seed the seed link for web crawling
 	 * @param queue Work queue to be used for passing the tasks
 	 */
-	public MultiThreadWebCrawler(MultiThreadInvertedIndex index, URL seed, WorkQueue queue) {
+	public MultiThreadWebCrawler(MultiThreadInvertedIndex index, WorkQueue queue) {
 
-		this(index, 50, seed, queue);
+		this(index, 50,  queue);
 
 	}
 
@@ -71,13 +71,13 @@ public class MultiThreadWebCrawler{
 	 * @param seed the seed link for web crawling
 	 * @param queue Work queue to be used for passing the tasks
 	 */
-	public MultiThreadWebCrawler(MultiThreadInvertedIndex index, int limit, URL seed, WorkQueue queue) {
+	public MultiThreadWebCrawler(MultiThreadInvertedIndex index, int limit, WorkQueue queue) {
 
 		this.index = index;
 
 		this.limit = limit;
 
-		this.seed = seed;
+		//		this.seed = seed;
 
 		this.queue = queue;
 
@@ -145,7 +145,7 @@ public class MultiThreadWebCrawler{
 	 * Method for crawling webs by BFS
 	 * @throws MalformedURLException if url is not correctly provided
 	 */
-	public void webCrawling() throws MalformedURLException {
+	public void webCrawling(URL seed) throws MalformedURLException {
 
 		queue.execute(new Task(seed));
 
@@ -160,8 +160,19 @@ public class MultiThreadWebCrawler{
 
 		logger.debug("travers dirctory finished: Thread: " + Thread.currentThread().getId() );
 
+		//		for(var key: index.getLocations()) {
+		//
+		//			System.out.println(key);
+		//
+		//		}
+
 	}
 
+	//	public void addSeed(String seed) {
+	//
+	//
+	//
+	//	}
 	/**
 	 * Nested class for creating Tasks
 	 * @author chrislee

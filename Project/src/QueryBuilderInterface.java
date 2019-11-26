@@ -65,4 +65,11 @@ public interface QueryBuilderInterface {
 	 */
 	public List<InvertedIndex.SearchResult> results(String query) throws IOException;
 
+	/**
+	 * Function for parsing the links from a webSite
+	 * @param line the line to be parsed
+	 * @param exact the search method according to true or false
+	 */
+	public void parseLinks(String line, boolean exact);
+
 }

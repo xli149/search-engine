@@ -95,6 +95,25 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 	}
 
 	@Override
+	public void parseLinks(String line, boolean exact) {
+
+		parseLine(line, exact);
+
+		try {
+
+			queue.finished();
+
+		} catch (InterruptedException e) {
+
+			logger.debug("Thread: " + Thread.currentThread().getId() + " get interrupted");
+
+		}
+
+		logger.debug("Query finished parsing file: " + Thread.currentThread().getId());
+
+	}
+
+	@Override
 	public List<InvertedIndex.SearchResult> results(String query) throws IOException{
 
 		if(map.containsKey(query)) {
