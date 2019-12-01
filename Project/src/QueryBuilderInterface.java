@@ -70,6 +70,6 @@ public interface QueryBuilderInterface {
 	 * @param line the line to be parsed
 	 * @param exact the search method according to true or false
 	 */
-	public void parseLinks(String line, boolean exact);
+	public List<InvertedIndex.SearchResult> parseLinks(String line, boolean exact) throws IOException;
 
 }

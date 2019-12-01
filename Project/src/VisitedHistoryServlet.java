@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
@@ -11,26 +12,23 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.text.StringEscapeUtils;
 
-/**
- * Demonstrates how to create, use, and clear cookies.
- *
- * @see CookieBaseServlet
- * @see CookieIndexServlet
- * @see CookieConfigServlet
- */
-@SuppressWarnings("serial")
-public class CookieIndexServlet extends CookieBaseServlet {
-
-
-	//	public CookieIndexServlet(String his)
+public class VisitedHistoryServlet extends CookieBaseServlet {
 
 	/** Used to fetch the history from a cookie. */
-	public static final String SEARCH_HISTORY = "history";
-
+	public static final String VISIT_HISTORY = "visited";
 
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+
+		String queryString = null;
+
+		if(request.getQueryString() != null) {
+
+			queryString = URLDecoder.decode(request.getQueryString(), StandardCharsets.UTF_8);
+
+		}
+
 
 		log.info("GET " + request.getRequestURL().toString());
 
@@ -41,11 +39,9 @@ public class CookieIndexServlet extends CookieBaseServlet {
 
 		prepareResponse("Cookies!", response);
 
-
-
 		Map<String, Cookie> cookies = getCookieMap(request);
 
-		Cookie visitHistory = cookies.get(SEARCH_HISTORY);
+		Cookie visitHistory = cookies.get(VISIT_HISTORY);
 
 		PrintWriter out = response.getWriter();
 		out.printf("<p>");
@@ -53,9 +49,11 @@ public class CookieIndexServlet extends CookieBaseServlet {
 		// Update visit count as necessary and output information.
 		if (visitHistory == null ) {
 
-			//			visitHistory = new Cookie(VISIT_HISTORY, "");
+			visitHistory = new Cookie(VISIT_HISTORY, "");
 
-			out.printf("<p>You don't have any history</p>");
+			out.printf("<h2>Visited Websites<h2>");
+
+			//			out.printf("<p>You don't have any visited history yet</p>");
 		}
 		else {
 			try {
@@ -65,7 +63,7 @@ public class CookieIndexServlet extends CookieBaseServlet {
 				String escaped = StringEscapeUtils.escapeHtml4(decoded);
 				//				log.info("Encoded: " + visitDate.getValue() + ", Decoded: " + decoded + ", Escaped: " + escaped);
 
-				out.printf("<h2>History<h2>");
+				out.printf("<h2>Visited Websites<h2>");
 
 				String [] histories = escaped.split("-");
 
@@ -77,10 +75,10 @@ public class CookieIndexServlet extends CookieBaseServlet {
 			}
 			catch (NullPointerException | IllegalArgumentException e) {
 				// reset to safe values
-
-				visitHistory = new Cookie(SEARCH_HISTORY, "");
-
 				out.printf("Unable to store the history. ");
+
+				visitHistory = new Cookie(VISIT_HISTORY, "");
+
 			}
 		}
 
@@ -91,24 +89,31 @@ public class CookieIndexServlet extends CookieBaseServlet {
 		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/DNT
 		// https://support.mozilla.org/en-US/kb/how-do-i-turn-do-not-track-feature
 		// https://www.macworld.com/article/3338152/apple-safari-removing-do-not-track.html
-		//		if (request.getIntHeader("DNT") != 1) {
-		//
-		//			String decoded = URLDecoder.decode(visitHistory.getValue(), StandardCharsets.UTF_8);
-		//
-		//			String update = decoded + "-" + request.getParameter();
-		//			String encoded = URLEncoder.encode(update, StandardCharsets.UTF_8);
-		//			visitHistory.setValue(encoded);
-		//			response.addCookie(visitHistory);
-		//		}
-		//		else {
-		//			clearCookies(request, response);
-		//			out.printf("<p>Your visits will not be tracked.</p>");
-		//		}
+		if (request.getIntHeader("DNT") != 1 && queryString != null && queryString.length() != 0) {
+
+
+			//			System.out.println("query: " + "\""+queryString+"\"");
+
+			String decoded = URLDecoder.decode(visitHistory.getValue(), StandardCharsets.UTF_8);
+
+			String update = decoded + "-" + queryString;
+
+			//			System.out.println(update);
+			String encoded = URLEncoder.encode(update, StandardCharsets.UTF_8);
+
+			visitHistory.setValue(encoded);
+
+			response.addCookie(visitHistory);
+
+			response.sendRedirect(queryString);
+		}
+
 
 
 		printForm(request, response);
 
 		finishResponse(request, response);
+
 	}
 
 	@Override
@@ -135,4 +140,5 @@ public class CookieIndexServlet extends CookieBaseServlet {
 		out.printf("<p><input type=\"submit\" value=\"Clean\"></p>\n%n");
 		out.printf("</form>\n%n");
 	}
+
 }

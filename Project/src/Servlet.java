@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
@@ -29,7 +28,6 @@ public class Servlet extends CookieBaseServlet {
 	/** ID used for serialization, which we are not using. */
 	private static final long serialVersionUID = 1L;
 
-	private ConcurrentLinkedQueue<String> messages;
 
 	/**
 	 * Displays a form where users can enter a URL to check. When the button is
@@ -54,11 +52,11 @@ public class Servlet extends CookieBaseServlet {
 
 	//	private final MultiThreadInvertedIndex index;
 
-	private final SimpleReadWriteLock lock;
-
-	public static final String VISIT_HISTORY = "history";
+	public static final String SEARCH_HISTORY = "history";
 
 	public static final String VISIT_LASTTIME = "last";
+
+	private final MultiThreadInvertedIndex index;
 
 
 
@@ -68,7 +66,7 @@ public class Servlet extends CookieBaseServlet {
 	 * @param webCrawler webCrawler object
 	 * @param history an arrayList
 	 */
-	public Servlet(QueryBuilderInterface queryBuilder, MultiThreadWebCrawler webCrawler, LinkedList<String> suggestQueries) {
+	public Servlet(QueryBuilderInterface queryBuilder, MultiThreadWebCrawler webCrawler, LinkedList<String> suggestQueries, MultiThreadInvertedIndex index) {
 
 		super();
 
@@ -76,13 +74,10 @@ public class Servlet extends CookieBaseServlet {
 
 		this.webCrawler = webCrawler;
 
-		messages = new ConcurrentLinkedQueue<>();
-
 		this.suggestQueries = suggestQueries;
 
-		//		this.index = index;
+		this.index = index;
 
-		lock = new SimpleReadWriteLock();
 
 	}
 
@@ -90,12 +85,199 @@ public class Servlet extends CookieBaseServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
-		System.out.println(request.getRequestURI());
+		response.setContentType("text/html");
 
+		preFormat(request, response);
 
+		postFormat(request, response);
+
+		response.setStatus(HttpServletResponse.SC_OK);
+	}
+
+	@Override
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
+		PrintWriter out = response.getWriter();
 
 		response.setContentType("text/html");
 
+		String message = request.getParameter("message");
+
+		String seed = request.getParameter("seed");
+
+		seed = seed == null ? "" : seed;
+
+		message = message == null ? "" : message;
+
+		seed = StringEscapeUtils.escapeHtml4(seed);
+
+		message = StringEscapeUtils.escapeHtml4(message);
+
+		preFormat(request, response);
+
+		if(seed.length() != 0) {
+
+			System.out.println("seed: " + "\"" + seed + "\"");
+
+			URL url = new URL(seed);
+
+			webCrawler.webCrawling(url);
+
+			out.print("<p> New links resources has been added</p>");
+
+		}
+
+		addHistory(request, response, message);
+
+		suggestQueries.addFirst(message);
+
+		List<InvertedIndex.SearchResult> links = queryBuilder.parseLinks(message, false);
+
+		if(links != null) {
+
+			//			request.setAttribute("luckLink", links.get(0).getLocation());
+			//
+			//			RequestDispatcher dispatcher = request.getRequestDispatcher("/lucky");
+			//
+			//			//			dispatcher.forward(request,response);
+
+			//			ServletContext context = getServletContext();
+
+			System.out.println(links.get(0).getLocation());
+
+			//			context.setAttribute("luckValue", links.get(0).getLocation());
+
+
+			for(int i = 0; i < links.size(); i++) {
+
+				String link = links.get(i).getLocation();
+
+				String formatted = String.format("<p><a href=/visited?%s>%s</a> </p>", link, link);
+
+				out.printf("				<div class=\"box\">%n");
+				//				out.printf(message);
+
+				out.print(formatted);
+				out.printf("				</div>%n");
+				out.printf("%n");
+
+			}
+		}
+
+		postFormat(request, response);
+
+		response.setStatus(HttpServletResponse.SC_OK);
+
+		//		System.out.println(request.getServletPath());
+
+		//		response.sendRedirect(request.getServletPath());
+
+		//		System.out.println(request.getSer);
+
+		//		response.sendRedirect("https://www.cs.usfca.edu/~cs212/birds/albatross.html");
+
+	}
+
+	/**
+	 * Returns the date and time in a long format. For example: "12:00 am on
+	 * Saturday, January 01 2000".
+	 *
+	 * @return current date and time
+	 */
+	private static String getDate() {
+		String format = "hh:mm a 'on' EEEE, MMMM dd yyyy";
+		DateFormat formatter = new SimpleDateFormat(format);
+		return formatter.format(new Date());
+	}
+
+	private void getLastTime(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		PrintWriter out = response.getWriter();
+
+		Map<String, Cookie> cookies = getCookieMap(request);
+
+		Cookie visitLast = cookies.get(VISIT_LASTTIME);
+
+		if(visitLast == null) {
+
+			visitLast = new Cookie(VISIT_LASTTIME, "");
+
+			String encoded = URLEncoder.encode(getShortDate(), StandardCharsets.UTF_8);
+
+			visitLast.setValue(encoded);
+
+			response.addCookie(visitLast);
+
+			//			out.printf("	<section class=\"hero is-primary is-bold\">%n");
+
+			out.printf("	<section class=\"hero is-primary is-bold\">%n");
+			out.printf("	  <div class=\"hero-body\">%n");
+
+			out.print("<p>Welcome, this is your first time visiting this website</p>");
+
+			out.printf("	  </div>%n");
+			out.printf("	</section>%n");
+
+			//			out.print("</section>");
+
+		}
+		else {
+			String decoded = URLDecoder.decode(visitLast.getValue(), StandardCharsets.UTF_8);
+
+			String escaped = StringEscapeUtils.escapeHtml4(decoded);
+
+			out.printf("	<section class=\"hero is-primary is-bold\">%n");
+			out.printf("	  <div class=\"hero-body\">%n");
+
+			out.printf("</p>Last time log in was at %s</p>", escaped);
+
+			out.printf("	  </div>%n");
+			out.printf("	</section>%n");
+
+		}
+
+		String encoded = URLEncoder.encode(getShortDate(), StandardCharsets.UTF_8);
+
+		visitLast.setValue(encoded);
+
+		response.addCookie(visitLast);
+	}
+
+	public void addHistory(HttpServletRequest request, HttpServletResponse response, String message) {
+
+		Map<String, Cookie> cookies = getCookieMap(request);
+
+		Cookie visitHistory = cookies.get(SEARCH_HISTORY);
+
+		if (visitHistory == null ) {
+
+			visitHistory = new Cookie(SEARCH_HISTORY, "");
+
+		}
+
+		if (request.getIntHeader("DNT") != 1) {
+
+			System.out.println("got here");
+
+			String decoded = URLDecoder.decode(visitHistory.getValue(), StandardCharsets.UTF_8);
+
+			String update = decoded + "-" + message;
+
+			String encoded = URLEncoder.encode(update, StandardCharsets.UTF_8);
+
+			visitHistory.setValue(encoded);
+
+			response.addCookie(visitHistory);
+		}
+		//		else {
+		//			clearCookies(request, response);
+		//			out.printf("<p>Your visits will not be tracked.</p>");
+		//		}
+
+	}
+
+	public void preFormat(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		PrintWriter out = response.getWriter();
 
 		out.printf("<!DOCTYPE html>%n");
@@ -109,6 +291,17 @@ public class Servlet extends CookieBaseServlet {
 		out.printf("</head>%n");
 		out.printf("%n");
 		out.printf("<body>%n");
+
+		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/shutdown");
+		out.printf("				<div class=\"control\">%n");
+		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						&nbsp;%n");
+		out.printf("						%n");
+		out.printf("					</button>%n");
+		out.printf("			  </div>%n");
+		out.printf("			</form>%n");
+
 		out.printf("	<section class=\"hero is-primary is-bold\">%n");
 		out.printf("	  <div class=\"hero-body\">%n");
 		out.printf("	    <div class=\"container\">%n");
@@ -131,24 +324,9 @@ public class Servlet extends CookieBaseServlet {
 		out.printf("			<h2 class=\"title\">Links</h2>%n");
 		out.printf("%n");
 
-
-
-
-		if (messages.isEmpty()) {
-			out.printf("				<p>No Links.</p>%n");
-		}
-		else {
-			for (String message : messages) {
-				out.printf("				<div class=\"box\">%n");
-				out.printf(message);
-				out.printf("				</div>%n");
-				out.printf("%n");
-				messages.poll();
-			}
-
-		}
-
-
+	}
+	public void postFormat(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		PrintWriter out = response.getWriter();
 		out.printf("			</div>%n");
 		out.printf("%n");
 		out.printf("		</div>%n");
@@ -213,10 +391,32 @@ public class Servlet extends CookieBaseServlet {
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
 		out.printf("						<i class=\"fas fa-comment\"></i>%n");
 		out.printf("						&nbsp;%n");
-		out.printf("						History%n");
+		out.printf("						Search History%n");
 		out.printf("					</button>%n");
 		out.printf("			  </div>%n");
 		out.printf("			</form>%n");
+
+		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/visited");
+		out.printf("				<div class=\"control\">%n");
+		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						&nbsp;%n");
+		out.printf("						Visited History%n");
+		out.printf("					</button>%n");
+		out.printf("			  </div>%n");
+		out.printf("			</form>%n");
+
+		//		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/check");
+		//		out.printf("				<div class=\"control\">%n");
+		//		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+		//		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		//		out.printf("						&nbsp;%n");
+		//		out.printf("						I Feel Lucky%n");
+		//		out.printf("					</button>%n");
+		//		out.printf("			  </div>%n");
+		//		out.printf("			</form>%n");
+
+
 
 		out.printf("		</div>%n");
 		out.printf("	</section>%n");
@@ -230,171 +430,5 @@ public class Servlet extends CookieBaseServlet {
 		out.printf("	</footer>%n");
 		out.printf("</body>%n");
 		out.printf("</html>%n");
-
-		response.setStatus(HttpServletResponse.SC_OK);
-	}
-
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-
-		//		System.out.println(request.getRequestURI());
-
-		response.setContentType("text/html");
-
-		String message = request.getParameter("message");
-
-
-		String seed = request.getParameter("seed");
-
-		seed = seed == null ? "" : seed;
-
-
-		message = message == null ? "" : message;
-
-		seed = StringEscapeUtils.escapeHtml4(seed);
-
-		message = StringEscapeUtils.escapeHtml4(message);
-
-		if(seed.length() != 0) {
-
-			System.out.println("seed: " + "\"" + seed + "\"");
-
-			URL url = new URL(seed);
-
-			webCrawler.webCrawling(url);
-
-			messages.add("<p> New links resources has been added</p>");
-
-		}
-
-
-
-
-		addHistory(request, response, message);
-
-		suggestQueries.addFirst(message);
-
-
-
-		queryBuilder.parseLinks(message, false);
-
-		//		System.out.println(message);
-
-		List<InvertedIndex.SearchResult> links = queryBuilder.results(message);
-
-		//		System.out.println(links);
-
-		if(links != null) {
-
-			for(int i = 0; i < links.size(); i++) {
-
-				String link = links.get(i).getLocation();
-
-				String formatted = String.format("<p><a href=\"%s\">%s</a> </p>", link, link);
-
-				// TODO synchronized on it
-				messages.add(formatted);
-
-
-
-			}
-		}
-
-		response.setStatus(HttpServletResponse.SC_OK);
-
-		//		System.out.println(request.getServletPath());
-
-		response.sendRedirect(request.getServletPath());
-
-	}
-
-	/**
-	 * Returns the date and time in a long format. For example: "12:00 am on
-	 * Saturday, January 01 2000".
-	 *
-	 * @return current date and time
-	 */
-	private static String getDate() {
-		String format = "hh:mm a 'on' EEEE, MMMM dd yyyy";
-		DateFormat formatter = new SimpleDateFormat(format);
-		return formatter.format(new Date());
-	}
-
-	private void getLastTime(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-		PrintWriter out = response.getWriter();
-
-		Map<String, Cookie> cookies = getCookieMap(request);
-
-		Cookie visitLast = cookies.get(VISIT_LASTTIME);
-
-		if(visitLast == null) {
-
-			visitLast = new Cookie(VISIT_LASTTIME, "");
-
-			String encoded = URLEncoder.encode(getShortDate(), StandardCharsets.UTF_8);
-
-			visitLast.setValue(encoded);
-
-			response.addCookie(visitLast);
-
-			//			out.printf("	<section class=\"hero is-primary is-bold\">%n");
-
-			out.print("<p>Welcome, this is your first time visiting this website</p>");
-
-			//			out.print("</section>");
-
-		}
-		else {
-			String decoded = URLDecoder.decode(visitLast.getValue(), StandardCharsets.UTF_8);
-
-			String escaped = StringEscapeUtils.escapeHtml4(decoded);
-
-			out.printf("</p>Last time log in was at %s</p>", escaped);
-
-		}
-
-		String encoded = URLEncoder.encode(getShortDate(), StandardCharsets.UTF_8);
-
-		visitLast.setValue(encoded);
-
-		response.addCookie(visitLast);
-	}
-
-	public void addHistory(HttpServletRequest request, HttpServletResponse response, String message) {
-
-		Map<String, Cookie> cookies = getCookieMap(request);
-
-		Cookie visitHistory = cookies.get(VISIT_HISTORY);
-
-
-		if (visitHistory == null ) {
-
-			visitHistory = new Cookie(VISIT_HISTORY, "");
-
-
-		}
-
-		if (request.getIntHeader("DNT") != 1) {
-
-			System.out.println("got here");
-
-			String decoded = URLDecoder.decode(visitHistory.getValue(), StandardCharsets.UTF_8);
-
-			String update = decoded + "-" + message;
-
-			String encoded = URLEncoder.encode(update, StandardCharsets.UTF_8);
-
-			visitHistory.setValue(encoded);
-
-			response.addCookie(visitHistory);
-		}
-		//		else {
-		//			clearCookies(request, response);
-		//			out.printf("<p>Your visits will not be tracked.</p>");
-		//		}
-
 	}
 }

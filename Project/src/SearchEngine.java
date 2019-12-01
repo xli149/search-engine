@@ -7,7 +7,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 /**
  * Creates a web server to allow users to fetch HTTP headers for a URL.
  */
-public class SearchEngine {
+public class SearchEngine  {
 
 	/**
 	 * Port to be used
@@ -25,6 +25,7 @@ public class SearchEngine {
 	private final MultiThreadWebCrawler webCrawler;
 
 	private final LinkedList<String> suggestQueries;
+
 
 	/**
 	 * The MultiThreadInvertedIndex object
@@ -51,6 +52,7 @@ public class SearchEngine {
 
 	}
 
+
 	/**
 	 * Starts a Jetty server on the port and maps /check requests to the servlet
 	 * @throws Exception
@@ -62,17 +64,24 @@ public class SearchEngine {
 
 		ServletHandler handler = new ServletHandler();
 
-		handler.addServletWithMapping(new ServletHolder(new Servlet(queryBuilder, webCrawler, suggestQueries)), "/check" );
+		handler.addServletWithMapping(new ServletHolder(new Servlet(queryBuilder, webCrawler, suggestQueries, index)), "/check" );
 
 		handler.addServletWithMapping(new ServletHolder(new LocationServlet(index)), "/counts" );
 
 		handler.addServletWithMapping(new ServletHolder(new CookieIndexServlet()), "/history");
+
+		handler.addServletWithMapping(new ServletHolder(new VisitedHistoryServlet()), "/visited");
+
+		handler.addServletWithMapping(new ServletHolder(new GraceShutdown(server)), "/shutdown");
+
+		handler.addServletWithMapping(new ServletHolder(new LuckyServlet()), "/lucky");
 
 		server.setHandler(handler);
 
 		server.start();
 
 		server.join();
+
 	}
 
 }

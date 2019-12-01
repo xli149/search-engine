@@ -32,9 +32,7 @@ public class Driver {
 
 		InvertedIndex index;
 
-
 		MultiThreadInvertedIndex threadSafe = null;
-
 
 		InvertedIndexBuilder builder;
 
@@ -235,6 +233,8 @@ public class Driver {
 				System.out.println("Server is unable to set up");
 
 			}
+
+			System.out.println("got here");
 
 		}
 

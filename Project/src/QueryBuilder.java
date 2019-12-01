@@ -95,9 +95,11 @@ public class QueryBuilder implements QueryBuilderInterface {
 	}
 
 	@Override
-	public void parseLinks(String line, boolean exact) {
+	public List<InvertedIndex.SearchResult> parseLinks(String line, boolean exact) throws IOException{
 
 		parseLine(line, exact);
+
+		return results(line);
 
 	}
 

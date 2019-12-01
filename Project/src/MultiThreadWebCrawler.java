@@ -22,6 +22,8 @@ public class MultiThreadWebCrawler{
 	/** The default stemmer algorithm used by this class. */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
+	public static final int CHUNCK = 50;
+
 	/**
 	 * Logger Object for logging purpose
 	 */
@@ -77,8 +79,6 @@ public class MultiThreadWebCrawler{
 
 		this.limit = limit;
 
-		//		this.seed = seed;
-
 		this.queue = queue;
 
 		lookUp = new HashSet<>();
@@ -100,6 +100,8 @@ public class MultiThreadWebCrawler{
 		return links;
 
 	}
+
+
 
 	/**
 	 * Static method that reads a file line by line, parses each line into cleaned and stemmed words,
@@ -141,11 +143,22 @@ public class MultiThreadWebCrawler{
 		}
 	}
 
+	public synchronized void incrementLimit() {
+
+		limit += CHUNCK;
+
+	}
+
 	/**
 	 * Method for crawling webs by BFS
 	 * @throws MalformedURLException if url is not correctly provided
 	 */
 	public void webCrawling(URL seed) throws MalformedURLException {
+
+		System.out.println("limit: " + limit);
+		
+		incrementLimit();
+
 
 		queue.execute(new Task(seed));
 

@@ -95,13 +95,17 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 	}
 
 	@Override
-	public void parseLinks(String line, boolean exact) {
+	public List<InvertedIndex.SearchResult> parseLinks(String line, boolean exact) throws IOException {
 
 		parseLine(line, exact);
 
 		try {
 
 			queue.finished();
+
+			return results(line);
+
+
 
 		} catch (InterruptedException e) {
 
@@ -110,6 +114,8 @@ public class MultiThreadQueryBuilder implements QueryBuilderInterface {
 		}
 
 		logger.debug("Query finished parsing file: " + Thread.currentThread().getId());
+
+		return null;
 
 	}
 
