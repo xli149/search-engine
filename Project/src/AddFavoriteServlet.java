@@ -41,8 +41,6 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 
 		preFormat(request, response);
 
-		System.out.println("GOt here");
-
 		String queryString = null;
 
 		String escaped = null;

@@ -108,7 +108,7 @@ public class LocationServlet extends HttpServlet{
 
 		out.print("<p> <font size=\"3\" face=\"arial\" color=\"white\"><i>Everything is possible</i></font><p>");
 
-		out.printf("	        Favorites%n");
+		out.printf("	       Locations%n");
 
 		out.printf("	      </h1>%n");
 
@@ -132,7 +132,7 @@ public class LocationServlet extends HttpServlet{
 
 		out.printf("		<div class=\"container\">%n");
 
-		out.printf("			<h2 class=\"title\"> A New Favorite Has Been Successfully Added!!</h2>%n");
+		out.printf("			<h2 class=\"title\"> Links and Locations</h2>%n");
 
 		out.printf("%n");
 
@@ -157,12 +157,6 @@ public class LocationServlet extends HttpServlet{
 		out.printf("	</section>%n");
 
 		out.printf("%n");
-
-		out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
-
-		out.printf("<p><input type=\"submit\" value=\"Clean\"></p>\n%n");
-
-		out.printf("</form>\n%n");
 
 		out.printf("	<footer class=\"footer\">%n");
 

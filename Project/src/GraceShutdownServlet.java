@@ -138,7 +138,7 @@ public class GraceShutdownServlet extends HttpServlet{
 
 		out.print("<p> <font size=\"3\" face=\"arial\" color=\"white\"><i>Everything is possible</i></font><p>");
 
-		out.printf("	        Favorites%n");
+		out.printf("	        Graceful ShutDown%n");
 
 		out.printf("	      </h1>%n");
 
@@ -162,7 +162,7 @@ public class GraceShutdownServlet extends HttpServlet{
 
 		out.printf("		<div class=\"container\">%n");
 
-		out.printf("			<h2 class=\"title\"> A New Favorite Has Been Successfully Added!!</h2>%n");
+		out.printf("			<h2 class=\"title\"> GoodBye!</h2>%n");
 
 		out.printf("%n");
 
@@ -188,11 +188,55 @@ public class GraceShutdownServlet extends HttpServlet{
 
 		out.printf("%n");
 
-		out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
+		out.printf("	<section class=\"section\">%n");
 
-		out.printf("<p><input type=\"submit\" value=\"Clean\"></p>\n%n");
+		out.printf("		<div class=\"container\">%n");
 
-		out.printf("</form>\n%n");
+		out.printf("			<h2 class=\"title\">PassWord Required</h2>%n");
+
+		out.printf("			<form method=\"%s\" action=\"%s\">%n", "POST", request.getServletPath());
+
+		out.printf("				<div class=\"field\">%n");
+
+		out.printf("					<label class=\"label\">PassWord</label>%n");
+
+		out.printf("					<div class=\"control has-icons-left\">%n");
+
+		out.printf("						<input class=\"input\" type=\"text\" name=\"%s\" placeholder=\"Enter password here.\">%n", "passwd");
+
+		out.printf("						<span class=\"icon is-small is-left\">%n");
+
+		out.printf("							<i class=\"fas fa-user\"></i>%n");
+
+		out.printf("						</span>%n");
+
+		out.printf("					</div>%n");
+
+		out.printf("				</div>%n");
+
+		out.printf("%n");
+
+		out.printf("				<div class=\"control\">%n");
+
+		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
+		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
+		out.printf("						&nbsp;%n");
+
+		out.printf("						Submit%n");
+
+		out.printf("					</button>%n");
+
+		out.printf("			  </div>%n");
+
+		out.printf("			</form>%n");
+
+		out.printf("		</div>%n");
+
+		out.printf("	</section>%n");
+
+		out.printf("%n");
 
 		out.printf("	<footer class=\"footer\">%n");
 

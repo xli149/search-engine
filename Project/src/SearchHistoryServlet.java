@@ -148,7 +148,7 @@ public class SearchHistoryServlet extends CookieBaseServlet {
 
 		out.print("<p> <font size=\"3\" face=\"arial\" color=\"white\"><i>Everything is possible</i></font><p>");
 
-		out.printf("	        Visited History%n");
+		out.printf("	        Search History%n");
 
 		out.printf("	      </h1>%n");
 

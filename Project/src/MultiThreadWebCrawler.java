@@ -153,8 +153,6 @@ public class MultiThreadWebCrawler{
 	 */
 	public void webCrawling(URL seed) throws MalformedURLException {
 
-		System.out.println("limit: " + limit);
-
 		incrementLimit();
 
 		queue.execute(new Task(seed));

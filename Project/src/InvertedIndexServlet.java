@@ -157,7 +157,7 @@ public class InvertedIndexServlet extends HttpServlet {
 
 		out.print("<p> <font size=\"3\" face=\"arial\" color=\"white\"><i>Everything is possible</i></font><p>");
 
-		out.printf("	        Visited History%n");
+		out.printf("	        InvertedIndex%n");
 
 		out.printf("	      </h1>%n");
 
@@ -181,7 +181,7 @@ public class InvertedIndexServlet extends HttpServlet {
 
 		out.printf("		<div class=\"container\">%n");
 
-		out.printf("			<h2 class=\"title\">History</h2>%n");
+		out.printf("			<h2 class=\"title\">InvertedIndex</h2>%n");
 
 		out.printf("%n");
 
@@ -206,12 +206,6 @@ public class InvertedIndexServlet extends HttpServlet {
 		out.printf("	</section>%n");
 
 		out.printf("%n");
-
-		out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
-
-		out.printf("<p><input type=\"submit\" value=\"Clean\"></p>\n%n");
-
-		out.printf("</form>\n%n");
 
 		out.printf("	<footer class=\"footer\">%n");
 
