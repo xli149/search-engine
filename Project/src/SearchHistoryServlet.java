@@ -1,46 +1,95 @@
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Map;
 
-import javax.servlet.http.HttpServlet;
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.text.StringEscapeUtils;
 
 /**
- * Servlet for handling "I feel lucky" functionality
- * @author chrislee
- *
+ * Servlet for demonstrating search histories
  */
-public class LuckyServlet extends HttpServlet{
+public class SearchHistoryServlet extends CookieBaseServlet {
 
 	/**
-	 * Default serial ID not used
+	 * Defaulted serial ID not used
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * An interface of {@link QueryBuilderInterface}
-	 */
-	QueryBuilderInterface queryBuilder;
-
-	/**
 	 * Title of a link
 	 */
-	private static final String TITLE = "I Feel Lucky";
+	private static final String TITLE = "Search History";
 
-	/**
-	 * Constructor
-	 * @param queryBuilder interface of {@link QueryBuilderInterface}
-	 */
-	public LuckyServlet(QueryBuilderInterface queryBuilder) {
+	/** Used to fetch the history from a cookie. */
+	public static final String SEARCH_HISTORY = "history";
 
-		this.queryBuilder = queryBuilder;
+	@Override
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
+		log.info("GET " + request.getRequestURL().toString());
+
+		preFormat(request, response);
+
+		if (request.getRequestURI().endsWith("favicon.ico")) {
+
+			response.sendError(HttpServletResponse.SC_NOT_FOUND);
+
+			return;
+		}
+
+		prepareResponse("Cookies!", response);
+
+		Map<String, Cookie> cookies = getCookieMap(request);
+
+		Cookie visitHistory = cookies.get(SEARCH_HISTORY);
+
+		PrintWriter out = response.getWriter();
+
+		out.printf("<p>");
+
+		if (visitHistory == null ) {
+
+			out.printf("<p>You don't have any history</p>");
+		}
+		else {
+
+			try {
+
+				String decoded = URLDecoder.decode(visitHistory.getValue(), StandardCharsets.UTF_8);
+
+				String escaped = StringEscapeUtils.escapeHtml4(decoded);
+
+				String [] histories = escaped.split("-");
+
+				for(var history : histories) {
+
+					out.printf("<p>%s<p>", history);
+
+				}
+			}
+			catch (NullPointerException | IllegalArgumentException e) {
+
+				visitHistory = new Cookie(SEARCH_HISTORY, "");
+
+				out.printf("Unable to store the history. ");
+			}
+		}
+
+		out.printf("</p>%n");
+
+		postFormat(request, response);
+
+		finishResponse(request, response);
 	}
 
 	@Override
@@ -48,41 +97,12 @@ public class LuckyServlet extends HttpServlet{
 
 		response.setContentType("text/html");
 
-		PrintWriter out = response.getWriter();
-
-		String message = request.getParameter("message");
-
-		message = message == null ? "" : message;
-
-		message = StringEscapeUtils.escapeHtml4(message);
-
-		List<InvertedIndex.SearchResult> links = queryBuilder.parseLinks(message, false);
-
-		preFormat(request, response);
-
-		if(links != null) {
-
-			String link = links.get(0).getLocation();
-
-			response.sendRedirect(link);
-
-		}else {
-
-			out.printf("				<div class=\"box\">%n");
-
-			out.print("No Result");
-
-			out.printf("				</div>%n");
-
-			out.printf("%n");
-
-		}
-
-		postFormat(request, response);
+		clearCookies(request,response);
 
 		response.setStatus(HttpServletResponse.SC_OK);
-	}
 
+		response.sendRedirect(request.getServletPath());
+	}
 
 	/**
 	 * Function for prepare the html script
@@ -128,7 +148,7 @@ public class LuckyServlet extends HttpServlet{
 
 		out.print("<p> <font size=\"3\" face=\"arial\" color=\"white\"><i>Everything is possible</i></font><p>");
 
-		out.printf("	        Favorites%n");
+		out.printf("	        Visited History%n");
 
 		out.printf("	      </h1>%n");
 
@@ -152,7 +172,7 @@ public class LuckyServlet extends HttpServlet{
 
 		out.printf("		<div class=\"container\">%n");
 
-		out.printf("			<h2 class=\"title\"> A New Favorite Has Been Successfully Added!!</h2>%n");
+		out.printf("			<h2 class=\"title\">History</h2>%n");
 
 		out.printf("%n");
 
@@ -201,7 +221,6 @@ public class LuckyServlet extends HttpServlet{
 		out.printf("</body>%n");
 
 		out.printf("</html>%n");
-
 	}
 
 	/**

@@ -18,8 +18,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.text.StringEscapeUtils;
 
-
-
 /**
  * Servlet to GET handle requests to /check.
  */
@@ -28,43 +26,42 @@ public class Servlet extends CookieBaseServlet {
 	/** ID used for serialization, which we are not using. */
 	private static final long serialVersionUID = 1L;
 
-
 	/**
-	 * Displays a form where users can enter a URL to check. When the button is
-	 * pressed, submits the URL back to /check as a GET request.
-	 *
-	 * If a URL was included as a parameter in the GET request, fetch and display
-	 * the HTTP headers of that URL.
+	 * Title of a link
 	 */
-
-
 	private static final String TITLE = "Link Checker";
 
-
 	/**
-	 * queryBuilder to be used
+	 * Instance of queryBuilder to be used
 	 */
 	private final QueryBuilderInterface queryBuilder;
 
+	/**
+	 * Instance of webCrawler to be used
+	 */
 	private final MultiThreadWebCrawler webCrawler;
 
+	/**
+	 * A linkedList of suggested Queries
+	 */
 	private final LinkedList<String> suggestQueries;
 
-	//	private final MultiThreadInvertedIndex index;
-
+	/**
+	 * Constant String variable for cookie to use
+	 */
 	public static final String SEARCH_HISTORY = "history";
 
+	/**
+	 * Constant String variable for cookie to use
+	 */
 	public static final String VISIT_LASTTIME = "last";
-
-	private final MultiThreadInvertedIndex index;
-
-
 
 	/**
 	 * Servlet constructor
 	 * @param queryBuilder queryBuilder queryBuilder object to be used to create query
 	 * @param webCrawler webCrawler object
-	 * @param history an arrayList
+	 * @param suggestQueries linkedList of suggested queries
+	 * @param index
 	 */
 	public Servlet(QueryBuilderInterface queryBuilder, MultiThreadWebCrawler webCrawler, LinkedList<String> suggestQueries, MultiThreadInvertedIndex index) {
 
@@ -75,9 +72,6 @@ public class Servlet extends CookieBaseServlet {
 		this.webCrawler = webCrawler;
 
 		this.suggestQueries = suggestQueries;
-
-		this.index = index;
-
 
 	}
 
@@ -144,22 +138,22 @@ public class Servlet extends CookieBaseServlet {
 
 			//			ServletContext context = getServletContext();
 
-			System.out.println(links.get(0).getLocation());
+			//			System.out.println(links.get(0).getLocation());
 
 			//			context.setAttribute("luckValue", links.get(0).getLocation());
-
 
 			for(int i = 0; i < links.size(); i++) {
 
 				String link = links.get(i).getLocation();
 
-				String formatted = String.format("<p><a href=/visited?%s>%s</a> </p>", link, link);
+				String formatted = String.format("<p><a href=/visited?%s>%s</a>  <a href=/favorite?%s>[favorite]</a> </p>", link, link, link);
 
 				out.printf("				<div class=\"box\">%n");
-				//				out.printf(message);
 
 				out.print(formatted);
+
 				out.printf("				</div>%n");
+
 				out.printf("%n");
 
 			}
@@ -168,14 +162,6 @@ public class Servlet extends CookieBaseServlet {
 		postFormat(request, response);
 
 		response.setStatus(HttpServletResponse.SC_OK);
-
-		//		System.out.println(request.getServletPath());
-
-		//		response.sendRedirect(request.getServletPath());
-
-		//		System.out.println(request.getSer);
-
-		//		response.sendRedirect("https://www.cs.usfca.edu/~cs212/birds/albatross.html");
 
 	}
 
@@ -191,6 +177,12 @@ public class Servlet extends CookieBaseServlet {
 		return formatter.format(new Date());
 	}
 
+	/**
+	 * Function for get last login time
+	 * @param request the httpServlet request
+	 * @param response the httpServleet response
+	 * @throws IOException if the socket is not writable
+	 */
 	private void getLastTime(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		PrintWriter out = response.getWriter();
@@ -209,30 +201,31 @@ public class Servlet extends CookieBaseServlet {
 
 			response.addCookie(visitLast);
 
-			//			out.printf("	<section class=\"hero is-primary is-bold\">%n");
-
 			out.printf("	<section class=\"hero is-primary is-bold\">%n");
+
 			out.printf("	  <div class=\"hero-body\">%n");
 
 			out.print("<p>Welcome, this is your first time visiting this website</p>");
 
 			out.printf("	  </div>%n");
-			out.printf("	</section>%n");
 
-			//			out.print("</section>");
+			out.printf("	</section>%n");
 
 		}
 		else {
+
 			String decoded = URLDecoder.decode(visitLast.getValue(), StandardCharsets.UTF_8);
 
 			String escaped = StringEscapeUtils.escapeHtml4(decoded);
 
 			out.printf("	<section class=\"hero is-primary is-bold\">%n");
+
 			out.printf("	  <div class=\"hero-body\">%n");
 
 			out.printf("</p>Last time log in was at %s</p>", escaped);
 
 			out.printf("	  </div>%n");
+
 			out.printf("	</section>%n");
 
 		}
@@ -244,6 +237,12 @@ public class Servlet extends CookieBaseServlet {
 		response.addCookie(visitLast);
 	}
 
+	/**
+	 * Function for adding histories
+	 * @param request the httpServlet request
+	 * @param response the httpServleet response
+	 * @param message history message to be added
+	 */
 	public void addHistory(HttpServletRequest request, HttpServletResponse response, String message) {
 
 		Map<String, Cookie> cookies = getCookieMap(request);
@@ -258,8 +257,6 @@ public class Servlet extends CookieBaseServlet {
 
 		if (request.getIntHeader("DNT") != 1) {
 
-			System.out.println("got here");
-
 			String decoded = URLDecoder.decode(visitHistory.getValue(), StandardCharsets.UTF_8);
 
 			String update = decoded + "-" + message;
@@ -270,165 +267,316 @@ public class Servlet extends CookieBaseServlet {
 
 			response.addCookie(visitHistory);
 		}
-		//		else {
-		//			clearCookies(request, response);
-		//			out.printf("<p>Your visits will not be tracked.</p>");
-		//		}
 
 	}
 
+	/**
+	 * Function for preparing the html script
+	 * @param request the httpServlet request
+	 * @param response the httpServleet response
+	 * @throws IOException if the socket is not writable
+	 */
 	public void preFormat(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
 		PrintWriter out = response.getWriter();
 
 		out.printf("<!DOCTYPE html>%n");
+
 		out.printf("<html>%n");
+
 		out.printf("<head>%n");
+
 		out.printf("	<meta charset=\"utf-8\">%n");
+
 		out.printf("	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">%n");
+
 		out.printf("	<title>%s</title>%n", TITLE);
+
 		out.printf("	<link rel=\"stylesheet\" href=\"https://cdn.jsdelivr.net/npm/bulma@0.8.0/css/bulma.min.css\">%n");
+
 		out.printf("	<script defer src=\"https://use.fontawesome.com/releases/v5.3.1/js/all.js\"></script>%n");
+
 		out.printf("</head>%n");
+
 		out.printf("%n");
+
 		out.printf("<body>%n");
 
 		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/shutdown");
+
 		out.printf("				<div class=\"control\">%n");
+
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
 		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
 		out.printf("						&nbsp;%n");
+
 		out.printf("						%n");
+
 		out.printf("					</button>%n");
+
 		out.printf("			  </div>%n");
+
 		out.printf("			</form>%n");
 
 		out.printf("	<section class=\"hero is-primary is-bold\">%n");
+
 		out.printf("	  <div class=\"hero-body\">%n");
+
 		out.printf("	    <div class=\"container\">%n");
+
 		out.printf("	      <h1 class=\"title\">%n");
+
+		out.print("<img src=\"images/brand.png\" width=\"60\" height=\"50\"></img>");
+
+		out.print("<p> <font size=\"3\" face=\"arial\" color=\"white\"><i>Everything is possible</i></font><p>");
+
 		out.printf("	        Search Engine%n");
+
 		out.printf("	      </h1>%n");
+
 		out.printf("	      <h2 class=\"subtitle\">%n");
+
 		out.printf("					<i class=\"fas fa-calendar-alt\"></i>%n");
+
 		out.printf("					&nbsp;Updated %s%n", getDate());
+
 		out.printf("	      </h2>%n");
+
 		out.printf("	    </div>%n");
+
 		out.printf("	  </div>%n");
+
 		out.printf("	</section>%n");
+
 		out.printf("%n");
 
 		getLastTime(request, response);
 
 		out.printf("	<section class=\"section\">%n");
+
 		out.printf("		<div class=\"container\">%n");
+
 		out.printf("			<h2 class=\"title\">Links</h2>%n");
+
 		out.printf("%n");
 
 	}
+
+	/**
+	 * Function for finishing the html script
+	 * @param request the httpServlet request
+	 * @param response the httpServleet response
+	 * @throws IOException if the socket is not writable
+	 */
 	public void postFormat(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
 		PrintWriter out = response.getWriter();
+
 		out.printf("			</div>%n");
+
 		out.printf("%n");
+
 		out.printf("		</div>%n");
+
 		out.printf("	</section>%n");
+
 		out.printf("%n");
+
 		out.printf("	<section class=\"section\">%n");
+
 		out.printf("		<div class=\"container\">%n");
+
 		out.printf("			<h2 class=\"title\">Add Message</h2>%n");
+
 		out.printf("%n");
+
 		out.printf("			<form method=\"%s\" action=\"%s\">%n", "POST", request.getServletPath());
+
 		out.printf("				<div class=\"field\">%n");
+
 		out.printf("					<label class=\"label\">New Crawl</label>%n");
+
 		out.printf("					<div class=\"control has-icons-left\">%n");
+
 		out.printf("						<input class=\"input\" type=\"text\" name=\"%s\" placeholder=\"Enter new seed here.\">%n", "seed");
+
 		out.printf("						<span class=\"icon is-small is-left\">%n");
+
 		out.printf("							<i class=\"fas fa-user\"></i>%n");
+
 		out.printf("						</span>%n");
+
 		out.printf("					</div>%n");
+
 		out.printf("				</div>%n");
+
 		out.printf("%n");
+
 		out.printf("				<div class=\"field\">%n");
 
-		out.printf("                  <p>favorite queries</p> ");
-
-		out.printf("<tr>");
-
+		out.printf("				  <label class=\"label\">Favorite Queries:</label>%n");
 
 		for(int i = 0; i < 5 && i< suggestQueries.size(); i++) {
 
-			out.printf("<td>%s </td>", suggestQueries.get(i) );
+			out.printf("<p>%s </p>", suggestQueries.get(i) );
 		}
-		out.printf("</tr>");
-
 
 		out.printf("				  <label class=\"label\">Message</label>%n");
+
 		out.printf("				  <div class=\"control\">%n");
+
 		out.printf("				    <textarea class=\"textarea\" name=\"%s\" placeholder=\"Enter your message here.\"></textarea>%n", "message");
+
 		out.printf("				  </div>%n");
+
 		out.printf("				</div>%n");
+
 		out.printf("%n");
+
 		out.printf("				<div class=\"control\">%n");
+
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
 		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
 		out.printf("						&nbsp;%n");
+
 		out.printf("						Post Message%n");
+
 		out.printf("					</button>%n");
+
 		out.printf("			  </div>%n");
+
+		out.printf("			</form>%n");
+
+		out.printf("			<form method=\"%s\" action=\"%s\">%n", "POST", "/lucky");
+
+		out.printf("					<div class=\"control has-icons-left\">%n");
+
+		out.printf("						<input class=\"input\" type=\"text\" name=\"%s\" placeholder=\"Enter new message here.\">%n", "message");
+
+		out.printf("						<span class=\"icon is-small is-left\">%n");
+
+		out.printf("							<i class=\"fas fa-user\"></i>%n");
+
+		out.printf("						</span>%n");
+
+		out.printf("					</div>%n");
+
+		out.printf("%n");
+
+		out.printf("				<div class=\"control\">%n");
+
+		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
+		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
+		out.printf("						&nbsp;%n");
+
+		out.printf("						I feel Lucky%n");
+
+		out.printf("					</button>%n");
+
+		out.printf("			  </div>%n");
+
 		out.printf("			</form>%n");
 
 		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/counts");
+
 		out.printf("				<div class=\"control\">%n");
+
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
 		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
 		out.printf("						&nbsp;%n");
+
 		out.printf("						Locations Browser%n");
+
 		out.printf("					</button>%n");
+
 		out.printf("			  </div>%n");
+
 		out.printf("			</form>%n");
 
 		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/history");
+
 		out.printf("				<div class=\"control\">%n");
+
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
 		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
 		out.printf("						&nbsp;%n");
+
 		out.printf("						Search History%n");
+
 		out.printf("					</button>%n");
+
 		out.printf("			  </div>%n");
+
 		out.printf("			</form>%n");
 
 		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/visited");
+
 		out.printf("				<div class=\"control\">%n");
+
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
 		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
 		out.printf("						&nbsp;%n");
+
 		out.printf("						Visited History%n");
+
 		out.printf("					</button>%n");
+
 		out.printf("			  </div>%n");
+
 		out.printf("			</form>%n");
 
-		//		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/check");
-		//		out.printf("				<div class=\"control\">%n");
-		//		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
-		//		out.printf("						<i class=\"fas fa-comment\"></i>%n");
-		//		out.printf("						&nbsp;%n");
-		//		out.printf("						I Feel Lucky%n");
-		//		out.printf("					</button>%n");
-		//		out.printf("			  </div>%n");
-		//		out.printf("			</form>%n");
+		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/index");
 
+		out.printf("				<div class=\"control\">%n");
 
+		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
+		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
+		out.printf("						&nbsp;%n");
+
+		out.printf("						InvertedIndex%n");
+
+		out.printf("					</button>%n");
+
+		out.printf("			  </div>%n");
+
+		out.printf("			</form>%n");
 
 		out.printf("		</div>%n");
+
 		out.printf("	</section>%n");
+
 		out.printf("%n");
+
 		out.printf("	<footer class=\"footer\">%n");
+
 		out.printf("	  <div class=\"content has-text-centered\">%n");
+
 		out.printf("	    <p>%n");
+
 		out.printf("	      This request was handled by thread %s.%n", Thread.currentThread().getName());
+
 		out.printf("	    </p>%n");
+
 		out.printf("	  </div>%n");
+
 		out.printf("	</footer>%n");
+
 		out.printf("</body>%n");
+
 		out.printf("</html>%n");
 	}
 }

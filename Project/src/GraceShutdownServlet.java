@@ -3,20 +3,19 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.text.StringEscapeUtils;
+import org.eclipse.jetty.server.Server;
 
 /**
- * Servlet for handling "I feel lucky" functionality
  * @author chrislee
  *
  */
-public class LuckyServlet extends HttpServlet{
+public class GraceShutdownServlet extends HttpServlet{
 
 	/**
 	 * Default serial ID not used
@@ -24,22 +23,44 @@ public class LuckyServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * An interface of {@link QueryBuilderInterface}
+	 * Server to be shutdown
 	 */
-	QueryBuilderInterface queryBuilder;
+	private final Server server;
 
 	/**
-	 * Title of a link
+	 * Pass Word to be used
 	 */
-	private static final String TITLE = "I Feel Lucky";
+	private final String passWd = "123";
+
+	/**
+	 * Title of a linl
+	 */
+	private static final String TITLE = "ShutDown";
 
 	/**
 	 * Constructor
-	 * @param queryBuilder interface of {@link QueryBuilderInterface}
+	 * @param server the server to be shutdown
 	 */
-	public LuckyServlet(QueryBuilderInterface queryBuilder) {
+	public GraceShutdownServlet(Server server) {
 
-		this.queryBuilder = queryBuilder;
+		this.server = server;
+
+	}
+
+	@Override
+	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
+
+		response.setContentType("text/html");
+
+		PrintWriter out = response.getWriter();
+
+		preFormat(request, response);
+
+		out.printf("Thanks for visiting our website! See you next time");
+
+		postFormat(request, response);
+
+		response.setStatus(HttpServletResponse.SC_OK);
 
 	}
 
@@ -50,42 +71,31 @@ public class LuckyServlet extends HttpServlet{
 
 		PrintWriter out = response.getWriter();
 
-		String message = request.getParameter("message");
+		response.setStatus(HttpServletResponse.SC_OK);
 
-		message = message == null ? "" : message;
+		String pw = request.getParameter("passwd");
 
-		message = StringEscapeUtils.escapeHtml4(message);
+		pw = StringEscapeUtils.escapeHtml4(pw);
 
-		List<InvertedIndex.SearchResult> links = queryBuilder.parseLinks(message, false);
+		if(pw.equalsIgnoreCase(passWd)) {
 
-		preFormat(request, response);
+			try {
 
-		if(links != null) {
+				server.setStopTimeout(0);
 
-			String link = links.get(0).getLocation();
+				server.stop();
 
-			response.sendRedirect(link);
+			} catch (Exception e) {
 
-		}else {
+				out.printf("Sorry... unable to shutdown your Engine");
 
-			out.printf("				<div class=\"box\">%n");
-
-			out.print("No Result");
-
-			out.printf("				</div>%n");
-
-			out.printf("%n");
-
+			}
 		}
 
-		postFormat(request, response);
-
-		response.setStatus(HttpServletResponse.SC_OK);
 	}
 
-
 	/**
-	 * Function for prepare the html script
+	 * Function for preparing the html script
 	 * @param request the httpServlet request
 	 * @param response the httpServleet response
 	 * @throws IOException if the socket is not writable

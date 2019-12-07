@@ -3,20 +3,17 @@ import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.text.StringEscapeUtils;
-
 /**
- * Servlet for handling "I feel lucky" functionality
  * @author chrislee
  *
  */
-public class LuckyServlet extends HttpServlet{
+public class InvertedIndexServlet extends HttpServlet {
 
 	/**
 	 * Default serial ID not used
@@ -24,65 +21,97 @@ public class LuckyServlet extends HttpServlet{
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * An interface of {@link QueryBuilderInterface}
-	 */
-	QueryBuilderInterface queryBuilder;
-
-	/**
 	 * Title of a link
 	 */
-	private static final String TITLE = "I Feel Lucky";
+	private static final String TITLE = "Index";
+
+	/**
+	 * Instance of {@link MultiThreadInvertedIndex}
+	 */
+	MultiThreadInvertedIndex index;
 
 	/**
 	 * Constructor
-	 * @param queryBuilder interface of {@link QueryBuilderInterface}
+	 * @param index
 	 */
-	public LuckyServlet(QueryBuilderInterface queryBuilder) {
+	public InvertedIndexServlet(MultiThreadInvertedIndex index) {
 
-		this.queryBuilder = queryBuilder;
+		this.index = index;
 
 	}
 
+
 	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+
+		Set<String> words = index.getWords();
 
 		response.setContentType("text/html");
 
 		PrintWriter out = response.getWriter();
 
-		String message = request.getParameter("message");
-
-		message = message == null ? "" : message;
-
-		message = StringEscapeUtils.escapeHtml4(message);
-
-		List<InvertedIndex.SearchResult> links = queryBuilder.parseLinks(message, false);
-
 		preFormat(request, response);
 
-		if(links != null) {
+		for(var word : words) {
 
-			String link = links.get(0).getLocation();
+			out.printf("<p><font size=\"6\" face=\"arial\" color=\"black\"> %s: </font></p>", word);
 
-			response.sendRedirect(link);
+			out.print("<br>");
 
-		}else {
+			Set<String> urls = index.getLocations(word);
 
-			out.printf("				<div class=\"box\">%n");
+			for(var url : urls) {
 
-			out.print("No Result");
+				if(index.getPositions(word, url).size() != 0) {
 
-			out.printf("				</div>%n");
+					String formatted = String.format("<p style=\"margin-left:20px\"><i>Locations: </i><a href=\"%s\">%s</a> </p>",url, url);
 
-			out.printf("%n");
+					out.printf(formatted);
+
+					Set<Integer> positions = index.getPositions(word, url);
+
+					out.print("<p style=\"margin-left:20px\">");
+
+					out.printf("<i>Positions:</i> [");
+
+					var iterator = positions.iterator();
+
+					if(iterator.hasNext()) {
+
+						var position = iterator.next();
+
+						out.print(position.toString());
+
+					}
+
+					while(iterator.hasNext()) {
+
+						out.print(",");
+
+						var position = iterator.next();
+
+						out.print(position.toString());
+
+					}
+
+					out.printf("]");
+
+					out.print("</p>");
+
+					out.printf("<br>");
+
+				}
+			}
+
+			out.print("<br>");
 
 		}
 
 		postFormat(request, response);
 
 		response.setStatus(HttpServletResponse.SC_OK);
-	}
 
+	}
 
 	/**
 	 * Function for prepare the html script
@@ -128,7 +157,7 @@ public class LuckyServlet extends HttpServlet{
 
 		out.print("<p> <font size=\"3\" face=\"arial\" color=\"white\"><i>Everything is possible</i></font><p>");
 
-		out.printf("	        Favorites%n");
+		out.printf("	        Visited History%n");
 
 		out.printf("	      </h1>%n");
 
@@ -152,7 +181,7 @@ public class LuckyServlet extends HttpServlet{
 
 		out.printf("		<div class=\"container\">%n");
 
-		out.printf("			<h2 class=\"title\"> A New Favorite Has Been Successfully Added!!</h2>%n");
+		out.printf("			<h2 class=\"title\">History</h2>%n");
 
 		out.printf("%n");
 
@@ -201,7 +230,6 @@ public class LuckyServlet extends HttpServlet{
 		out.printf("</body>%n");
 
 		out.printf("</html>%n");
-
 	}
 
 	/**

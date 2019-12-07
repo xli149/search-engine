@@ -22,6 +22,9 @@ public class MultiThreadWebCrawler{
 	/** The default stemmer algorithm used by this class. */
 	public static final SnowballStemmer.ALGORITHM DEFAULT = SnowballStemmer.ALGORITHM.ENGLISH;
 
+	/**
+	 * Limit number per crawl to increase
+	 */
 	public static final int CHUNCK = 50;
 
 	/**
@@ -45,11 +48,6 @@ public class MultiThreadWebCrawler{
 	private WorkQueue queue;
 
 	/**
-	 * The seed url
-	 */
-	//	private URL seed;
-
-	/**
 	 * A set for checking repeating urls
 	 */
 	private Set<URL> lookUp;
@@ -57,7 +55,6 @@ public class MultiThreadWebCrawler{
 	/**
 	 * Default constructor
 	 * @param index the object of MultiThreadInvertedIndex
-	 * @param seed the seed link for web crawling
 	 * @param queue Work queue to be used for passing the tasks
 	 */
 	public MultiThreadWebCrawler(MultiThreadInvertedIndex index, WorkQueue queue) {
@@ -70,7 +67,6 @@ public class MultiThreadWebCrawler{
 	 * Constructor
 	 * @param index the object of MultiThreadInvertedIndex
 	 * @param limit the limit number of link to crawl
-	 * @param seed the seed link for web crawling
 	 * @param queue Work queue to be used for passing the tasks
 	 */
 	public MultiThreadWebCrawler(MultiThreadInvertedIndex index, int limit, WorkQueue queue) {
@@ -100,8 +96,6 @@ public class MultiThreadWebCrawler{
 		return links;
 
 	}
-
-
 
 	/**
 	 * Static method that reads a file line by line, parses each line into cleaned and stemmed words,
@@ -143,6 +137,9 @@ public class MultiThreadWebCrawler{
 		}
 	}
 
+	/**
+	 * Method for synchronized adding limits for a new crawl
+	 */
 	public synchronized void incrementLimit() {
 
 		limit += CHUNCK;
@@ -151,14 +148,14 @@ public class MultiThreadWebCrawler{
 
 	/**
 	 * Method for crawling webs by BFS
+	 * @param seed a new url to be crawled
 	 * @throws MalformedURLException if url is not correctly provided
 	 */
 	public void webCrawling(URL seed) throws MalformedURLException {
 
 		System.out.println("limit: " + limit);
-		
-		incrementLimit();
 
+		incrementLimit();
 
 		queue.execute(new Task(seed));
 
@@ -173,19 +170,8 @@ public class MultiThreadWebCrawler{
 
 		logger.debug("travers dirctory finished: Thread: " + Thread.currentThread().getId() );
 
-		//		for(var key: index.getLocations()) {
-		//
-		//			System.out.println(key);
-		//
-		//		}
-
 	}
 
-	//	public void addSeed(String seed) {
-	//
-	//
-	//
-	//	}
 	/**
 	 * Nested class for creating Tasks
 	 * @author chrislee

@@ -1,6 +1,10 @@
 import java.util.LinkedList;
 
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
+import org.eclipse.jetty.server.handler.ContextHandler;
+import org.eclipse.jetty.server.handler.HandlerList;
+import org.eclipse.jetty.server.handler.ResourceHandler;
 import org.eclipse.jetty.servlet.ServletHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -24,8 +28,10 @@ public class SearchEngine  {
 	 */
 	private final MultiThreadWebCrawler webCrawler;
 
+	/**
+	 * A linkedList for suggest queries
+	 */
 	private final LinkedList<String> suggestQueries;
-
 
 	/**
 	 * The MultiThreadInvertedIndex object
@@ -52,7 +58,6 @@ public class SearchEngine  {
 
 	}
 
-
 	/**
 	 * Starts a Jetty server on the port and maps /check requests to the servlet
 	 * @throws Exception
@@ -62,21 +67,39 @@ public class SearchEngine  {
 
 		Server server = new Server(port);
 
+		ResourceHandler resourceHandler = new ResourceHandler();
+
+		resourceHandler.setResourceBase("logo");
+
+		resourceHandler.setDirectoriesListed(true);
+
+		ContextHandler resourceContext = new ContextHandler("/images");
+
+		resourceContext.setHandler(resourceHandler);
+
 		ServletHandler handler = new ServletHandler();
 
-		handler.addServletWithMapping(new ServletHolder(new Servlet(queryBuilder, webCrawler, suggestQueries, index)), "/check" );
+		handler.addServletWithMapping(new ServletHolder(new Servlet(queryBuilder, webCrawler, suggestQueries, index)), "/" );
 
 		handler.addServletWithMapping(new ServletHolder(new LocationServlet(index)), "/counts" );
 
-		handler.addServletWithMapping(new ServletHolder(new CookieIndexServlet()), "/history");
+		handler.addServletWithMapping(new ServletHolder(new SearchHistoryServlet()), "/history");
 
 		handler.addServletWithMapping(new ServletHolder(new VisitedHistoryServlet()), "/visited");
 
-		handler.addServletWithMapping(new ServletHolder(new GraceShutdown(server)), "/shutdown");
+		handler.addServletWithMapping(new ServletHolder(new GraceShutdownServlet(server)), "/shutdown");
 
-		handler.addServletWithMapping(new ServletHolder(new LuckyServlet()), "/lucky");
+		handler.addServletWithMapping(new ServletHolder(new LuckyServlet(queryBuilder)), "/lucky");
 
-		server.setHandler(handler);
+		handler.addServletWithMapping(new ServletHolder(new InvertedIndexServlet(index)), "/index");
+
+		handler.addServletWithMapping(new ServletHolder(new AddFavoriteServlet()), "/favorite");
+
+		HandlerList handlers = new HandlerList();
+
+		handlers.setHandlers(new Handler[] { resourceContext, handler});
+
+		server.setHandler(handlers);
 
 		server.start();
 
