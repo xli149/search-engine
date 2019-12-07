@@ -95,6 +95,8 @@ public class SearchEngine  {
 
 		handler.addServletWithMapping(new ServletHolder(new AddFavoriteServlet()), "/favorite");
 
+		handler.addServletWithMapping(new ServletHolder(new ShowMessageServlet()), "/show");
+
 		HandlerList handlers = new HandlerList();
 
 		handlers.setHandlers(new Handler[] { resourceContext, handler});

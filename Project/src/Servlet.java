@@ -555,6 +555,24 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("			</form>%n");
 
+		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/favorite");
+
+		out.printf("				<div class=\"control\">%n");
+
+		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
+		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
+		out.printf("						&nbsp;%n");
+
+		out.printf("						Favorite%n");
+
+		out.printf("					</button>%n");
+
+		out.printf("			  </div>%n");
+
+		out.printf("			</form>%n");
+
 		out.printf("		</div>%n");
 
 		out.printf("	</section>%n");

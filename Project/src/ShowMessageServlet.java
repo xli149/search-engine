@@ -1,26 +1,19 @@
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Map;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.text.StringEscapeUtils;
-
 /**
- * Servlet class for handling adding favorites
+ * Servlet for showing links and their locations of {@link InvertedIndexServlet}
  * @author chrislee
  *
  */
-public class AddFavoriteServlet extends CookieBaseServlet {
+public class ShowMessageServlet extends HttpServlet{
 
 	/**
 	 * Default serial ID not used
@@ -28,121 +21,23 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * The title of a link
+	 * Title of a link
 	 */
-	private static final String TITLE = "Favorite";
-
-	/** Used to fetch the history from a cookie. */
-	public static final String FAVORITE_HISTORY = "favorite";
+	private static final String TITLE = "favorite";
 
 	@Override
-	protected void doGet(HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-
-		preFormat(request, response);
-
-		String queryString = null;
-
-		String escaped = null;
-
-		if(request.getQueryString() != null) {
-
-			queryString = URLDecoder.decode(request.getQueryString(), StandardCharsets.UTF_8);
-
-			queryString = StringEscapeUtils.escapeHtml4(queryString);
-
-		}
-
-		log.info("GET " + request.getRequestURL().toString());
-
-		if (request.getRequestURI().endsWith("favicon.ico")) {
-
-			response.sendError(HttpServletResponse.SC_NOT_FOUND);
-
-			return;
-		}
-
-		prepareResponse("Cookies!", response);
-
-		Map<String, Cookie> cookies = getCookieMap(request);
-
-		Cookie visitHistory = cookies.get(FAVORITE_HISTORY);
-
-		PrintWriter out = response.getWriter();
-
-		out.printf("<p>");
-
-		if (visitHistory == null ) {
-
-			visitHistory = new Cookie(FAVORITE_HISTORY, "");
-
-			out.printf("<label>No Favorites So Far..</label>");
-
-		}
-		else {
-
-			try {
-
-				String decoded = URLDecoder.decode(visitHistory.getValue(), StandardCharsets.UTF_8);
-
-				escaped = StringEscapeUtils.escapeHtml4(decoded);
-
-			}
-			catch (NullPointerException | IllegalArgumentException e) {
-
-				out.printf("Unable to store the history. ");
-
-				visitHistory = new Cookie(FAVORITE_HISTORY, "");
-
-			}
-		}
-
-		out.printf("</p>%n");
-
-		if (request.getIntHeader("DNT") != 1 && queryString != null && queryString.length() != 0) {
-
-			String decoded = URLDecoder.decode(visitHistory.getValue(), StandardCharsets.UTF_8);
-
-			String update = decoded + "-" + queryString;
-
-			String encoded = URLEncoder.encode(update, StandardCharsets.UTF_8);
-
-			visitHistory.setValue(encoded);
-
-			response.addCookie(visitHistory);
-
-			response.sendRedirect("/show");
-
-		}
-
-		if(escaped != null) {
-
-			String [] histories = escaped.split("-");
-
-			for(var history : histories) {
-
-				out.printf("<p>%s<p>", history);
-
-			}
-
-		}
-
-		postFormat(request, response);
-
-		finishResponse(request, response);
-
-	}
-
-	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
 		response.setContentType("text/html");
 
-		clearCookies(request,response);
+		PrintWriter out = response.getWriter();
+
+		preFormat(request, response);
+
+		postFormat(request, response);
 
 		response.setStatus(HttpServletResponse.SC_OK);
 
-		response.sendRedirect(request.getServletPath());
 	}
 
 	/**
@@ -189,7 +84,7 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 
 		out.print("<p> <font size=\"3\" face=\"arial\" color=\"white\"><i>Everything is possible</i></font><p>");
 
-		out.printf("	        Favorites%n");
+		out.printf("	       Favorites%n");
 
 		out.printf("	      </h1>%n");
 
@@ -213,7 +108,7 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 
 		out.printf("		<div class=\"container\">%n");
 
-		out.printf("			<h2 class=\"title\"> A New Favorite Has Been Successfully Added!!</h2>%n");
+		out.printf("			<h2 class=\"title\"> New Favorite Has Been Successfully Added</h2>%n");
 
 		out.printf("%n");
 
@@ -238,12 +133,6 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 		out.printf("	</section>%n");
 
 		out.printf("%n");
-
-		out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
-
-		out.printf("<p><input type=\"submit\" value=\"Clean\"></p>\n%n");
-
-		out.printf("</form>\n%n");
 
 		out.printf("	<footer class=\"footer\">%n");
 
@@ -278,4 +167,5 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 		return formatter.format(new Date());
 
 	}
+
 }
