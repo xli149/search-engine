@@ -66,7 +66,13 @@ public class InvertedIndexServlet extends HttpServlet {
 
 					String formatted = String.format("<p style=\"margin-left:20px\"><i>Locations: </i><a href=\"%s\">%s</a> </p>",url, url);
 
+					out.printf("				<div class=\"box\">%n");
+
 					out.printf(formatted);
+
+					out.printf("				</div>%n");
+
+					out.printf("%n");
 
 					Set<Integer> positions = index.getPositions(word, url);
 

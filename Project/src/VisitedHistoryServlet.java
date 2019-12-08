@@ -90,7 +90,13 @@ public class VisitedHistoryServlet extends CookieBaseServlet {
 
 				for(var history : histories) {
 
+					out.printf("				<div class=\"box\">%n");
+
 					out.printf("<p>%s<p>", history);
+
+					out.printf("				</div>%n");
+
+					out.printf("%n");
 
 				}
 			}
@@ -136,6 +142,31 @@ public class VisitedHistoryServlet extends CookieBaseServlet {
 		response.setStatus(HttpServletResponse.SC_OK);
 
 		response.sendRedirect(request.getServletPath());
+	}
+
+	@Override
+	public void clearCookies(HttpServletRequest request, HttpServletResponse response) {
+
+		Cookie[] cookies = request.getCookies();
+
+		if (cookies != null) {
+
+			for (Cookie cookie : cookies) {
+
+				System.out.println(cookie.getName());
+
+				if(cookie.getName().equals("visited")) {
+
+					System.out.println(cookie.getName());
+
+					cookie.setValue(null);
+
+					cookie.setMaxAge(0);
+
+					response.addCookie(cookie);
+				}
+			}
+		}
 	}
 
 	/**

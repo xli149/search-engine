@@ -55,7 +55,13 @@ public class LocationServlet extends HttpServlet{
 
 			String formatted = String.format("<p><a href=\"%s\">%s</a> : %s </p>",count.getKey(), count.getKey(), count.getValue());
 
+			out.printf("				<div class=\"box\">%n");
+
 			out.printf(formatted);
+
+			out.printf("				</div>%n");
+
+			out.printf("%n");
 
 		}
 		postFormat(request, response);

@@ -121,7 +121,14 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 
 			for(var history : histories) {
 
+				out.printf("				<div class=\"box\">%n");
+
 				out.printf("<p>%s<p>", history);
+
+				out.printf("				</div>%n");
+
+				out.printf("%n");
+
 
 			}
 
@@ -143,6 +150,31 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 		response.setStatus(HttpServletResponse.SC_OK);
 
 		response.sendRedirect(request.getServletPath());
+	}
+
+	@Override
+	public void clearCookies(HttpServletRequest request, HttpServletResponse response) {
+
+		Cookie[] cookies = request.getCookies();
+
+		if (cookies != null) {
+
+			for (Cookie cookie : cookies) {
+
+				System.out.println(cookie.getName());
+
+				if(cookie.getName().equals("favorite")) {
+
+					System.out.println(cookie.getName());
+
+					cookie.setValue(null);
+
+					cookie.setMaxAge(0);
+
+					response.addCookie(cookie);
+				}
+			}
+		}
 	}
 
 	/**
@@ -213,7 +245,7 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 
 		out.printf("		<div class=\"container\">%n");
 
-		out.printf("			<h2 class=\"title\"> A New Favorite Has Been Successfully Added!!</h2>%n");
+		out.printf("			<h2 class=\"title\">Favorites:</h2>%n");
 
 		out.printf("%n");
 

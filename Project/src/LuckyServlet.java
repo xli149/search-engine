@@ -60,7 +60,7 @@ public class LuckyServlet extends HttpServlet{
 
 		preFormat(request, response);
 
-		if(links != null) {
+		if(links != null && links.size() != 0) {
 
 			String link = links.get(0).getLocation();
 

@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
@@ -112,13 +113,31 @@ public class Servlet extends CookieBaseServlet {
 
 		if(seed.length() != 0) {
 
-			System.out.println("seed: " + "\"" + seed + "\"");
+			try {
 
-			URL url = new URL(seed);
+				URL url = new URL(seed);
 
-			webCrawler.webCrawling(url);
+				webCrawler.webCrawling(url);
 
-			out.print("<p> New links resources has been added</p>");
+				out.printf("				<div class=\"box\">%n");
+
+				out.print("<p> New links resources has been added</p>");
+
+				out.printf("				</div>%n");
+
+				out.printf("%n");
+
+			}catch(MalformedURLException ex) {
+
+				out.printf("				<div class=\"box\">%n");
+
+				out.print("<p style=\"color:#FF0000\"> Invalid URL for Crawling!</h2>");
+
+				out.printf("				</div>%n");
+
+				out.printf("%n");
+
+			}
 
 		}
 
@@ -128,25 +147,13 @@ public class Servlet extends CookieBaseServlet {
 
 		List<InvertedIndex.SearchResult> links = queryBuilder.parseLinks(message, false);
 
-		if(links != null) {
-
-			//			request.setAttribute("luckLink", links.get(0).getLocation());
-			//
-			//			RequestDispatcher dispatcher = request.getRequestDispatcher("/lucky");
-			//
-			//			//			dispatcher.forward(request,response);
-
-			//			ServletContext context = getServletContext();
-
-			//			System.out.println(links.get(0).getLocation());
-
-			//			context.setAttribute("luckValue", links.get(0).getLocation());
+		if(links != null  && links.size() != 0) {
 
 			for(int i = 0; i < links.size(); i++) {
 
 				String link = links.get(i).getLocation();
 
-				String formatted = String.format("<p><a href=/visited?%s>%s</a>  <a href=/favorite?%s>[favorite]</a> </p>", link, link, link);
+				String formatted = String.format("<p><a href=/visited?%s>%s</a>  <a style=\"color:#FF0000\" href=/favorite?%s>[favorite]</a> </p>", link, link, link);
 
 				out.printf("				<div class=\"box\">%n");
 
@@ -157,6 +164,17 @@ public class Servlet extends CookieBaseServlet {
 				out.printf("%n");
 
 			}
+
+		}else {
+
+			out.printf("				<div class=\"box\">%n");
+
+			out.print("No Result");
+
+			out.printf("				</div>%n");
+
+			out.printf("%n");
+
 		}
 
 		postFormat(request, response);
