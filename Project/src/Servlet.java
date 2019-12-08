@@ -445,7 +445,7 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("				  <div class=\"control\">%n");
 
-		out.printf("				    <textarea class=\"textarea\" name=\"%s\" placeholder=\"Enter your message here.\"></textarea>%n", "message");
+		out.printf("				    <textarea class=\"textarea\" name=\"%s\" placeholder=\"Enter your message here in alphabetic order.\"></textarea>%n", "message");
 
 		out.printf("				  </div>%n");
 
