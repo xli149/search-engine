@@ -117,7 +117,7 @@ public class Servlet extends CookieBaseServlet {
 
 				URL url = new URL(seed);
 
-				webCrawler.webCrawling(url);
+				webCrawler.newCrawling(url);
 
 				out.printf("				<div class=\"box\">%n");
 

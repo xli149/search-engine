@@ -147,13 +147,24 @@ public class MultiThreadWebCrawler{
 	}
 
 	/**
+	 * Method for adding new seed
+	 * @param seed the Url to be crawled
+	 * @throws MalformedURLException if Url is not valid
+	 */
+	public void newCrawling(URL seed) throws MalformedURLException {
+
+		incrementLimit();
+
+		webCrawling(seed);
+
+	}
+
+	/**
 	 * Method for crawling webs by BFS
 	 * @param seed a new url to be crawled
 	 * @throws MalformedURLException if url is not correctly provided
 	 */
 	public void webCrawling(URL seed) throws MalformedURLException {
-
-		//		incrementLimit();
 
 		queue.execute(new Task(seed));
 

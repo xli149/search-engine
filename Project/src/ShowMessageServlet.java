@@ -30,8 +30,6 @@ public class ShowMessageServlet extends HttpServlet{
 
 		response.setContentType("text/html");
 
-		PrintWriter out = response.getWriter();
-
 		preFormat(request, response);
 
 		postFormat(request, response);
