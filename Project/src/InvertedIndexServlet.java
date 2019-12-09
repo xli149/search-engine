@@ -54,7 +54,6 @@ public class InvertedIndexServlet extends HttpServlet {
 
 		for(var word : words) {
 
-
 			out.printf("<details>");
 
 			out.printf("<p><summary>");

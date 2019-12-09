@@ -176,11 +176,15 @@ public class CookieBaseServlet extends HttpServlet {
 
 			for (Cookie cookie : cookies) {
 
-				cookie.setValue(null);
+				if(cookie.getName().equals("visited") || cookie.getName().equals("history")) {
 
-				cookie.setMaxAge(0);
+					cookie.setValue(null);
 
-				response.addCookie(cookie);
+					cookie.setMaxAge(0);
+
+					response.addCookie(cookie);
+
+				}
 			}
 		}
 	}

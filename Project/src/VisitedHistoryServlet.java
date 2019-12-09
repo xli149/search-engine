@@ -155,8 +155,6 @@ public class VisitedHistoryServlet extends CookieBaseServlet {
 
 			for (Cookie cookie : cookies) {
 
-				System.out.println(cookie.getName());
-
 				if(cookie.getName().equals("visited")) {
 
 					System.out.println(cookie.getName());

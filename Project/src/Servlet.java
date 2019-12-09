@@ -145,7 +145,18 @@ public class Servlet extends CookieBaseServlet {
 
 		suggestQueries.addFirst(message);
 
-		List<InvertedIndex.SearchResult> links = queryBuilder.parseLinks(message, false);
+		List<InvertedIndex.SearchResult> links;
+
+		if(request.getParameter("select") == null || request.getParameter("select").equals("partial")) {
+
+			links = queryBuilder.parseLinks(message, false);
+
+		}
+		else {
+
+			links = queryBuilder.parseLinks(message, true);
+
+		}
 
 		if(links != null  && links.size() != 0) {
 
@@ -436,12 +447,22 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("				<div class=\"field\">%n");
 
+		out.printf("				<div class=\"box\">%n");
+
 		out.printf("				  <label class=\"label\">Favorite Queries:</label>%n");
 
 		for(int i = 0; i < 5 && i< suggestQueries.size(); i++) {
 
+			out.printf("				<div class=\"box\">%n");
+
 			out.printf("<p>%s </p>", suggestQueries.get(i) );
+
+			out.printf("				</div>%n");
+
 		}
+
+		out.printf("				</div>%n");
+
 
 		out.printf("				  <label class=\"label\">Message</label>%n");
 
@@ -454,6 +475,22 @@ public class Servlet extends CookieBaseServlet {
 		out.printf("				</div>%n");
 
 		out.printf("%n");
+
+		out.printf("				<div class=\"box\">%n");
+
+		out.printf("<details>");
+
+		out.printf("<summary>Choose search method</summary>");
+
+		out.printf("<label><input type=\"radio\" name=\"select\" value=\"partial\"> Partial</label>");
+
+		out.printf("<label style=\"margin-left:20px\"><input type=\"radio\" name=\"select\" value=\"exact\"> Exact</label>");
+
+		out.printf("</details>");
+
+		out.printf("%n");
+
+		out.printf("				</div>%n");
 
 		out.printf("				<div class=\"control\">%n");
 

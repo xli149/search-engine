@@ -69,6 +69,8 @@ public interface QueryBuilderInterface {
 	 * Function for parsing the links from a webSite
 	 * @param line the line to be parsed
 	 * @param exact the search method according to true or false
+	 * @return a list of InvertedIndex.SearchResult
+	 * @throws IOException
 	 */
 	public List<InvertedIndex.SearchResult> parseLinks(String line, boolean exact) throws IOException;
 
