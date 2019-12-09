@@ -54,9 +54,16 @@ public class InvertedIndexServlet extends HttpServlet {
 
 		for(var word : words) {
 
-			out.printf("<p><font size=\"6\" face=\"arial\" color=\"black\"> %s: </font></p>", word);
 
-			out.print("<br>");
+			out.printf("<details>");
+
+			out.printf("<p><summary>");
+
+			out.printf("<font size=\"6\" face=\"arial\" color=\"black\"> %s: </font>", word);
+
+			out.printf("</summary></p>");
+
+			out.printf("<br>");
 
 			Set<String> urls = index.getLocations(word);
 
@@ -76,9 +83,17 @@ public class InvertedIndexServlet extends HttpServlet {
 
 					Set<Integer> positions = index.getPositions(word, url);
 
-					out.print("<p style=\"margin-left:20px\">");
+					out.printf("<details>");
 
-					out.printf("<i>Positions:</i> [");
+					out.printf("<summary style=\"margin-left:20px\">");
+
+					out.printf("<i>Positions:</i>");
+
+					out.printf("</summary>");
+
+					out.printf("				<div style=\"margin-left:80px\" class=\"box\">%n");
+
+					out.print("<p>");
 
 					var iterator = positions.iterator();
 
@@ -92,22 +107,26 @@ public class InvertedIndexServlet extends HttpServlet {
 
 					while(iterator.hasNext()) {
 
-						out.print(",");
-
 						var position = iterator.next();
+
+						out.print(", ");
 
 						out.print(position.toString());
 
 					}
 
-					out.printf("]");
+					out.printf("				</div>%n");
 
 					out.print("</p>");
+
+					out.printf("</details>");
 
 					out.printf("<br>");
 
 				}
 			}
+
+			out.printf("</details>");
 
 			out.print("<br>");
 

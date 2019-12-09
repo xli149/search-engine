@@ -279,6 +279,8 @@ public class Servlet extends CookieBaseServlet {
 
 			String update = decoded + "-" + message;
 
+			update = update + "<" + getDate() + ">";
+
 			String encoded = URLEncoder.encode(update, StandardCharsets.UTF_8);
 
 			visitHistory.setValue(encoded);
