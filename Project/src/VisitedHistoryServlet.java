@@ -157,8 +157,6 @@ public class VisitedHistoryServlet extends CookieBaseServlet {
 
 				if(cookie.getName().equals("visited")) {
 
-					System.out.println(cookie.getName());
-
 					cookie.setValue(null);
 
 					cookie.setMaxAge(0);
