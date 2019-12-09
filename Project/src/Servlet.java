@@ -425,24 +425,6 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("			<form method=\"%s\" action=\"%s\">%n", "POST", request.getServletPath());
 
-		out.printf("				<div class=\"field\">%n");
-
-		out.printf("					<label class=\"label\">New Crawl</label>%n");
-
-		out.printf("					<div class=\"control has-icons-left\">%n");
-
-		out.printf("						<input class=\"input\" type=\"text\" name=\"%s\" placeholder=\"Enter new seed here.\">%n", "seed");
-
-		out.printf("						<span class=\"icon is-small is-left\">%n");
-
-		out.printf("							<i class=\"fas fa-user\"></i>%n");
-
-		out.printf("						</span>%n");
-
-		out.printf("					</div>%n");
-
-		out.printf("				</div>%n");
-
 		out.printf("%n");
 
 		out.printf("				<div class=\"field\">%n");
@@ -462,7 +444,6 @@ public class Servlet extends CookieBaseServlet {
 		}
 
 		out.printf("				</div>%n");
-
 
 		out.printf("				  <label class=\"label\">Message</label>%n");
 
@@ -501,6 +482,24 @@ public class Servlet extends CookieBaseServlet {
 		out.printf("						&nbsp;%n");
 
 		out.printf("						Post Message%n");
+
+		out.printf("					</button>%n");
+
+		out.printf("			  </div>%n");
+
+		out.printf("			</form>%n");
+
+		out.printf("			<form method=\"%s\" action=\"%s\">%n", "GET", "/newcrawl");
+
+		out.printf("				<div class=\"control\">%n");
+
+		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
+
+		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
+		out.printf("						&nbsp;%n");
+
+		out.printf("						NewCrawl%n");
 
 		out.printf("					</button>%n");
 

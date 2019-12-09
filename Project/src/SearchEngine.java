@@ -97,6 +97,8 @@ public class SearchEngine  {
 
 		handler.addServletWithMapping(new ServletHolder(new ShowMessageServlet()), "/show");
 
+		handler.addServletWithMapping(new ServletHolder(new AddNewCrawl(webCrawler)), "/newcrawl");
+
 		HandlerList handlers = new HandlerList();
 
 		handlers.setHandlers(new Handler[] { resourceContext, handler});

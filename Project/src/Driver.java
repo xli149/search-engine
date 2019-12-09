@@ -234,8 +234,6 @@ public class Driver {
 
 			}
 
-			System.out.println("got here");
-
 		}
 
 		if(workers != null) {

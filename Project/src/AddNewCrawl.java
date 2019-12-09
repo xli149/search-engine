@@ -1,99 +1,120 @@
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.text.StringEscapeUtils;
-import org.eclipse.jetty.server.Server;
 
 /**
+ * Servlet for adding new crawls
  * @author chrislee
  *
  */
-public class GraceShutdownServlet extends HttpServlet{
+public class AddNewCrawl extends HttpServlet{
 
 	/**
-	 * Default serial ID not used
+	 * Default serial number that is not used here
 	 */
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * Server to be shutdown
+	 * Instance of {@link MultiThreadWebCrawler}
 	 */
-	private final Server server;
+	MultiThreadWebCrawler webCrawler;
 
 	/**
-	 * Pass Word to be used
+	 * The title of this link
+	 */
+	private static final String TITLE = "New Crawl";
+
+	/**
+	 * Default pass word
 	 */
 	private static final String PASSWORD = "123";
 
 	/**
-	 * Title of a linl
-	 */
-	private static final String TITLE = "ShutDown";
-
-	/**
 	 * Constructor
-	 * @param server the server to be shutdown
+	 * @param webCrawler
 	 */
-	public GraceShutdownServlet(Server server) {
+	public AddNewCrawl(MultiThreadWebCrawler webCrawler) {
 
-		this.server = server;
+		this.webCrawler = webCrawler;
 
 	}
 
 	@Override
-	public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
+	protected void doGet(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		response.setContentType("text/html");
 
-		PrintWriter out = response.getWriter();
-
 		preFormat(request, response);
-
-		out.printf("Thanks for visiting our website! See you next time");
 
 		postFormat(request, response);
 
 		response.setStatus(HttpServletResponse.SC_OK);
-
 	}
 
 	@Override
-	public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
-		response.setContentType("text/html");
+	protected void doPost(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
 
 		PrintWriter out = response.getWriter();
 
-		response.setStatus(HttpServletResponse.SC_OK);
+		response.setContentType("text/html");
+
+		String seed = request.getParameter("seed");
+
+		seed = seed == null ? "" : seed;
+
+		seed = StringEscapeUtils.escapeHtml4(seed);
+
+		String passWord = request.getParameter("passwd");
+
+		passWord = StringEscapeUtils.escapeHtml4(passWord);
 
 		preFormat(request, response);
 
-		String pw = request.getParameter("passwd");
+		if(passWord.equals(PASSWORD)) {
 
-		pw = StringEscapeUtils.escapeHtml4(pw);
+			if(seed.length() != 0) {
 
-		if(pw.equals(PASSWORD)) {
+				try {
 
-			try {
+					URL url = new URL(seed);
 
-				server.setStopTimeout(0);
+					webCrawler.newCrawling(url);
 
-				server.stop();
+					out.printf("				<div class=\"box\">%n");
 
-			} catch (Exception e) {
+					out.print("<p> New links resources has been added</p>");
 
-				out.printf("Sorry... unable to shutdown your Engine");
+					out.printf("				</div>%n");
+
+					out.printf("%n");
+
+				}catch(MalformedURLException ex) {
+
+					out.printf("				<div class=\"box\">%n");
+
+					out.print("<p style=\"color:#FF0000\"> Invalid URL for Crawling!</h2>");
+
+					out.printf("				</div>%n");
+
+					out.printf("%n");
+
+				}
 
 			}
-		}
-		else {
+		}else {
 
 			out.printf("				<div class=\"box\">%n");
 
@@ -102,6 +123,7 @@ public class GraceShutdownServlet extends HttpServlet{
 			out.printf("				</div>%n");
 
 			out.printf("%n");
+
 		}
 
 		postFormat(request, response);
@@ -111,7 +133,7 @@ public class GraceShutdownServlet extends HttpServlet{
 	}
 
 	/**
-	 * Function for preparing the html script
+	 * Function for prepare the html script
 	 * @param request the httpServlet request
 	 * @param response the httpServleet response
 	 * @throws IOException if the socket is not writable
@@ -154,7 +176,7 @@ public class GraceShutdownServlet extends HttpServlet{
 
 		out.print("<p> <font size=\"3\" face=\"arial\" color=\"white\"><i>Everything is possible</i></font><p>");
 
-		out.printf("	        Graceful ShutDown%n");
+		out.printf("	       Locations%n");
 
 		out.printf("	      </h1>%n");
 
@@ -178,7 +200,7 @@ public class GraceShutdownServlet extends HttpServlet{
 
 		out.printf("		<div class=\"container\">%n");
 
-		out.printf("			<h2 class=\"title\"> GoodBye!</h2>%n");
+		out.printf("			<h2 class=\"title\"> Links and Locations</h2>%n");
 
 		out.printf("%n");
 
@@ -208,17 +230,39 @@ public class GraceShutdownServlet extends HttpServlet{
 
 		out.printf("		<div class=\"container\">%n");
 
-		out.printf("			<h2 class=\"title\">PassWord Required</h2>%n");
+		out.printf("			<h2 class=\"title\">Add Message</h2>%n");
+
+		out.printf("%n");
 
 		out.printf("			<form method=\"%s\" action=\"%s\">%n", "POST", request.getServletPath());
 
 		out.printf("				<div class=\"field\">%n");
 
-		out.printf("					<label class=\"label\">PassWord</label>%n");
+		out.printf("					<label class=\"label\">New Crawl</label>%n");
 
 		out.printf("					<div class=\"control has-icons-left\">%n");
 
-		out.printf("						<input class=\"input\" type=\"text\" name=\"%s\" placeholder=\"Enter password here.\">%n", "passwd");
+		out.printf("						<input class=\"input\" type=\"text\" name=\"%s\" placeholder=\"Enter new seed here.\">%n", "seed");
+
+		out.printf("						<span class=\"icon is-small is-left\">%n");
+
+		out.printf("							<i class=\"fas fa-user\"></i>%n");
+
+		out.printf("						</span>%n");
+
+		out.printf("					</div>%n");
+
+		out.printf("				</div>%n");
+
+		out.printf("%n");
+
+		out.printf("				<div class=\"field\">%n");
+
+		out.printf("					<label class=\"label\">Pass Word Required For Administer</label>%n");
+
+		out.printf("					<div class=\"control has-icons-left\">%n");
+
+		out.printf("						<input class=\"input\" type=\"text\" name=\"%s\" placeholder=\"Enter pass word here.\">%n", "passwd");
 
 		out.printf("						<span class=\"icon is-small is-left\">%n");
 
@@ -240,7 +284,7 @@ public class GraceShutdownServlet extends HttpServlet{
 
 		out.printf("						&nbsp;%n");
 
-		out.printf("						Submit%n");
+		out.printf("						Add NewCrawl%n");
 
 		out.printf("					</button>%n");
 
@@ -271,9 +315,7 @@ public class GraceShutdownServlet extends HttpServlet{
 		out.printf("</body>%n");
 
 		out.printf("</html>%n");
-
 	}
-
 	/**
 	 * Function for getting the current date
 	 * @return a formatted date
