@@ -163,8 +163,6 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 
 			for (Cookie cookie : cookies) {
 
-				System.out.println(cookie.getName());
-
 				if(cookie.getName().equals("favorite")) {
 
 					System.out.println(cookie.getName());
