@@ -275,7 +275,19 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 
 		out.printf("<form method=\"post\" action=\"%s\">%n", request.getServletPath());
 
-		out.printf("<p><input type=\"submit\" value=\"Clean\"></p>\n%n");
+		out.printf("				<div class=\"control\">%n");
+
+		out.printf("			    <button style=\"margin-left:110px\" class=\"button is-primary\" type=\"submit\">%n");
+
+		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+
+		out.printf("						&nbsp;%n");
+
+		out.printf("						Clean%n");
+
+		out.printf("					</button>%n");
+
+		out.printf("			  </div>%n");
 
 		out.printf("</form>\n%n");
 
