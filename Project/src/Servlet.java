@@ -143,7 +143,7 @@ public class Servlet extends CookieBaseServlet {
 
 		addHistory(request, response, message);
 
-		suggestQueries.addFirst(message);
+		addSuggestQuery(message);
 
 		List<InvertedIndex.SearchResult> links;
 
@@ -192,6 +192,15 @@ public class Servlet extends CookieBaseServlet {
 
 		response.setStatus(HttpServletResponse.SC_OK);
 
+	}
+
+	/**
+	 * Synchronized method for adding suggest query
+	 * @param query the suggest query
+	 */
+	public synchronized void addSuggestQuery(String query) {
+
+		suggestQueries.addFirst(query);
 	}
 
 	/**
@@ -251,7 +260,7 @@ public class Servlet extends CookieBaseServlet {
 
 			out.printf("	  <div class=\"hero-body\">%n");
 
-			out.printf("</p>Last time log in was at %s</p>", escaped);
+			out.printf("<p style=\"margin-left:90px\">Last time log in was at %s</p>", escaped);
 
 			out.printf("	  </div>%n");
 
@@ -339,7 +348,7 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
 
-		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						<i class=\"fas fa-ban\"></i>%n");
 
 		out.printf("						&nbsp;%n");
 
@@ -495,7 +504,7 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
 
-		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						<i class=\"fas fa-info-circle\"></i>%n");
 
 		out.printf("						&nbsp;%n");
 
@@ -515,7 +524,7 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("						<span class=\"icon is-small is-left\">%n");
 
-		out.printf("							<i class=\"fas fa-user\"></i>%n");
+		out.printf("							<i class=\"fas fa-spinner fa-pulse\"></i>%n");
 
 		out.printf("						</span>%n");
 
@@ -545,7 +554,7 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
 
-		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						<i class=\"fas fa-info-circle\"></i>%n");
 
 		out.printf("						&nbsp;%n");
 
@@ -563,7 +572,7 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
 
-		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						<i class=\"fas fa-info-circle\"></i>%n");
 
 		out.printf("						&nbsp;%n");
 
@@ -581,7 +590,7 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
 
-		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						<i class=\"fas fa-info-circle\"></i>%n");
 
 		out.printf("						&nbsp;%n");
 
@@ -599,7 +608,7 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
 
-		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						<i class=\"fas fa-info-circle\"></i>%n");
 
 		out.printf("						&nbsp;%n");
 
@@ -617,7 +626,7 @@ public class Servlet extends CookieBaseServlet {
 
 		out.printf("			    <button class=\"button is-primary\" type=\"submit\">%n");
 
-		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						<i class=\"fas fa-info-circle\"></i>%n");
 
 		out.printf("						&nbsp;%n");
 

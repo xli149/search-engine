@@ -277,7 +277,7 @@ public class AddFavoriteServlet extends CookieBaseServlet {
 
 		out.printf("			    <button style=\"margin-left:110px\" class=\"button is-primary\" type=\"submit\">%n");
 
-		out.printf("						<i class=\"fas fa-comment\"></i>%n");
+		out.printf("						<i class=\"fas fa-ban\"></i>%n");
 
 		out.printf("						&nbsp;%n");
 

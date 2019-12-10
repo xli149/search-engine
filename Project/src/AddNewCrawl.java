@@ -246,7 +246,7 @@ public class AddNewCrawl extends HttpServlet{
 
 		out.printf("						<span class=\"icon is-small is-left\">%n");
 
-		out.printf("							<i class=\"fas fa-user\"></i>%n");
+		out.printf("							<i class=\"fas fa-spinner fa-pulse\"></i>%n");
 
 		out.printf("						</span>%n");
 
